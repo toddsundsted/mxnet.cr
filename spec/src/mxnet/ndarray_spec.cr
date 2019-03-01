@@ -38,6 +38,10 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.array([1_i64]).should eq(MXNet::NDArray.array([1_i64]))
     end
 
+    it "supports explicit context" do
+      MXNet::NDArray.array([1], ctx: MXNet::Context.cpu).context.should eq(MXNet::Context.cpu)
+    end
+
     it "fails if the array has inconsistent nesting" do
       expect_raises(MXNet::NDArrayException, /inconsistent nesting/) do
         MXNet::NDArray.array([1, [2.0]])
@@ -75,6 +79,15 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.array([[1_i64, 2_i64], [3_i64, 4_i64]]).shape.should eq([2_u32, 2_u32])
       MXNet::NDArray.array([1, 2]).shape.should eq([2_u32])
       MXNet::NDArray.array([1_u8]).shape.should eq([1_u32])
+    end
+  end
+
+  describe "#context" do
+    it "returns the context of the array" do
+      MXNet::NDArray.array([1.0, 2.0, 3.0]).context.should eq(MXNet::Context.cpu)
+      MXNet::NDArray.array([[1_i64, 2_i64], [3_i64, 4_i64]]).context.should eq(MXNet::Context.cpu)
+      MXNet::NDArray.array([1, 2]).context.should eq(MXNet::Context.cpu)
+      MXNet::NDArray.array([1_u8]).context.should eq(MXNet::Context.cpu)
     end
   end
 

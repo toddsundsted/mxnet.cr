@@ -45,6 +45,11 @@ module MXNet
       pdata.to_slice(dim).to_a
     end
 
+    def context
+      MXNet::Internal.libcall(MXNDArrayGetContext, @handle, out dev_type, out dev_id)
+      Context.new(dev_type, dev_id)
+    end
+
     def dtype
       MXNet::Internal.libcall(MXNDArrayGetDType, @handle, out dtype)
       DT2T[dtype]
@@ -67,7 +72,7 @@ module MXNet
         data = data.in_groups_of(dim).map { |group| "[#{group.join(", ")}]" }
       end
       data.each { |line| io << line << "\n" }
-      io << "<NDArray #{shape.join("x")} #{dtype} cpu(0)>"
+      io << "<NDArray #{shape.join("x")} #{dtype} #{context}>"
     end
 
     protected def raw
@@ -106,17 +111,41 @@ module MXNet
       MXNet::Internal.libcall(MXNDArrayFree, @handle)
     end
 
-    def self.empty(shape, dtype : Symbol = :float32)
+    # Returns an MXArray of given shape and type, without initializing entries.
+    #
+    # ### Parameters
+    # * *shape* (`Array(Int32)`)
+    #   The shape of the empty array.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
+    # * *dtype* (`Symbol`, optional)
+    #   The data type of the output array. The default is `:float32`.
+    #
+    def self.empty(shape, ctx : Context = Context.current, dtype : Symbol = :float32)
       dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
-      MXNet::Internal.libcall(MXNDArrayCreateEx, shape, shape.size, 1, 0, 0, dtype, out handle)
+      MXNet::Internal.libcall(MXNDArrayCreateEx, shape, shape.size, *ctx.device, 0, dtype, out handle)
       new(handle)
     end
 
-    def self.array(array : Array(T), dtype : Symbol | Nil = nil) forall T
-      shape_and_type = infer_shape_and_type(array)
+    # Creates an MXNet array from any enumerable object.
+    #
+    # ### Parameters
+    # * *source* (`Enumerable(T)`)
+    #   Any enumerable object, or nested objects.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
+    # * *dtype* (`Symbol`, optional)
+    #   The data type of the output array. If unspecified, the type is
+    #   inferred from the source type.
+    #
+    def self.array(source : Enumerable(T), ctx : Context | Nil = nil, dtype : Symbol | Nil = nil) forall T
+      source = source.to_a
+      shape_and_type = infer_shape_and_type(source)
       inferred_shape = shape_and_type.map(&.first)
       inferred_type = shape_and_type.last.last
-      elements = array.flatten
+      elements = source.flatten
+
+      ctx ||= Context.current
 
       if dtype
         dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
@@ -127,11 +156,11 @@ module MXNet
         raise MXNet::NDArrayException.new("type can't be inferred")
       end
 
-      MXNet::Internal.libcall(MXNDArrayCreateEx, inferred_shape, inferred_shape.size, 1, 0, 0, inferred_type, out handle)
+      MXNet::Internal.libcall(MXNDArrayCreateEx, inferred_shape, inferred_shape.size, *ctx.device, 0, inferred_type, out handle)
       MXNet::Internal.libcall(MXNDArraySyncCopyFromCPU, handle, elements, elements.size)
 
       if dtype && dtype != inferred_type
-        empty(inferred_shape, dtype: DT2T[dtype]).tap do |res|
+        empty(inferred_shape, ctx: ctx, dtype: DT2T[dtype]).tap do |res|
           new(handle).copy_to(res)
         end
       else

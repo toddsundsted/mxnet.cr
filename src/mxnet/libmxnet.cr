@@ -28,6 +28,7 @@ module MXNet
       fun MXNDArraySyncCopyFromCPU(handle : NDArrayHandle, data : Void*, size : LibC::SizeT) : Int32
       fun MXNDArraySyncCopyToCPU(handle : NDArrayHandle, data : Void*, size : LibC::SizeT) : Int32
       fun MXNDArrayGetShape(handle : NDArrayHandle, dim : UInt32*, pdata : UInt32**) : Int32
+      fun MXNDArrayGetContext(handle : NDArrayHandle, dev_type : Int32*, dev_id : Int32*) : Int32
       fun MXNDArrayGetDType(handle : NDArrayHandle, dtype : UInt32*) : Int32
       fun MXNDArrayFree(handle : NDArrayHandle) : Int32
       fun NNGetOpHandle(name : UInt8*, op : OpHandle*) : Int32

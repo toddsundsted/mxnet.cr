@@ -30,6 +30,13 @@ module MXNet
       fun MXNDArrayGetShape(handle : NDArrayHandle, dim : UInt32*, pdata : UInt32**) : Int32
       fun MXNDArrayGetDType(handle : NDArrayHandle, dtype : UInt32*) : Int32
       fun MXNDArrayFree(handle : NDArrayHandle) : Int32
+      fun NNGetOpHandle(name : UInt8*, op : OpHandle*) : Int32
+      fun MXImperativeInvoke(
+        creator : OpHandle,
+        num_inputs : Int32, inputs : NDArrayHandle*,
+        num_outputs : Int32*, outputs : NDArrayHandle**,
+        num_params : Int32, param_keys : UInt8**, param_vals : UInt8**
+      ) : Int32
     end
   end
 end

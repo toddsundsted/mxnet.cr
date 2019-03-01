@@ -114,5 +114,43 @@ module MXNet
         raise MXNet::NDArrayException.new("inconsistent nesting: #{array}")
       end
     end
+
+    # TODO: cache op handles
+    def self.imperative_invoke(op, *ndargs, **kwargs)
+      op = op.to_s
+      ndargs = ndargs.to_a
+      kwargs = kwargs.to_h
+      num_outputs = 0
+      outputs = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).null
+
+      if kwargs.has_key?(:out)
+        out = kwargs.delete(:out)
+        if out.is_a?(NDArray)
+          num_outputs = 1
+          outputs = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).malloc(1)
+          outputs[0] = out.handle
+        else
+          raise MXNet::NDArrayException.new("out is invalid (must be NDArray): #{out}")
+        end
+      end
+
+      MXNet::Internal.libcall(
+        NNGetOpHandle,
+        op,
+        out op_handle
+      )
+      MXNet::Internal.libcall(
+        MXImperativeInvoke,
+        op_handle,
+        ndargs.size,
+        ndargs.map(&.handle),
+        pointerof(num_outputs),
+        pointerof(outputs),
+        kwargs.size,
+        kwargs.keys.map(&.to_s.as(String).to_unsafe),
+        kwargs.values.map(&.to_s.as(String).to_unsafe)
+      )
+      num_outputs.times.map { |i| NDArray.new(outputs[i]) }
+    end
   end
 end

@@ -1,5 +1,16 @@
 require "../../spec_helper"
 
+class MXNet::NDArray
+  # Redefined this method for testing. The original method
+  # performs an element-wise comparison for equality.
+  def ==(other : self)
+    return false unless other.dtype == self.dtype
+    return false unless other.shape == self.shape
+    return false unless other.raw == self.raw
+    true
+  end
+end
+
 describe "MXNet::NDArray" do
   describe ".array" do
     it "creates an NDArray from a Crystal array" do
@@ -9,13 +20,22 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.array([1]).should be_a(MXNet::NDArray)
     end
 
+    it "supports MXNet numeric types" do
+      MXNet::NDArray.array([1], dtype: :float32).should eq(MXNet::NDArray.array([1_f32]))
+      MXNet::NDArray.array([1], dtype: :float64).should eq(MXNet::NDArray.array([1_f64]))
+      MXNet::NDArray.array([1], dtype: :uint8).should eq(MXNet::NDArray.array([1_u8]))
+      MXNet::NDArray.array([1], dtype: :int32).should eq(MXNet::NDArray.array([1_i32]))
+      MXNet::NDArray.array([1], dtype: :int8).should eq(MXNet::NDArray.array([1_i8]))
+      MXNet::NDArray.array([1], dtype: :int64).should eq(MXNet::NDArray.array([1_i64]))
+    end
+
     it "supports Crystal numeric types" do
-      MXNet::NDArray.array([1_f32]).should be_a(MXNet::NDArray)
-      MXNet::NDArray.array([1_f64]).should be_a(MXNet::NDArray)
-      MXNet::NDArray.array([1_u8]).should be_a(MXNet::NDArray)
-      MXNet::NDArray.array([1_i32]).should be_a(MXNet::NDArray)
-      MXNet::NDArray.array([1_i8]).should be_a(MXNet::NDArray)
-      MXNet::NDArray.array([1_i64]).should be_a(MXNet::NDArray)
+      MXNet::NDArray.array([1_f32]).should eq(MXNet::NDArray.array([1_f32]))
+      MXNet::NDArray.array([1_f64]).should eq(MXNet::NDArray.array([1_f64]))
+      MXNet::NDArray.array([1_u8]).should eq(MXNet::NDArray.array([1_u8]))
+      MXNet::NDArray.array([1_i32]).should eq(MXNet::NDArray.array([1_i32]))
+      MXNet::NDArray.array([1_i8]).should eq(MXNet::NDArray.array([1_i8]))
+      MXNet::NDArray.array([1_i64]).should eq(MXNet::NDArray.array([1_i64]))
     end
 
     it "fails if the array has inconsistent nesting" do
@@ -64,6 +84,17 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.array([[1_i64, 2_i64], [3_i64, 4_i64]]).dtype.should eq(:int64)
       MXNet::NDArray.array([1, 2]).dtype.should eq(:int32)
       MXNet::NDArray.array([1_u8]).dtype.should eq(:uint8)
+    end
+  end
+
+  describe "#as_type" do
+    it "returns a copy after casting to the specified type" do
+      MXNet::NDArray.array([1]).as_type(:float32).should eq(MXNet::NDArray.array([1_f32]))
+      MXNet::NDArray.array([1]).as_type(:float64).should eq(MXNet::NDArray.array([1_f64]))
+      MXNet::NDArray.array([1]).as_type(:uint8).should eq(MXNet::NDArray.array([1_u8]))
+      MXNet::NDArray.array([1]).as_type(:int32).should eq(MXNet::NDArray.array([1_i32]))
+      MXNet::NDArray.array([1]).as_type(:int8).should eq(MXNet::NDArray.array([1_i8]))
+      MXNet::NDArray.array([1]).as_type(:int64).should eq(MXNet::NDArray.array([1_i64]))
     end
   end
 

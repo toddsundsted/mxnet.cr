@@ -13,7 +13,11 @@ module MXNet
 
     lib LibMXNet
       type NDArrayHandle = Void*
+      type SymbolHandle = Void*
       type OpHandle = Void*
+
+      alias MXUInt = UInt32
+      alias NNUInt = UInt32
 
       fun MXGetLastError() : UInt8*
       fun MXGetVersion(i : Int32*) : Int32
@@ -38,6 +42,14 @@ module MXNet
         num_outputs : Int32*, outputs : NDArrayHandle**,
         num_params : Int32, param_keys : UInt8**, param_vals : UInt8**
       ) : Int32
+      fun MXSymbolCreateVariable(
+        name : UInt8*,
+        handle : SymbolHandle*
+      ) : Int32
+      fun MXSymbolGetName(handle : SymbolHandle, name : UInt8**, success : Int32*) : Int32
+      fun MXSymbolListArguments(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
+      fun MXSymbolListOutputs(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
+      fun MXSymbolFree(handle : SymbolHandle) : Int32
     end
   end
 end

@@ -36,9 +36,9 @@ module MXNet
     #
     # [How to run MXNet on multiple CPU/GPUs](http://mxnet.io/faq/multi_devices.html)
     #
-    def initialize(device_type : Symbol | Int32, device_id : Int32 = 0)
+    def initialize(device_type : ::Symbol | Int32, device_id : Int32 = 0)
       case device_type
-      when Symbol
+      when ::Symbol
         @device_type = DEVICE_TYPE_SYM_TO_INT[device_type]
         @device_id = device_id
       else

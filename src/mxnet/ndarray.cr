@@ -59,7 +59,7 @@ module MXNet
       NDArray.imperative_invoke("_copyto", self, out: other)
     end
 
-    def as_type(dtype : Symbol)
+    def as_type(dtype : ::Symbol)
       return self if dtype == self.dtype
       NDArray.empty(shape, dtype: dtype).tap do |res|
         copy_to(res)
@@ -121,7 +121,7 @@ module MXNet
     # * *dtype* (`Symbol`, optional)
     #   The data type of the output array. The default is `:float32`.
     #
-    def self.empty(shape, ctx : Context = Context.current, dtype : Symbol = :float32)
+    def self.empty(shape, ctx : Context = Context.current, dtype : ::Symbol = :float32)
       dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
       MXNet::Internal.libcall(MXNDArrayCreateEx, shape, shape.size, *ctx.device, 0, dtype, out handle)
       new(handle)
@@ -138,7 +138,7 @@ module MXNet
     #   The data type of the output array. If unspecified, the type is
     #   inferred from the source type.
     #
-    def self.array(source : Enumerable(T), ctx : Context | Nil = nil, dtype : Symbol | Nil = nil) forall T
+    def self.array(source : Enumerable(T), ctx : Context | Nil = nil, dtype : ::Symbol | Nil = nil) forall T
       source = source.to_a
       shape_and_type = infer_shape_and_type(source)
       inferred_shape = shape_and_type.map(&.first)

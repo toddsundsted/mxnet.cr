@@ -9,3 +9,4 @@ end
 require "./mxnet/libmxnet"
 require "./mxnet/context"
 require "./mxnet/ndarray"
+require "./mxnet/symbol"

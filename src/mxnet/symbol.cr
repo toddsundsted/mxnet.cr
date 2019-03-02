@@ -49,6 +49,23 @@ module MXNet
       str_array.to_slice(size).map { |u| String.new(u) }.to_a
     end
 
+    def bind(ctx : Context, args : Array(MXNet::NDArray))
+      arg_grad_store = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).malloc(args.size)
+      grad_req_type = Pointer(UInt32).malloc(args.size, 1_u32)
+
+      MXNet::Internal.libcall(
+        MXExecutorBindEX,
+        @handle,
+        *ctx.device,
+        0, [] of UInt8*, [] of Int32, [] of Int32,
+        args.size, args.map(&.handle), arg_grad_store, grad_req_type,
+        0, [] of MXNet::Internal::LibMXNet::NDArrayHandle,
+        nil,
+        out exec_handle
+      )
+      MXNet::Executor.new(exec_handle)
+    end
+
     def to_s(io)
       io << "<Symbol #{name}>"
     end
@@ -67,6 +84,35 @@ module MXNet
     def self.var(name : String)
       MXNet::Internal.libcall(MXSymbolCreateVariable, name, out handle)
       new(handle)
+    end
+
+    # TODO: cache op handles
+    def self.create_symbol(op, *args, **kwargs)
+      op = op.to_s
+      args = args.to_a
+      kwargs = kwargs.to_h
+
+      MXNet::Internal.libcall(
+        NNGetOpHandle,
+        op,
+        out op_handle
+      )
+      MXNet::Internal.libcall(
+        MXSymbolCreateAtomicSymbol,
+        op_handle,
+        kwargs.size,
+        kwargs.keys.map(&.to_s.as(String).to_unsafe),
+        kwargs.values.map(&.to_s.as(String).to_unsafe),
+        out sym_handle)
+      sym = new(sym_handle)
+      MXNet::Internal.libcall(
+        NNSymbolCompose,
+        sym_handle,
+        op,
+        args.size,
+        nil,
+        args.to_a.map(&.handle))
+      sym
     end
   end
 end

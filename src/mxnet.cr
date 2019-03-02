@@ -8,5 +8,6 @@ end
 
 require "./mxnet/libmxnet"
 require "./mxnet/context"
+require "./mxnet/executor"
 require "./mxnet/ndarray"
 require "./mxnet/symbol"

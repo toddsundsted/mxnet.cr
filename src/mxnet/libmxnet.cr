@@ -14,6 +14,7 @@ module MXNet
     lib LibMXNet
       type NDArrayHandle = Void*
       type SymbolHandle = Void*
+      type ExecutorHandle = Void*
       type OpHandle = Void*
 
       alias MXUInt = UInt32
@@ -50,6 +51,52 @@ module MXNet
       fun MXSymbolListArguments(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
       fun MXSymbolListOutputs(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
       fun MXSymbolFree(handle : SymbolHandle) : Int32
+      fun MXExecutorBindEX(
+        handle : SymbolHandle,
+        dev_type : Int32, dev_id : Int32,
+        num_map_keys : MXUInt,
+        map_keys : UInt8**,
+        map_dev_types : Int32*,
+        map_dev_ids : Int32*,
+        len : MXUInt,
+        in_args : NDArrayHandle*,
+        arg_grad_store : NDArrayHandle*,
+        grad_req_type : MXUInt*,
+        aux_states_len : MXUInt,
+        aux_states : NDArrayHandle*,
+        shared_exec : ExecutorHandle,
+        exec_handle : ExecutorHandle*
+      ) : Int32
+      fun MXExecutorForward(
+        handle : ExecutorHandle,
+        is_train : Int32
+      ) : Int32
+      fun MXExecutorBackwardEx(
+        handle : ExecutorHandle,
+        len : MXUInt,
+        head_grads : NDArrayHandle*,
+        is_train : Int32
+      ) : Int32
+      fun MXExecutorOutputs(
+        handle : ExecutorHandle,
+        num_outputs : UInt32*,
+        outputs : NDArrayHandle**
+      ) : Int32
+      fun MXExecutorFree(handle : ExecutorHandle) : Int32
+      fun MXSymbolCreateAtomicSymbol(
+        creator : OpHandle,
+        num_param : MXUInt,
+        keys : UInt8**,
+        vals : UInt8**,
+        sym_handle : SymbolHandle*
+      ) : Int32
+      fun NNSymbolCompose(
+        handle : SymbolHandle,
+        name : UInt8*,
+        num_args : NNUInt,
+        keys : UInt8**,
+        args : SymbolHandle*
+      ) : Int32
     end
   end
 end

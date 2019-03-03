@@ -3,7 +3,9 @@ module MXNet
   end
 
   class NDArray
-    @handle : MXNet::Internal::LibMXNet::NDArrayHandle
+    alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
+
+    @handle : NDArrayHandle
 
     DT2T = {
       0 => :float32,
@@ -192,13 +194,13 @@ module MXNet
       ndargs = ndargs.to_a
       kwargs = kwargs.to_h
       num_outputs = 0
-      outputs = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).null
+      outputs = Pointer(NDArrayHandle).null
 
       if kwargs.has_key?(:out)
         out = kwargs.delete(:out)
         if out.is_a?(NDArray)
           num_outputs = 1
-          outputs = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).malloc(1)
+          outputs = Pointer(NDArrayHandle).malloc(1)
           outputs[0] = out.handle
         else
           raise MXNet::NDArrayException.new("out is invalid (must be NDArray): #{out}")
@@ -214,7 +216,7 @@ module MXNet
         MXImperativeInvoke,
         op_handle,
         ndargs.size,
-        ndargs.map(&.handle),
+        ndargs.map(&.handle.as(NDArrayHandle)),
         pointerof(num_outputs),
         pointerof(outputs),
         kwargs.size,

@@ -1,6 +1,8 @@
 module MXNet
   class Symbol
-    @handle : MXNet::Internal::LibMXNet::SymbolHandle
+    alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
+
+    @handle : SymbolHandle
 
     def initialize(handle)
       @handle = handle
@@ -111,7 +113,7 @@ module MXNet
         op,
         args.size,
         nil,
-        args.to_a.map(&.handle))
+        args.to_a.map(&.handle.as(SymbolHandle)))
       sym
     end
   end

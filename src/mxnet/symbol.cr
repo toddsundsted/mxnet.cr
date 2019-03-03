@@ -51,7 +51,7 @@ module MXNet
       str_array.to_slice(size).map { |u| String.new(u) }.to_a
     end
 
-    def bind(ctx : Context, args : Array(MXNet::NDArray))
+    def bind(ctx : Context = MXNet::Context.current, args : Array(MXNet::NDArray) = [] of MXNet::NDArray)
       arg_grad_store = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).malloc(args.size)
       grad_req_type = Pointer(UInt32).malloc(args.size, 1_u32)
 

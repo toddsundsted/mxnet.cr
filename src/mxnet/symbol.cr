@@ -1,4 +1,7 @@
 module MXNet
+  class SymbolException < Exception
+  end
+
   class Symbol
     alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
 
@@ -51,7 +54,42 @@ module MXNet
       str_array.to_slice(size).map { |u| String.new(u) }.to_a
     end
 
-    def bind(ctx : Context = MXNet::Context.current, args : Array(MXNet::NDArray) = [] of MXNet::NDArray)
+    # Binds the current symbol to an executor and returns the executor.
+    #
+    # First, declare the computation and then bind to the data to
+    # evaluate.  This function returns an executor which provides an
+    # `Executor#forward()` method for evaluation.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # c = a + b # => "<Symbol broadcast_add>"
+    # e = c.bind(args: {"a" => MXNet::NDArray.ones([2, 3]), "b" => MXNet::NDArray.ones([2, 3])}, ctx: MXNet.cpu)
+    # e.forward.first # => [[2.0, 2.0, 2.0], [2.0, 2.0, 2.0]]
+    #                 #    <NDArray 2x3 float32 cpu(0)>
+    # ```
+    #
+    # ### Parameters
+    # * *args* (`Array(MXNet::NDArray)` or `Hash(String, MXNet::NDArray)`, default `[]`)
+    #   Input arguments.
+    #   * If the input type is `Array(MXNet::NDArray)`, the order should be same as the order returned by `#list_arguments`.
+    #   * If the input type is `Hash(String, MXNet::NDArray)`, the arguments map to those returned by `#list_arguments`.
+    # * *ctx* (`Context`, default is current context)
+    #   The device context the executor is to evaluate on.
+    #
+    def bind(args : Array(MXNet::NDArray) | Hash(String, MXNet::NDArray) = [] of MXNet::NDArray, ctx : Context = MXNet::Context.current)
+      arguments = list_arguments
+      if args.is_a?(Array(MXNet::NDArray))
+        if arguments.size != args.size
+          raise SymbolException.new("wrong number of arguments (expected #{arguments.size}, given #{args.size})")
+        end
+      elsif args.is_a?(Hash(String, MXNet::NDArray))
+        args = arguments.map { |a| args[a]?.as(MXNet::NDArray | Nil) }.compact
+        if arguments.size != args.size
+          raise SymbolException.new("wrong number of arguments (expected #{arguments.size}, matched #{args.size})")
+        end
+      end
+
       arg_grad_store = Pointer(MXNet::Internal::LibMXNet::NDArrayHandle).malloc(args.size)
       grad_req_type = Pointer(UInt32).malloc(args.size, 1_u32)
 
@@ -66,6 +104,50 @@ module MXNet
         out exec_handle
       )
       MXNet::Executor.new(exec_handle)
+    end
+
+    # Evaluates a symbol given arguments.
+    #
+    # The `#eval` method combines a call to `#bind` (which returns an
+    # `Executor`) with a call to `Executor#forward`. For the common
+    # use case, where you might repeatedly evaluate with the same
+    # arguments, `#eval` is slow. In that case, you should call `#bind`
+    # once and then repeatedly call `Executor#forward`. This function
+    # allows simpler syntax for less cumbersome introspection.
+    #
+    # Returns an array of `MXNet::NDArray` corresponding to the values
+    # taken by each symbol when evaluated on the given arguments. When
+    # called on a single symbol (not a group), the result will be an
+    # array with one element.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # c = a + b # => "<Symbol broadcast_add>"
+    # c.eval(a: MXNet::NDArray.ones([2, 3]), b: MXNet::NDArray.ones([2, 3])) # => [<NDArray 2x3 int32 @cpu(0)>]
+    # c.eval(MXNet::NDArray.ones([2, 3]), MXNet::NDArray.ones([2, 3])) # => [<NDArray 2x3 int32 @cpu(0)>]
+    # ```
+    #
+    # ### Parameters
+    # * *ctx* (`Context`, default is current context)
+    #   The device context the executor is to evaluate on.
+    # * *ndargs* (`MXNet::NDArray`)
+    #   Input arguments. All the arguments must be provided.
+    #
+    def eval(*ndargs : MXNet::NDArray, ctx : Context = MXNet::Context.current)
+      args = ndargs.to_a
+      bind(args: args, ctx: ctx).forward
+    end
+
+    # ditto
+    def eval(ctx : Context = MXNet::Context.current, **ndargs : MXNet::NDArray)
+      args = ndargs.map { |k, v| {k.to_s, v} }.to_h
+      bind(ctx: ctx, args: args).forward
+    end
+
+    # ditto
+    def eval(ctx : Context = MXNet::Context.current)
+      bind(ctx: ctx).forward
     end
 
     def to_s(io)

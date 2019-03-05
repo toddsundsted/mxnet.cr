@@ -25,6 +25,24 @@ describe "MXNet::Symbol" do
     end
   end
 
+  describe "#bind" do
+    it "binds an array of arguments" do
+      MXNet::Symbol.var("a").bind(args: [MXNet::NDArray.array([1])]).should be_a(MXNet::Executor)
+    end
+    it "binds a hash of arguments" do
+      MXNet::Symbol.var("a").bind(args: {"a" => MXNet::NDArray.array([1])}).should be_a(MXNet::Executor)
+    end
+  end
+
+  describe "#eval" do
+    it "evaluates arguments" do
+      MXNet::Symbol.var("a").eval(MXNet::NDArray.array([1])).to_a.should be_a(Array(MXNet::NDArray))
+    end
+    it "evaluates named arguments" do
+      MXNet::Symbol.var("a").eval(a: MXNet::NDArray.array([1])).to_a.should be_a(Array(MXNet::NDArray))
+    end
+  end
+
   describe "#to_s" do
     it "pretty-prints the symbol" do
       MXNet::Symbol.var("foo").to_s.should eq("<Symbol foo>")

@@ -69,9 +69,12 @@ module MXNet
     end
 
     def to_s(io)
-      data = raw
-      shape.reverse.each do |dim|
-        data = data.in_groups_of(dim).map { |group| "[#{group.join(", ")}]" }
+      data = ["[]"]
+      if shape.product > 0
+        data = raw
+        shape.reverse.each do |dim|
+          data = data.in_groups_of(dim).map { |group| "[#{group.join(", ")}]" }
+        end
       end
       data.each { |line| io << line << "\n" }
       io << "<NDArray"

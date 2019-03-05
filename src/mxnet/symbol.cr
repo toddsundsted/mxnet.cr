@@ -69,7 +69,9 @@ module MXNet
     end
 
     def to_s(io)
-      io << "<Symbol #{name}>"
+      io << "<Symbol"
+      io << " " << name
+      io << ">"
     end
 
     # :nodoc:

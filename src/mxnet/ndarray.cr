@@ -74,7 +74,11 @@ module MXNet
         data = data.in_groups_of(dim).map { |group| "[#{group.join(", ")}]" }
       end
       data.each { |line| io << line << "\n" }
-      io << "<NDArray #{shape.join("x")} #{dtype} #{context}>"
+      io << "<NDArray"
+      io << " " << shape.join("x") if shape.size > 0
+      io << " " << dtype
+      io << " " << context
+      io << ">"
     end
 
     protected def raw

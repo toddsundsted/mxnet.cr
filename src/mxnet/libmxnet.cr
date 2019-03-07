@@ -97,6 +97,13 @@ module MXNet
         keys : UInt8**,
         args : SymbolHandle*
       ) : Int32
+      fun MXRandomSeed(
+        seed : Int32
+      ) : Int32
+      fun MXRandomSeedContext(
+        seed : Int32,
+        dev_type : Int32, dev_id : Int32
+      ) : Int32
     end
   end
 end

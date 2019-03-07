@@ -4,6 +4,12 @@ module MXNet
     Internal.libcall(MXGetVersion, out version)
     version
   end
+
+  private module ClassMethods
+    delegate cpu, gpu, to: MXNet::Context
+  end
+
+  extend ClassMethods
 end
 
 require "./mxnet/libmxnet"

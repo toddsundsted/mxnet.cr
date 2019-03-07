@@ -152,6 +152,109 @@ module MXNet
       bind(ctx: ctx).forward
     end
 
+    macro arithmetic(op, array_mod, scalar_mod)
+      def {{ op.id }}(other : self | Number)
+        if other.is_a?(self)
+          Symbol::{{ array_mod }}(self, other)
+        else
+          Symbol::{{ scalar_mod }}(self, scalar: other)
+        end
+      end
+    end
+
+    # Performs element-wise addition (without broadcasting).
+    arithmetic(:+, Internal._plus, Internal._plus_scalar)
+
+    # Performs element-wise subtraction (without broadcasting).
+    arithmetic(:-, Internal._minus, Internal._minus_scalar)
+
+    # Performs element-wise multiplication (without broadcasting).
+    arithmetic(:*, Internal._mul, Internal._mul_scalar)
+
+    # Performs element-wise division (without broadcasting).
+    arithmetic(:/, Internal._div, Internal._div_scalar)
+
+    # Returns the result of the first array elements raised to powers
+    # from the second array (or scalar), element-wise with broadcasting.
+    arithmetic(:**, Internal._power, Internal._power_scalar)
+
+    # Reshapes the input array.
+    #
+    # Returns a copy of the array with a new shape without altering any data.
+    #
+    # ```
+    # MXNet::NDArray.array([1, 2, 3, 4]).reshape(shape: [2, 2]) # => MXNet::NDArray.array([[1, 2], [3, 4]])
+    # ```
+    #
+    # Some dimensions of the shape can take special values from the
+    # set `{0, -1, -2, -3, -4}`. The significance of each is explained
+    # below:
+    #
+    # Given `a = MXNet::NDArray.zeros([2, 3, 4])`
+    #
+    # * `0` copies this dimension from the input to the output shape:
+    #     MXNet::Symbol.var("a").reshape([4, 0, 2]).eval(a).first.shape # => [4, 3, 2]
+    #     MXNet::Symbol.var("a").reshape([2, 0, 0]).eval(a).first.shape # => [2, 3, 4]
+    # * `-1` infers the dimension of the output shape by using the
+    #   remainder of the input dimensions, keeping the size of the
+    #   new array the same as that of the input array. At most one
+    #   dimension can be `-1`:
+    #     MXNet::Symbol.var("a").reshape([6, 1, -1]).eval(a).first.shape # => [6, 1, 4]
+    #     MXNet::Symbol.var("a").reshape([3, -1, 8]).eval(a).first.shape # => [3, 1, 8]
+    #     MXNet::Symbol.var("a").reshape([-1]).eval(a).first.shape # => [24]
+    # * `-2` copies all/the remainder of the input dimensions to the
+    #   output shape:
+    #     MXNet::Symbol.var("a").reshape([-2]).eval(a).first.shape # => [2, 3, 4]
+    #     MXNet::Symbol.var("a").reshape([2, -2]).eval(a).first.shape # => [2, 3, 4]
+    #     MXNet::Symbol.var("a").reshape([-2, 1, 1]).eval(a).first.shape # => [2, 3, 4, 1, 1]
+    # * `-3` uses the product of two consecutive dimensions of the
+    #   input shape as the output dimension:
+    #     MXNet::Symbol.var("a").reshape([-3, 4]).eval(a).first.shape # => [6, 4]
+    #     MXNet::Symbol.var("a").reshape([-3, -3]).eval(a).first.shape # => [6, 20]
+    #     MXNet::Symbol.var("a").reshape([0, -3]).eval(a).first.shape # => [2, 12]
+    #     MXNet::Symbol.var("a").reshape([-3, -2]).eval(a).first.shape # => [6, 4]
+    # * `-4` splits one dimension of the input into the two dimensions
+    #   passed subsequent to `-4` (which can contain `-1`):
+    #     MXNet::Symbol.var("a").reshape([-4, 1, 2, -2]).eval(a).first.shape # => [1, 2, 3, 4]
+    #     MXNet::Symbol.var("a").reshape([2, -4, -1, 3, -2]).eval(a).first.shape # => [2, 1, 3, 4]
+    #
+    # ### Parameters
+    # * *shape* (`Int` or `Array(Int)`)
+    #   The target shape.
+    # * *reverse* (`Bool`, optional, default `false`)
+    #   If `true` then the special values are inferred from right to left.
+    # * *name* (`String`, optional)
+    #   Name of the resulting symbol.
+    #
+    def reshape(shape : Int | Array(Int), **kwargs)
+      Ops._reshape(self, **kwargs.merge({shape: shape}))
+    end
+
+    # Flattens the input array into a 2-D array by collapsing the
+    # higher dimensions.
+    #
+    # For an input array with shape `(d1, d2, ..., dk)`, `#flatten`
+    # reshapes the input array into an output array of shape
+    # `(d1, d2 * ... * dk)`.
+    #
+    # Note that the bahavior of this function is different from
+    # `Array#flatten`, which behaves similar to `#reshape([-1])`.
+    #
+    # ```
+    # x = MXNet::NDArray.array([[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]])
+    # MXNet::Symbol.var("x").flatten.eval(x).first.shape # => [2, 6]
+    # ```
+    #
+    # ### Parameters
+    # * *out* (`NDArray`, optional)
+    #   The output array.
+    # * *name* (`String`, optional)
+    #   Name of the resulting symbol.
+    #
+    def flatten(**kwargs)
+      Ops._flatten(self, **kwargs)
+    end
+
     def to_s(io)
       io << "<Symbol"
       io << " " << name
@@ -180,6 +283,9 @@ module MXNet
       args = args.to_a
       kwargs = kwargs.to_h
 
+      name = kwargs.delete(:name)
+      name = name.is_a?(String) ? name : nil
+
       MXNet::Internal.libcall(
         NNGetOpHandle,
         op,
@@ -196,7 +302,7 @@ module MXNet
       MXNet::Internal.libcall(
         NNSymbolCompose,
         sym_handle,
-        op,
+        MXNet::Name::Manager.current.get(name, op.downcase),
         args.size,
         nil,
         args.to_a.map(&.handle.as(SymbolHandle)))

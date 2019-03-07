@@ -18,6 +18,36 @@ describe "MXNet::Symbol" do
     end
   end
 
+  describe ".random_uniform" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.random_uniform(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_normal" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.random_normal(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_poisson" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.random_poisson(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_exponential" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.random_exponential(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_gamma" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.random_gamma(1.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    end
+  end
+
   describe "#name" do
     it "returns the name of the symbol" do
       MXNet::Symbol.var("foo").name.should eq("foo")

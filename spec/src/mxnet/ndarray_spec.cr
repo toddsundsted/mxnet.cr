@@ -99,6 +99,36 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe ".random_uniform" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.random_uniform(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_normal" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.random_normal(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_poisson" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.random_poisson(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_exponential" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.random_exponential(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
+    end
+  end
+
+  describe ".random_gamma" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.random_gamma(1.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
+    end
+  end
+
   describe "#shape" do
     it "returns the shape of the array" do
       MXNet::NDArray.array([1.0, 2.0, 3.0]).shape.should eq([3_u32])

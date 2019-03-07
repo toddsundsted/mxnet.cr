@@ -7,6 +7,7 @@ module MXNet
 end
 
 require "./mxnet/libmxnet"
+require "./mxnet/operations"
 require "./mxnet/context"
 require "./mxnet/executor"
 require "./mxnet/ndarray"

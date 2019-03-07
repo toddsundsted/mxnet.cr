@@ -3,6 +3,8 @@ module MXNet
   end
 
   class Symbol
+    extend MXNet::Operations
+
     alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
 
     @handle : SymbolHandle

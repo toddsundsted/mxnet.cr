@@ -3,6 +3,8 @@ module MXNet
   end
 
   class NDArray
+    extend MXNet::Operations
+
     alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
 
     @handle : NDArrayHandle

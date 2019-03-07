@@ -4,8 +4,8 @@ module MXNet
     end
 
     macro libcall(expr, *args)
-      unless Internal::LibMXNet.{{ expr }}({{ *args }}) == 0
-        raise Internal::LibraryException.new(String.new(Internal::LibMXNet.MXGetLastError))
+      unless MXNet::Internal::LibMXNet.{{ expr }}({{ *args }}) == 0
+        raise MXNet::Internal::LibraryException.new(String.new(MXNet::Internal::LibMXNet.MXGetLastError))
       end
     end
 

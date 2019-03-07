@@ -97,6 +97,7 @@ module MXNet
     # Compares contexts.
     #
     # Two contexts are equal if they have the same device type and device id.
+    #
     def ==(other : self)
       other.device_type == self.device_type && other.device_id == self.device_id
     end

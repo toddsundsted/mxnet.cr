@@ -9,6 +9,7 @@ module MXNet
 
     @handle : NDArrayHandle
 
+    # :nodoc:
     DT2T = {
       0 => :float32,
       1 => :float64,
@@ -17,6 +18,7 @@ module MXNet
       5 => :int8,
       6 => :int64
     }
+    # :nodoc:
     T2DT = {
       :float32 => 0,
       :float64 => 1,
@@ -26,6 +28,7 @@ module MXNet
       :int64 => 6
     }
 
+    # :nodoc:
     INFERRED_TYPES = {
       Array(Float32) => 0,
       Array(Float64) => 1,

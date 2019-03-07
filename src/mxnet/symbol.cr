@@ -457,3 +457,31 @@ module MXNet
     end
   end
 end
+
+struct Number
+  # Performs element-wise addition.
+  def +(other : MXNet::Symbol)
+    MXNet::Symbol::Internal._plus_scalar(other, scalar: self)
+  end
+
+  # Performs element-wise subtraction.
+  def -(other : MXNet::Symbol)
+    MXNet::Symbol::Internal._rminus_scalar(other, scalar: self)
+  end
+
+  # Performs element-wise multiplication.
+  def *(other : MXNet::Symbol)
+    MXNet::Symbol::Internal._mul_scalar(other, scalar: self)
+  end
+
+  # Performs element-wise division.
+  def /(other : MXNet::Symbol)
+    MXNet::Symbol::Internal._rdiv_scalar(other, scalar: self)
+  end
+
+  # Returns the result of this number raised to powers from the array,
+  # element-wise with broadcasting.
+  def **(other : MXNet::Symbol)
+    MXNet::Symbol::Internal._rpower_scalar(other, scalar: self)
+  end
+end

@@ -520,3 +520,31 @@ module MXNet
     end
   end
 end
+
+struct Number
+  # Performs element-wise addition.
+  def +(other : MXNet::NDArray)
+    MXNet::NDArray::Internal._plus_scalar(other, scalar: self).first
+  end
+
+  # Performs element-wise subtraction.
+  def -(other : MXNet::NDArray)
+    MXNet::NDArray::Internal._rminus_scalar(other, scalar: self).first
+  end
+
+  # Performs element-wise multiplication.
+  def *(other : MXNet::NDArray)
+    MXNet::NDArray::Internal._mul_scalar(other, scalar: self).first
+  end
+
+  # Performs element-wise division.
+  def /(other : MXNet::NDArray)
+    MXNet::NDArray::Internal._rdiv_scalar(other, scalar: self).first
+  end
+
+  # Returns the result of this number raised to powers from the array,
+  # element-wise with broadcasting.
+  def **(other : MXNet::NDArray)
+    MXNet::NDArray::Internal._rpower_scalar(other, scalar: self).first
+  end
+end

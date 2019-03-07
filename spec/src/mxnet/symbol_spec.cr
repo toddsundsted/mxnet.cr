@@ -100,6 +100,7 @@ describe "MXNet::Symbol" do
     it "adds a scalar to an array" do
       a = MXNet::Symbol.var("a")
       (a + 2).eval(**args).first.should eq(MXNet::NDArray.array([[3.0, 4.0], [5.0, 6.0]]))
+      (2 + a).eval(**args).first.should eq(MXNet::NDArray.array([[3.0, 4.0], [5.0, 6.0]]))
     end
     it "adds two arrays" do
       a = MXNet::Symbol.var("a")
@@ -112,6 +113,7 @@ describe "MXNet::Symbol" do
     it "subtracts a scalar from an array" do
       a = MXNet::Symbol.var("a")
       (a - 2).eval(**args).first.should eq(MXNet::NDArray.array([[-1.0, 0.0], [1.0, 2.0]]))
+      (2 - a).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 0.0], [-1.0, -2.0]]))
     end
     it "subtracts two arrays" do
       a = MXNet::Symbol.var("a")
@@ -124,6 +126,7 @@ describe "MXNet::Symbol" do
     it "multiplies an array by a scalar" do
       a = MXNet::Symbol.var("a")
       (a * 2).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 4.0], [6.0, 8.0]]))
+      (2 * a).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 4.0], [6.0, 8.0]]))
     end
     it "multiplies two arrays" do
       a = MXNet::Symbol.var("a")
@@ -136,6 +139,7 @@ describe "MXNet::Symbol" do
     it "divides an array by a scalar" do
       a = MXNet::Symbol.var("a")
       (a / 2).eval(**args).first.should eq(MXNet::NDArray.array([[0.5, 1.0], [1.5, 2.0]]))
+      (2 / a).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 1.0], [(1.0/1.5), 0.5]]))
     end
     it "divides two arrays" do
       a = MXNet::Symbol.var("a")
@@ -148,6 +152,7 @@ describe "MXNet::Symbol" do
     it "exponentiates an array by a scalar" do
       a = MXNet::Symbol.var("a")
       (a ** 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 4.0], [9.0, 16.0]]))
+      (2 ** a).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 4.0], [8.0, 16.0]]))
     end
     it "exponentiates two arrays" do
       a = MXNet::Symbol.var("a")

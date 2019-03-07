@@ -7,6 +7,7 @@ module MXNet
 end
 
 require "./mxnet/libmxnet"
+require "./mxnet/name/manager"
 require "./mxnet/operations"
 require "./mxnet/context"
 require "./mxnet/executor"

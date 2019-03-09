@@ -73,7 +73,7 @@ module MXNet
       end
     end
 
-    macro arithmetic(op, array_mod, scalar_mod)
+    private macro arithmetic(op, array_mod, scalar_mod)
       def {{ op.id }}(other : self | Number)
         if other.is_a?(self)
           NDArray::{{ array_mod }}(self, other).first

@@ -1,6 +1,7 @@
 module MXNet
   # Extends `MXNet::NDArray` and `MXNet::Symbol` classes with
   # wrappers for native MXNet operations.
+  #
   module Operations
     # :nodoc:
     OP_INFO = {

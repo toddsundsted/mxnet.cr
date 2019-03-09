@@ -1,5 +1,6 @@
 module MXNet
   # MXNet context.
+  #
   class Context
     private DEVICE_TYPE_SYM_TO_INT = {
       :cpu => 1,
@@ -27,9 +28,9 @@ module MXNet
     # Use `.cpu` and `.gpu` as shortcuts.
     #
     # ### Parameters
-    # * *device_type* (`:cpu`, `:gpu` or `int32`)
+    # * *device_type* (`:cpu`, `:gpu` or `Int32`)
     #   Symbol representing the device type, or the device type.
-    # * *device_id*   (`int32`, default = 0)
+    # * *device_id*   (`Int32`, default = 0)
     #   Device id of the device (for GPUs).
     #
     # ###  See also
@@ -54,7 +55,7 @@ module MXNet
     # context is `MXNet::Context.cpu`.
     #
     # ### Parameters
-    # * *device_id* (`int32`, default = 0)
+    # * *device_id* (`Int32`, default = 0)
     #   Device id of the device. Not required for the CPU
     #   context. Included to make the interface compatible with GPU
     #   contexts.
@@ -69,7 +70,7 @@ module MXNet
     # The K GPUs on a node are typically numbered 0, ..., K-1.
     #
     # ### Parameters
-    # * *device_id* (`int32`, default = 0)
+    # * *device_id* (`Int32`, default = 0)
     #   Device id of the device. Required for the GPU contexts.
     #
     def self.gpu(device_id : Int32 = 0)

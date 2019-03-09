@@ -1,6 +1,7 @@
 module MXNet
   # `Executor` provides efficient symbolic graph
   # execution and optimization.
+  #
   class Executor
     @handle : MXNet::Internal::LibMXNet::ExecutorHandle
 

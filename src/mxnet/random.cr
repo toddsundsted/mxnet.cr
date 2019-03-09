@@ -1,5 +1,6 @@
 module MXNet
   # Random number interface of MXNet.
+  #
   class Random
     # Seeds the random number generators in MXNet.
     #

@@ -81,8 +81,9 @@ describe "MXNet::NDArray" do
 
     it "writes the results to the output array" do
       a = MXNet::NDArray.array([99_f32])
-      MXNet::NDArray.zeros(1, out: a)
+      b = MXNet::NDArray.zeros(1, out: a)
       a.should eq(MXNet::NDArray.array([0_f32]))
+      a.should be(b)
     end
   end
 
@@ -94,8 +95,9 @@ describe "MXNet::NDArray" do
 
     it "writes the results to the output array" do
       a = MXNet::NDArray.array([99_f32])
-      MXNet::NDArray.ones(1, out: a)
+      b = MXNet::NDArray.ones(1, out: a)
       a.should eq(MXNet::NDArray.array([1_f32]))
+      a.should be(b)
     end
   end
 

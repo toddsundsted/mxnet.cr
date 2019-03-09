@@ -489,6 +489,7 @@ module MXNet
       num_outputs = 0
       outputs = Pointer(NDArrayHandle).null
 
+      out = nil
       if kwargs.has_key?(:out)
         out = kwargs.delete(:out)
         if out.is_a?(NDArray)
@@ -516,7 +517,7 @@ module MXNet
         kwargs.keys.map(&.to_s.as(String).to_unsafe),
         kwargs.values.map(&.to_s.as(String).to_unsafe)
       )
-      num_outputs.times.map { |i| NDArray.new(outputs[i]) }
+      out ? [out] : num_outputs.times.map { |i| NDArray.new(outputs[i]) }
     end
   end
 end

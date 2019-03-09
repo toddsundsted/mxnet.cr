@@ -106,7 +106,7 @@ module MXNet
       {"_contrib_Proposal", "_contrib_Proposal", [:cls_score,:bbox_pred,:im_info], nil, [:rpn_pre_nms_top_n,:rpn_post_nms_top_n,:threshold,:rpn_min_size,:scales,:ratios,:feature_stride,:output_score,:iou_loss]},
       {"_contrib_SparseEmbedding", "_contrib_SparseEmbedding", [:data,:weight], [:input_dim,:output_dim], [:dtype]},
       {"_contrib_backward_quadratic", "_contrib_backward_quadratic", nil, nil, nil},
-      {"_contrib_bipartite_matching", "_contrib_bipartite_matching", [:data], [:threshold], [:_is_ascend,:topk]},
+      {"_contrib_bipartite_matching", "_contrib_bipartite_matching", [:data], [:threshold], [:is_ascend,:topk]},
       {"_contrib_box_iou", "_contrib_box_iou", [:lhs,:rhs], nil, [:format]},
       {"_contrib_box_nms", "_contrib_box_nms", [:data], nil, [:overlap_thresh,:topk,:coord_start,:score_index,:id_index,:force_suppress,:in_format,:out_format]},
       {"_contrib_box_non_maximum_suppression", "_contrib_box_nms", [:data], nil, [:overlap_thresh,:topk,:coord_start,:score_index,:id_index,:force_suppress,:in_format,:out_format]},
@@ -124,8 +124,8 @@ module MXNet
       {"_contrib_requantize", "_contrib_requantize", [:data,:min_range,:max_range], nil, [:min_calib_range,:max_calib_range]},
       {"_copy", "_copy", [:data], nil, nil},
       {"_copyto", "_copyto", nil, nil, nil},
-      {"_crop_assign", "_slice_assign", [:lhs,:rhs], [:_begin,:_end], [:step]},
-      {"_crop_assign_scalar", "_slice_assign_scalar", [:data], [:_begin,:_end], [:scalar,:step]},
+      {"_crop_assign", "_slice_assign", [:lhs,:rhs], [:begin,:end], [:step]},
+      {"_crop_assign_scalar", "_slice_assign_scalar", [:data], [:begin,:end], [:scalar,:step]},
       {"_cvcopyMakeBorder", "_cvcopyMakeBorder", nil, [:top,:bot,:left,:right], [:type,:value,:values]},
       {"_cvimdecode", "_cvimdecode", nil, nil, [:flag,:to_rgb]},
       {"_cvimread", "_cvimread", nil, [:filename], [:flag,:to_rgb]},
@@ -134,7 +134,7 @@ module MXNet
       {"_div_scalar", "_div_scalar", [:data], [:scalar], nil},
       {"_equal", "_equal", [:lhs,:rhs], nil, nil},
       {"_equal_scalar", "_equal_scalar", [:data], [:scalar], nil},
-      {"_eye", "_eye", nil, [:_N], [:_M,:k,:ctx,:dtype]},
+      {"_eye", "_eye", nil, [:N], [:M,:k,:ctx,:dtype]},
       {"_full", "_full", nil, [:value], [:shape,:ctx,:dtype]},
       {"_grad_add", "_grad_add", [:lhs,:rhs], nil, nil},
       {"_greater", "_greater", [:lhs,:rhs], nil, nil},
@@ -162,16 +162,16 @@ module MXNet
       {"_lesser_equal", "_lesser_equal", [:lhs,:rhs], nil, nil},
       {"_lesser_equal_scalar", "_lesser_equal_scalar", [:data], [:scalar], nil},
       {"_lesser_scalar", "_lesser_scalar", [:data], [:scalar], nil},
-      {"_linalg_gelqf", "_linalg_gelqf", [:_A], nil, nil},
-      {"_linalg_gemm", "_linalg_gemm", [:_A,:_B,:_C], nil, [:transpose_a,:transpose_b,:alpha,:beta]},
-      {"_linalg_gemm2", "_linalg_gemm2", [:_A,:_B], nil, [:transpose_a,:transpose_b,:alpha]},
-      {"_linalg_potrf", "_linalg_potrf", [:_A], nil, nil},
-      {"_linalg_potri", "_linalg_potri", [:_A], nil, nil},
-      {"_linalg_sumlogdiag", "_linalg_sumlogdiag", [:_A], nil, nil},
-      {"_linalg_syevd", "_linalg_syevd", [:_A], nil, nil},
-      {"_linalg_syrk", "_linalg_syrk", [:_A], nil, [:transpose,:alpha]},
-      {"_linalg_trmm", "_linalg_trmm", [:_A,:_B], nil, [:transpose,:rightside,:alpha]},
-      {"_linalg_trsm", "_linalg_trsm", [:_A,:_B], nil, [:transpose,:rightside,:alpha]},
+      {"_linalg_gelqf", "_linalg_gelqf", [:A], nil, nil},
+      {"_linalg_gemm", "_linalg_gemm", [:A,:B,:C], nil, [:transpose_a,:transpose_b,:alpha,:beta,:axis]},
+      {"_linalg_gemm2", "_linalg_gemm2", [:A,:B], nil, [:transpose_a,:transpose_b,:alpha,:axis]},
+      {"_linalg_potrf", "_linalg_potrf", [:A], nil, nil},
+      {"_linalg_potri", "_linalg_potri", [:A], nil, nil},
+      {"_linalg_sumlogdiag", "_linalg_sumlogdiag", [:A], nil, nil},
+      {"_linalg_syevd", "_linalg_syevd", [:A], nil, nil},
+      {"_linalg_syrk", "_linalg_syrk", [:A], nil, [:transpose,:alpha]},
+      {"_linalg_trmm", "_linalg_trmm", [:A,:B], nil, [:transpose,:rightside,:alpha]},
+      {"_linalg_trsm", "_linalg_trsm", [:A,:B], nil, [:transpose,:rightside,:alpha]},
       {"_maximum", "_maximum", [:lhs,:rhs], nil, nil},
       {"_maximum_scalar", "_maximum_scalar", [:data], [:scalar], nil},
       {"_minimum", "_minimum", [:lhs,:rhs], nil, nil},
@@ -215,8 +215,8 @@ module MXNet
       {"_scatter_set_nd", "_scatter_set_nd", [:data,:indices], [:shape], nil},
       {"_set_value", "_set_value", nil, nil, nil},
       {"_shuffle", "_shuffle", [:data], nil, nil},
-      {"_slice_assign", "_slice_assign", [:lhs,:rhs], [:_begin,:_end], [:step]},
-      {"_slice_assign_scalar", "_slice_assign_scalar", [:data], [:_begin,:_end], [:scalar,:step]},
+      {"_slice_assign", "_slice_assign", [:lhs,:rhs], [:begin,:end], [:step]},
+      {"_slice_assign_scalar", "_slice_assign_scalar", [:data], [:begin,:end], [:scalar,:step]},
       {"_sparse_ElementWiseSum", "add_n", nil, nil, nil},
       {"_sparse_FullyConnected", "FullyConnected", [:data,:weight,:bias], [:num_hidden], [:no_bias,:flatten]},
       {"_sparse_LinearRegressionOutput", "LinearRegressionOutput", [:data,:label], nil, [:grad_scale]},
@@ -270,7 +270,7 @@ module MXNet
       {"_sparse_sign", "sign", [:data], nil, nil},
       {"_sparse_sin", "sin", [:data], nil, nil},
       {"_sparse_sinh", "sinh", [:data], nil, nil},
-      {"_sparse_slice", "slice", [:data], [:_begin,:_end], [:step]},
+      {"_sparse_slice", "slice", [:data], [:begin,:end], [:step]},
       {"_sparse_softsign", "softsign", [:data], nil, nil},
       {"_sparse_sqrt", "sqrt", [:data], nil, nil},
       {"_sparse_square", "square", [:data], nil, nil},
@@ -296,7 +296,7 @@ module MXNet
       {"argmax", "argmax", [:data], nil, [:axis,:keepdims]},
       {"argmax_channel", "argmax_channel", [:data], nil, nil},
       {"argmin", "argmin", [:data], nil, [:axis,:keepdims]},
-      {"argsort", "argsort", [:data], nil, [:axis,:_is_ascend]},
+      {"argsort", "argsort", [:data], nil, [:axis,:is_ascend]},
       {"batch_dot", "batch_dot", [:lhs,:rhs], nil, [:transpose_a,:transpose_b]},
       {"batch_take", "batch_take", [:a,:indices], nil, nil},
       {"broadcast_add", "broadcast_add", [:lhs,:rhs], nil, nil},
@@ -328,7 +328,7 @@ module MXNet
       {"concat", "Concat", nil, [:num_args], [:dim]},
       {"cos", "cos", [:data], nil, nil},
       {"cosh", "cosh", [:data], nil, nil},
-      {"crop", "slice", [:data], [:_begin,:_end], [:step]},
+      {"crop", "slice", [:data], [:begin,:end], [:step]},
       {"degrees", "degrees", [:data], nil, nil},
       {"dot", "dot", [:lhs,:rhs], nil, [:transpose_a,:transpose_b]},
       {"elemwise_add", "elemwise_add", [:lhs,:rhs], nil, nil},
@@ -350,15 +350,15 @@ module MXNet
       {"gather_nd", "gather_nd", [:data,:indices], nil, nil},
       {"identity", "_copy", [:data], nil, nil},
       {"khatri_rao", "khatri_rao", nil, nil, nil},
-      {"linalg_gelqf", "_linalg_gelqf", [:_A], nil, nil},
-      {"linalg_gemm", "_linalg_gemm", [:_A,:_B,:_C], nil, [:transpose_a,:transpose_b,:alpha,:beta]},
-      {"linalg_gemm2", "_linalg_gemm2", [:_A,:_B], nil, [:transpose_a,:transpose_b,:alpha]},
-      {"linalg_potrf", "_linalg_potrf", [:_A], nil, nil},
-      {"linalg_potri", "_linalg_potri", [:_A], nil, nil},
-      {"linalg_sumlogdiag", "_linalg_sumlogdiag", [:_A], nil, nil},
-      {"linalg_syrk", "_linalg_syrk", [:_A], nil, [:transpose,:alpha]},
-      {"linalg_trmm", "_linalg_trmm", [:_A,:_B], nil, [:transpose,:rightside,:alpha]},
-      {"linalg_trsm", "_linalg_trsm", [:_A,:_B], nil, [:transpose,:rightside,:alpha]},
+      {"linalg_gelqf", "_linalg_gelqf", [:A], nil, nil},
+      {"linalg_gemm", "_linalg_gemm", [:A,:B,:C], nil, [:transpose_a,:transpose_b,:alpha,:beta,:axis]},
+      {"linalg_gemm2", "_linalg_gemm2", [:A,:B], nil, [:transpose_a,:transpose_b,:alpha,:axis]},
+      {"linalg_potrf", "_linalg_potrf", [:A], nil, nil},
+      {"linalg_potri", "_linalg_potri", [:A], nil, nil},
+      {"linalg_sumlogdiag", "_linalg_sumlogdiag", [:A], nil, nil},
+      {"linalg_syrk", "_linalg_syrk", [:A], nil, [:transpose,:alpha]},
+      {"linalg_trmm", "_linalg_trmm", [:A,:B], nil, [:transpose,:rightside,:alpha]},
+      {"linalg_trsm", "_linalg_trsm", [:A,:B], nil, [:transpose,:rightside,:alpha]},
       {"log", "log", [:data], nil, nil},
       {"log10", "log10", [:data], nil, nil},
       {"log1p", "log1p", [:data], nil, nil},
@@ -420,14 +420,14 @@ module MXNet
       {"signum_update", "signum_update", [:weight,:grad,:mom], [:lr], [:momentum,:wd,:rescale_grad,:clip_gradient,:wd_lh]},
       {"sin", "sin", [:data], nil, nil},
       {"sinh", "sinh", [:data], nil, nil},
-      {"slice", "slice", [:data], [:_begin,:_end], [:step]},
-      {"slice_axis", "slice_axis", [:data], [:axis,:_begin,:_end], nil},
+      {"slice", "slice", [:data], [:begin,:end], [:step]},
+      {"slice_axis", "slice_axis", [:data], [:axis,:begin,:end], nil},
       {"slice_like", "slice_like", [:data,:shape_like], nil, [:axes]},
       {"smooth_l1", "smooth_l1", [:data], [:scalar], nil},
       {"softmax", "softmax", [:data], nil, [:axis]},
       {"softmax_cross_entropy", "softmax_cross_entropy", [:data,:label], nil, nil},
       {"softsign", "softsign", [:data], nil, nil},
-      {"sort", "sort", [:data], nil, [:axis,:_is_ascend]},
+      {"sort", "sort", [:data], nil, [:axis,:is_ascend]},
       {"split", "SliceChannel", [:data], [:num_outputs], [:axis,:squeeze_axis]},
       {"sqrt", "sqrt", [:data], nil, nil},
       {"square", "square", [:data], nil, nil},
@@ -441,7 +441,7 @@ module MXNet
       {"tan", "tan", [:data], nil, nil},
       {"tanh", "tanh", [:data], nil, nil},
       {"tile", "tile", [:data], [:reps], nil},
-      {"topk", "topk", [:data], nil, [:axis,:k,:ret_typ,:_is_ascend]},
+      {"topk", "topk", [:data], nil, [:axis,:k,:ret_typ,:is_ascend]},
       {"transpose", "transpose", [:data], nil, [:axes]},
       {"trunc", "trunc", [:data], nil, nil},
       {"uniform", "_random_uniform", nil, nil, [:low,:high,:shape,:ctx,:dtype]},
@@ -459,12 +459,12 @@ module MXNet
         {% name = op[0].gsub(/^(_contrib_|_linalg_|_sparse_|_)/, "") %}
         {% prefix = {"_contrib_", "_linalg_", "_sparse_", "_"}.find { |pre| op[0].starts_with?(pre) } || "" %}
         {% mod = {"_contrib_": "Contrib", "_linalg_": "Linalg", "_sparse_": "Sparse", "_": "Internal"}[prefix] || "Ops" %}
-        {% args = op[2] ? op[2].map { |a| "#{a.id} : #{@type}".id } : nil %}
-        {% kwargs = op[3] ? op[3].map { |a| "#{a.id}".id } : nil %}
+        {% args = op[2] ? op[2].map { |a| [:begin, :end].includes?(a) ? "_#{a.downcase.id} : #{@type}".id : "#{a.downcase.id} : #{@type}".id } : nil %}
+        {% kwargs = op[3] ? op[3].map { |a| [:begin, :end].includes?(a) ? "#{a.downcase.id} _#{a.downcase.id}".id : "#{a.downcase.id}".id } : nil %}
         {% if args && kwargs %}
           def {{ @type }}::{{ mod.id }}.{{ "_#{name.id}".id }}({{ *args }}, *, {{ *kwargs }}, **kwargs)
-            {% args = op[2].map(&.id) %}
-            {% kwargs = op[3].map { |a| "#{a.id}: #{a.id}".id } %}
+            {% args = op[2].map { |a| [:begin, :end].includes?(a) ? "_#{a.downcase.id}".id : a.downcase.id } %}
+            {% kwargs = op[3].map { |a| [:begin, :end].includes?(a) ? "#{a.downcase.id}: _#{a.downcase.id}".id : "#{a.downcase.id}: #{a.downcase.id}".id } %}
             {% if @type == MXNet::NDArray %}
               {{ @type }}.imperative_invoke({{ op[0] }}, {{ *args }}, **kwargs.merge({{ *kwargs }}))
             {% elsif @type == MXNet::Symbol %}
@@ -473,7 +473,7 @@ module MXNet
           end
         {% elsif args %}
           def {{ @type }}::{{ mod.id }}.{{ "_#{name.id}".id }}({{ *args }}, **kwargs)
-            {% args = op[2].map(&.id) %}
+            {% args = op[2].map { |a| [:begin, :end].includes?(a) ? "_#{a.downcase.id}".id : a.downcase.id } %}
             {% if @type == MXNet::NDArray %}
               {{ @type }}.imperative_invoke({{ op[0] }}, {{ *args }}, **kwargs)
             {% elsif @type == MXNet::Symbol %}
@@ -482,7 +482,7 @@ module MXNet
           end
         {% elsif kwargs %}
           def {{ @type }}::{{ mod.id }}.{{ "_#{name.id}".id }}(*, {{ *kwargs }}, **kwargs)
-            {% kwargs = op[3].map { |a| "#{a.id}: #{a.id}".id } %}
+            {% kwargs = op[3].map { |a| [:begin, :end].includes?(a) ? "#{a.downcase.id}: _#{a.downcase.id}".id : "#{a.downcase.id}: #{a.downcase.id}".id } %}
             {% if @type == MXNet::NDArray %}
               {{ @type }}.imperative_invoke({{ op[0] }}, **kwargs.merge({{ *kwargs }}))
             {% elsif @type == MXNet::Symbol %}

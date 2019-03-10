@@ -172,6 +172,126 @@ module MXNet
       Ops._flatten(self, **kwargs).first
     end
 
+    private macro method_missing(call)
+      {% if call.name == "[]".id %}
+        self.[]({{call.args}})
+      {% elsif call.name == "[]=".id %}
+        self.[]=({{call.args[0..-2]}}, {{call.args.last}})
+      {% else %}
+        {% raise "no method matches '#{@type}##{call.name}'" %}
+      {% end %}
+    end
+
+    private def ranges_and_dims(keys, compact = nil)
+      shape = self.shape.map(&.to_i32)
+      ranges = keys.map_with_index do |k, i|
+        if k.is_a?(Int)
+          b = k
+          e = k + 1
+          {b, e}
+        else
+          b = k.begin
+          e = k.end < 0 ? shape[i] + k.end : k.end
+          e = k.excludes_end? ? e : e + 1
+          {b, e}
+        end
+      end
+      dims = shape.map_with_index do |s, i|
+        if keys[i]?
+          if keys[i].is_a?(Int)
+            compact ? nil : 1
+          else
+            ranges[i].last - ranges[i].first
+          end
+        else
+          s
+        end
+      end.compact
+      {ranges, dims}
+    end
+
+    # Returns a sliced view of this array.
+    #
+    # This method assumes the key is `Array` of `Int` or `Range(Int, Int)`.
+    # A macro is provided that rewrites a key presented as a variable
+    # number of `Int` or `Range(Int, Int)` arguments to array syntax.
+    #
+    # ### Parameters
+    # * *keys* (`Array(Int | Range(Int, Int))`)
+    #   Indexing key.
+    #
+    # Using variable argument syntax:
+    #
+    # ```
+    # a = MXNet::NDArray.array([1, 2, 3, 4])
+    # a[1] # => MXNet::NDArray.array([2])
+    # a[1...3] # => MXNet::NDArray.array([2, 3])
+    # a[1..-2] # => MXNet::NDArray.array([2, 3])
+    # b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+    # b[1...3, 1] # => MXNet::NDArray.array([[7, 8], [1, 2]])
+    # b[1...3, 1...2] # => MXNet::NDArray.array([[[7, 8]], [[1, 2]]])
+    # b[1, 1...2] # => MXNet::NDArray.array([[7, 8]])
+    # ```
+    #
+    def [](keys : Array(Int | Range(Int, Int)))
+      ranges, dims = ranges_and_dims(keys, compact: true)
+      out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last)).first
+      dims = dims.size > 0 ? out.reshape(dims) : out
+    end
+
+    # Sets sliced view of this array to the specified value.
+    #
+    # This method assumes the key is `Array` of `Int` or `Range(Int, Int)`.
+    # A macro is provided that rewrites a key presented as a variable
+    # number of `Int` or `Range(Int, Int)` arguments to array syntax.
+    #
+    # ### Parameters
+    # * *keys* (`Array(Int | Range(Int, Int))`)
+    #   Indexing key.
+    # * *value* (`Number | MXNet::NDArray)`)
+    #   The value to set.
+    #
+    # Using variable argument syntax:
+    #
+    # ```
+    # a = MXNet::NDArray.array([1, 2, 3, 4])
+    # a[1] = 99
+    # a # => MXNet::NDArray.array([1, 99, 3, 4])
+    # a[1..-2] = 98
+    # a # => MXNet::NDArray.array([1, 98, 98, 4])
+    # a[1...3] = MXNet::NDArray.array([97, 97])
+    # a # => MXNet::NDArray.array([1, 97, 97, 4])
+    # b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+    # b[1...3, 1] = 99
+    # b # => MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]])
+    # b[1...3, 1...2] = MXNet::NDArray.array([[[98, 98]], [[98, 98]]])
+    # b # => MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [98, 98]], [[9, 0], [98, 98]]])
+    # b[1, 1...2] = MXNet::NDArray.array([[97, 97]])
+    # b # => MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [97, 97]], [[9, 0], [98, 98]]])
+    # ```
+    #
+    def []=(keys : Array(Int | Range(Int, Int)), value : Number | self)
+      ranges, dims = ranges_and_dims(keys, compact: false)
+      if value.is_a?(self)
+        Internal._slice_assign(
+          self,
+          value.reshape(dims),
+          begin: ranges.map(&.first),
+          end: ranges.map(&.last),
+          out: self
+        )
+      else
+        Internal._slice_assign_scalar(
+          self,
+          begin: ranges.map(&.first),
+          end: ranges.map(&.last),
+          scalar: value,
+          out: self
+        )
+      end
+      value
+    end
+
     def to_s(io)
       data = ["[]"]
       if shape.product > 0

@@ -264,4 +264,164 @@ describe "MXNet::NDArray" do
       c.flatten.shape.should eq([1_u32, 8_u32])
     end
   end
+
+  describe "#[]" do
+    it "returns the specified slice along the first axis" do
+      a = MXNet::NDArray.array([1, 2, 3, 4])
+      a[1].should eq(MXNet::NDArray.array([2]))
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1].should eq(MXNet::NDArray.array([[5, 6], [7, 8]]))
+    end
+
+    it "returns the specified slices along the first axis" do
+      a = MXNet::NDArray.array([1, 2, 3, 4])
+      a[1...3].should eq(MXNet::NDArray.array([2, 3]))
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1...3].should eq(MXNet::NDArray.array([[[5, 6], [7, 8]], [[9, 0], [1, 2]]]))
+    end
+
+    it "returns the specified slices along the first axis" do
+      a = MXNet::NDArray.array([1, 2, 3, 4])
+      a[1..-2].should eq(MXNet::NDArray.array([2, 3]))
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1..-1].should eq(MXNet::NDArray.array([[[5, 6], [7, 8]], [[9, 0], [1, 2]]]))
+    end
+
+    it "supports mixed ranges and indexes" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1...3, 1].should eq(MXNet::NDArray.array([[7, 8], [1, 2]]))
+    end
+
+    it "supports mixed ranges and indexes" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1...3, 1...2].should eq(MXNet::NDArray.array([[[7, 8]], [[1, 2]]]))
+    end
+
+    it "supports mixed ranges and indexes" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1, 1...2].should eq(MXNet::NDArray.array([[7, 8]]))
+    end
+
+    it "supports mixed ranges and indexes" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1, 1].should eq(MXNet::NDArray.array([7, 8]))
+    end
+
+    it "reduces dimensionality correctly" do
+      x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape([7, 5, 3, 1])
+      x[1].shape.should eq([5_u32, 3_u32, 1_u32])
+      x[0..-1, 1].shape.should eq([7_u32, 3_u32, 1_u32])
+      x[0..-1, 0..-1, 1].shape.should eq([7_u32, 5_u32, 1_u32])
+      x[0..-1, 1, 0..-1].shape.should eq([7_u32, 3_u32, 1_u32])
+      x[0..-1, 1, 1].shape.should eq([7_u32, 1_u32])
+    end
+  end
+
+  describe "#[]=" do
+    context "value is an array" do
+      it "replaces the specified slice along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1] = MXNet::NDArray.array([99])
+        a.should eq(MXNet::NDArray.array([1, 99, 3, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1] = MXNet::NDArray.array([[99, 99], [99, 99]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "replaces the specified slices along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1...3] = MXNet::NDArray.array([99, 99])
+        a.should eq(MXNet::NDArray.array([1, 99, 99, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3] = MXNet::NDArray.array([[[99, 99], [99, 99]], [[99, 99], [99, 99]]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[99, 99], [99, 99]]]))
+      end
+
+      it "replaces the specified slices along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1..-2] = MXNet::NDArray.array([99, 99])
+        a.should eq(MXNet::NDArray.array([1, 99, 99, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1..-1] = MXNet::NDArray.array([[[99, 99], [99, 99]], [[99, 99], [99, 99]]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[99, 99], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3, 1] = MXNet::NDArray.array([[99, 99], [99, 99]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3, 1...2] = MXNet::NDArray.array([[[99, 99]], [[99, 99]]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1, 1...2] = MXNet::NDArray.array([[99, 99]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1, 1] = MXNet::NDArray.array([99, 99])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+    end
+
+    context "value is a scalar" do
+      it "replaces the specified slice along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1] = 99
+        a.should eq(MXNet::NDArray.array([1, 99, 3, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "replaces the specified slices along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1...3] = 99
+        a.should eq(MXNet::NDArray.array([1, 99, 99, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[99, 99], [99, 99]]]))
+      end
+
+      it "replaces the specified slices along the first axis" do
+        a = MXNet::NDArray.array([1, 2, 3, 4])
+        a[1..-2] = 99
+        a.should eq(MXNet::NDArray.array([1, 99, 99, 4]))
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1..-1] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[99, 99], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3, 1] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1...3, 1...2] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1, 1...2] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "supports mixed ranges and indexes" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1, 1] = 99
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+    end
+  end
 end

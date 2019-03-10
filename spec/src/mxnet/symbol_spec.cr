@@ -18,6 +18,20 @@ describe "MXNet::Symbol" do
     end
   end
 
+  describe ".zeros" do
+    it "returns an array filled with all zeros" do
+      MXNet::Symbol.zeros([1, 2]).eval.first.should eq(MXNet::NDArray.array([[0.0, 0.0]], dtype: :float32))
+      MXNet::Symbol.zeros(2, dtype: :int32).eval.first.should eq(MXNet::NDArray.array([0, 0], dtype: :int32))
+    end
+  end
+
+  describe ".ones" do
+    it "returns an array filled with all ones" do
+      MXNet::Symbol.ones([1, 2]).eval.first.should eq(MXNet::NDArray.array([[1.0, 1.0]], dtype: :float32))
+      MXNet::Symbol.ones(2, dtype: :int64).eval.first.should eq(MXNet::NDArray.array([1, 1], dtype: :int64))
+    end
+  end
+
   describe ".random_uniform" do
     it "returns an array of random numbers" do
       MXNet::Symbol.random_uniform(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)

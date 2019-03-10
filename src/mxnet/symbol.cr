@@ -277,6 +277,40 @@ module MXNet
       new(handle)
     end
 
+    # Create a symbol representing zeros, with the given
+    # shape and type.
+    #
+    # ### Parameters
+    # * *shape* (`Int` or `Array(Int)`)
+    #   The shape of the symbol.
+    # * *dtype* (`Symbol`, optional)
+    #   The data type of the symbol. The default is `:float32`.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
+    # * *name* (`String`, optional)
+    #   Name of the resulting symbol.
+    #
+    def self.zeros(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
+      Symbol::Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    end
+
+    # Create a symbol representing ones, with the given
+    # shape and type.
+    #
+    # ### Parameters
+    # * *shape* (`Int` or `Array(Int)`)
+    #   The shape of the symbol.
+    # * *dtype* (`Symbol`, optional)
+    #   The data type of the symbol. The default is `:float32`.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
+    # * *name* (`String`, optional)
+    #   Name of the resulting symbol.
+    #
+    def self.ones(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
+      Symbol::Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    end
+
     # Draw random samples from a uniform distribution.
     #
     # Samples are uniformly distributed over the half-open interval

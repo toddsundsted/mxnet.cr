@@ -292,6 +292,36 @@ module MXNet
       value
     end
 
+    # Returns a scalar whose value is copied from this array.
+    #
+    # The array must have shape `[1]`.
+    #
+    # ```
+    # MXNet::NDArray.zeros([1], dtype: :float64).as_scalar # => 0.0
+    # ```
+    #
+    def as_scalar
+      unless (ar = raw).size == 1
+        raise NDArrayException.new("the array is not scalar")
+      end
+      ar[0]
+    end
+
+    # Returns an `Array` with values copied from this array.
+    #
+    # Only works for 1-dimensional arrays (`shape.size == 1`).
+    #
+    # ```
+    # MXNet::NDArray.zeros([4], dtype: :float64).to_a # => [0.0, 0.0, 0.0, 0.0]
+    # ```
+    #
+    def to_a
+      unless shape.size == 1
+        raise NDArrayException.new("the array must have only 1 dimension")
+      end
+      raw
+    end
+
     def to_s(io)
       data = ["[]"]
       if shape.product > 0

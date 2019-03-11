@@ -169,6 +169,30 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe "#as_scalar" do
+    it "returns a scalar" do
+      MXNet::NDArray.zeros([1], dtype: :float64).as_scalar.should eq(0.0)
+    end
+
+    it "fails if shape != [1]" do
+      expect_raises(MXNet::NDArrayException, "the array is not scalar") do
+        MXNet::NDArray.zeros([4]).as_scalar
+      end
+    end
+  end
+
+  describe "#to_a" do
+    it "returns an array" do
+      MXNet::NDArray.zeros([4], dtype: :float64).to_a.should eq([0.0, 0.0, 0.0, 0.0])
+    end
+
+    it "fails if shape.size > 1" do
+      expect_raises(MXNet::NDArrayException, "the array must have only 1 dimension") do
+        MXNet::NDArray.zeros([2, 2]).to_a
+      end
+    end
+  end
+
   describe "#to_s" do
     it "pretty-prints the array" do
       MXNet::NDArray.array([1.0, 2.0, 3.0]).to_s.should eq("[1.0, 2.0, 3.0]\n<NDArray 3 float64 cpu(0)>")

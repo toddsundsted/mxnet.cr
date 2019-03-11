@@ -36,6 +36,28 @@ module MXNet
       fun MXNDArrayGetContext(handle : NDArrayHandle, dev_type : Int32*, dev_id : Int32*) : Int32
       fun MXNDArrayGetDType(handle : NDArrayHandle, dtype : UInt32*) : Int32
       fun MXNDArrayFree(handle : NDArrayHandle) : Int32
+      fun MXAutogradMarkVariables(
+        num_var : MXUInt,
+        var_handles : NDArrayHandle*,
+        reqs_array : MXUInt*,
+        grad_handles : NDArrayHandle*
+      ) : Int32
+      fun MXAutogradBackwardEx(
+        num_outputs : MXUInt,
+        output_handles : NDArrayHandle*,
+        ograd_handles : NDArrayHandle*,
+        num_variables : MXUInt,
+        var_handles : NDArrayHandle*,
+        retain_graph : Int32,
+        create_graph : Int32,
+        is_train : Int32,
+        grad_handles : NDArrayHandle **,
+        grad_stypes : Int32**
+      ) : Int32
+      fun MXAutogradSetIsRecording(is_recording : Int32, previous : Int32*) : Int32
+      fun MXAutogradSetIsTraining(is_training : Int32, previous : Int32*) : Int32
+      fun MXAutogradIsRecording(current : Bool*) : Int32
+      fun MXAutogradIsTraining(current : Bool*) : Int32
       fun NNGetOpHandle(name : UInt8*, op : OpHandle*) : Int32
       fun MXImperativeInvoke(
         creator : OpHandle,

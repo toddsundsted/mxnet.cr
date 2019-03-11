@@ -53,13 +53,12 @@ describe "MXNet::Autograd" do
     end
   end
 
-  it "records computation history for automatic differentiation" do
-    x = MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0])
-    g = MXNet::NDArray.array([0.0, 0.0, 0.0, 0.0])
-    MXNet::Autograd.mark_variables(x, g)
+  it "computes gradient" do
+    x = MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]).attach_grad
     y = MXNet::Autograd.record do
       x * x + 1
     end
-    MXNet::Autograd.backward(y)
+    y.backward
+    x.grad.to_a.should eq([2.0, 4.0, 6.0, 8.0])
   end
 end

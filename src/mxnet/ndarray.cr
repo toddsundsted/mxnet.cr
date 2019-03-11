@@ -73,6 +73,45 @@ module MXNet
       end
     end
 
+    # Returns gradient buffer attached to this array.
+    #
+    def grad
+      MXNet::Internal.libcall(MXNDArrayGetGrad, @handle, out grad_handle)
+      raise NDArrayException.new("no gradient is attached") if grad_handle.null?
+      NDArray.new(grad_handle)
+    end
+
+    # Attach a gradient buffer to this array, so that `#backward`
+    # can compute gradient with respect to it.
+    #
+    # ### Parameters
+    # * *grad_req* (`Symbol`, default `:write`)
+    #   * `:write`: gradient will be overwritten on every backward pass
+    #   * `:add`: gradient will be added to existing value on every backward pass
+    #   * `:null`: do not compute gradient
+    #
+    def attach_grad(grad_req = :write)
+      MXNet::Autograd.mark_variables(self, Ops._zeros_like(self).first)
+      self
+    end
+
+    # Compute the gradients of this array with respect to previously
+    # marked variables.
+    #
+    # ### Parameters
+    # * *gradient* (`MXNet::NDArray`, optional)
+    #   Gradient with respect to this array.
+    # * *retain_graph* (`Bool`, default false)
+    #   Whether to keep computation graph to differentiate again,
+    #   instead of clearing history and releasing memory.
+    # * *train_mode* (`Bool`, default true)
+    #   Whether the backward pass is in training or predicting mode.
+    #
+    def backward(gradient = nil, retain_graph = false, train_mode = true)
+      MXNet::Autograd.backward(self, gradient, retain_graph, train_mode)
+      self
+    end
+
     private macro arithmetic(op, array_mod, scalar_mod)
       def {{ op.id }}(other : self | Number)
         if other.is_a?(self)

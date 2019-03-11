@@ -202,6 +202,24 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe "#grad" do
+    it "returns the attached gradient buffer" do
+      MXNet::NDArray.array([1]).attach_grad.grad.should eq(MXNet::NDArray.array([0]))
+    end
+
+    it "fails if no gradient buffer is attached" do
+      expect_raises(MXNet::NDArrayException, "no gradient is attached") do
+        MXNet::NDArray.array([1]).grad
+      end
+    end
+  end
+
+  describe "#attach_grad" do
+    it "attaches a gradient buffer" do
+      MXNet::NDArray.array([1]).attach_grad.grad.should be_a(MXNet::NDArray)
+    end
+  end
+
   describe "#+" do
     it "adds a scalar to an array" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

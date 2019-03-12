@@ -3,8 +3,6 @@ module MXNet
   end
 
   class NDArray < Base
-    extend MXNet::Operations
-
     alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
 
     @handle : NDArrayHandle
@@ -138,79 +136,6 @@ module MXNet
     # from the second array (or scalar), element-wise with broadcasting.
     arithmetic(:**, Ops._broadcast_power, Internal._power_scalar)
 
-    # Reshapes the input array.
-    #
-    # Returns a copy of the array with a new shape without altering any data.
-    #
-    # ```
-    # MXNet::NDArray.array([1, 2, 3, 4]).reshape(shape: [2, 2]) # => MXNet::NDArray.array([[1, 2], [3, 4]])
-    # ```
-    #
-    # Some dimensions of the shape can take special values from the
-    # set `{0, -1, -2, -3, -4}`. The significance of each is explained
-    # below:
-    #
-    # * `0` copies this dimension from the input to the output shape:
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([4, 0, 2]).shape # => [4, 3, 2]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([2, 0, 0]).shape # => [2, 3, 4]
-    # * `-1` infers the dimension of the output shape by using the
-    #   remainder of the input dimensions, keeping the size of the
-    #   new array the same as that of the input array. At most one
-    #   dimension can be `-1`:
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([6, 1, -1]).shape # => [6, 1, 4]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([3, -1, 8]).shape # => [3, 1, 8]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-1]).shape # => [24]
-    # * `-2` copies all/the remainder of the input dimensions to the
-    #   output shape:
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-2]).shape # => [2, 3, 4]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([2, -2]).shape # => [2, 3, 4]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-2, 1, 1]).shape # => [2, 3, 4, 1, 1]
-    # * `-3` uses the product of two consecutive dimensions of the
-    #   input shape as the output dimension:
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-3, 4]).shape # => [6, 4]
-    #     MXNet::NDArray.zeros([2, 3, 4, 5]).reshape([-3, -3]).shape # => [6, 20]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([0, -3]).shape # => [2, 12]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-3, -2]).shape # => [6, 4]
-    # * `-4` splits one dimension of the input into the two dimensions
-    #   passed subsequent to `-4` (which can contain `-1`):
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([-4, 1, 2, -2]).shape # => [1, 2, 3, 4]
-    #     MXNet::NDArray.zeros([2, 3, 4]).reshape([2, -4, -1, 3, -2]).shape # => [2, 1, 3, 4]
-    #
-    # ### Parameters
-    # * *shape* (`Int` or `Array(Int)`)
-    #   The target shape.
-    # * *reverse* (`Bool`, optional, default `false`)
-    #   If `true` then the special values are inferred from right to left.
-    # * *out* (`NDArray`, optional)
-    #   The output array.
-    #
-    def reshape(shape : Int | Array(Int), **kwargs)
-      Ops._reshape(self, **kwargs.merge({shape: shape})).first
-    end
-
-    # Flattens the input array into a 2-D array by collapsing the
-    # higher dimensions.
-    #
-    # For an input array with shape `(d1, d2, ..., dk)`, `#flatten`
-    # reshapes the input array into an output array of shape
-    # `(d1, d2 * ... * dk)`.
-    #
-    # Note that the bahavior of this function is different from
-    # `Array#flatten`, which behaves similar to `#reshape([-1])`.
-    #
-    # ```
-    # x = MXNet::NDArray.array([[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]])
-    # x.flatten.shape # => [2, 6]
-    # ```
-    #
-    # ### Parameters
-    # * *out* (`NDArray`, optional)
-    #   The output array.
-    #
-    def flatten(**kwargs)
-      Ops._flatten(self, **kwargs).first
-    end
-
     private macro method_missing(call)
       {% if call.name == "[]".id %}
         self.[]({{call.args}})
@@ -275,7 +200,7 @@ module MXNet
     def [](keys : Array(Int | Range(Int, Int)))
       ranges, dims = ranges_and_dims(keys, compact: true)
       out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last))
-      dims = dims.size > 0 ? out.reshape(dims) : out
+      dims = dims.size > 0 ? out.reshape(shape: dims) : out
     end
 
     # Sets sliced view of this array to the specified value.
@@ -314,7 +239,7 @@ module MXNet
       if value.is_a?(self)
         Internal._slice_assign(
           self,
-          value.reshape(dims),
+          value.reshape(shape: dims),
           begin: ranges.map(&.first),
           end: ranges.map(&.last),
           out: self

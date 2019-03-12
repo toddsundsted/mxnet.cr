@@ -285,18 +285,49 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe ".dot" do
+    it "computes the dot product of two arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      x = a.reshape(shape: [2, 2])
+      y = a.reshape(shape: 4).flip(axis: 0).reshape(shape: [2, 2])
+      MXNet::NDArray.dot(x, y).should eq(MXNet::NDArray.array([[8.0, 5.0], [20.0, 13.0]]))
+    end
+  end
+
+  describe ".concat" do
+    it "concatenates arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      MXNet::NDArray.concat(a, b).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+    end
+  end
+
+  describe ".add_n" do
+    it "adds arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      MXNet::NDArray.add_n(a, b).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+    end
+  end
+
+  describe ".shuffle" do
+    it "randomly shuffles the elements" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      MXNet::NDArray.shuffle(a).should be_a(MXNet::NDArray)
+    end
+  end
+
   describe "#reshape" do
     it "reshapes the input array" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       a.reshape(shape: [4]).should eq(MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]))
-      a.reshape([4]).should eq(MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]))
-      a.reshape(4).should eq(MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]))
+      a.reshape(shape: 4).should eq(MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]))
     end
 
     it "supports special values for dimensions" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.reshape([-1, 0], reverse: false).shape.should eq([2_u32, 4_u32])
-      c.reshape([-1, 0], reverse: true).shape.should eq([4_u32, 2_u32])
+      c.reshape(shape: [-1, 0], reverse: false).shape.should eq([2_u32, 4_u32])
+      c.reshape(shape: [-1, 0], reverse: true).shape.should eq([4_u32, 2_u32])
     end
   end
 
@@ -304,6 +335,101 @@ describe "MXNet::NDArray" do
     it "flattens the input array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
       c.flatten.shape.should eq([1_u32, 8_u32])
+    end
+  end
+
+  describe "#expand_dims" do
+    it "inserts a new axis into the input array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.expand_dims(axis: 1).shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
+      c.expand_dims(1).shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
+    end
+  end
+
+  describe "#mean" do
+    it "computes the mean" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.mean(axis: 1).should eq(MXNet::NDArray.array([[4.0, 5.0]]))
+      c.mean(axis: 2).should eq(MXNet::NDArray.array([[1.5, 3.5, 5.5, 7.5]]))
+      c.mean.should eq(MXNet::NDArray.array([4.5]))
+    end
+  end
+
+  describe "#max" do
+    it "computes the max" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.max(axis: 1).should eq(MXNet::NDArray.array([[7.0, 8.0]]))
+      c.max(axis: 2).should eq(MXNet::NDArray.array([[2.0, 4.0, 6.0, 8.0]]))
+      c.max.should eq(MXNet::NDArray.array([8.0]))
+    end
+  end
+
+  describe "#min" do
+    it "computes the min" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.min(axis: 1).should eq(MXNet::NDArray.array([[1.0, 2.0]]))
+      c.min(axis: 2).should eq(MXNet::NDArray.array([[1.0, 3.0, 5.0, 7.0]]))
+      c.min.should eq(MXNet::NDArray.array([1.0]))
+    end
+  end
+
+  describe "#transpose" do
+    it "permutes the dimensions of the array" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.transpose.should eq(MXNet::NDArray.array([[1.0, 3.0], [2.0, 4.0]]))
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.transpose.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
+      c.transpose(axes: [1, 0, 2]).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
+    end
+  end
+
+  describe "#flip" do
+    it "reverses the order of elements" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.flip(axis: 1).should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
+      c.flip(axis: 2).should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+    end
+  end
+
+  describe "#sqrt" do
+    it "computes the square-root of the input" do
+      d = MXNet::NDArray.array([[1.0], [4.0], [9.0]])
+      d.sqrt.should eq(MXNet::NDArray.array([[1.0], [2.0], [3.0]]))
+    end
+  end
+
+  describe "#square" do
+    it "computes the square of the input" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.square.should eq(MXNet::NDArray.array([[1.0, 4.0], [9.0, 16.0]]))
+    end
+  end
+
+  describe "#relu" do
+    it "computes the rectified linear activation of the input" do
+      e = MXNet::NDArray.array([[-1.0], [1.0]])
+      e.relu.should eq(MXNet::NDArray.array([[0.0], [1.0]]))
+    end
+  end
+
+  describe "#sigmoid" do
+    it "computes the sigmoid activation of the input" do
+      z = MXNet::NDArray.zeros([1])
+      z.sigmoid.as_scalar.should eq(0.5)
+    end
+  end
+
+  describe "#slice" do
+    it "slices a region of the array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.slice(begin: [0, 0, 1], end: [0, 2, 2]).should eq(MXNet::NDArray.array([[[2.0], [4.0]]]))
+    end
+  end
+
+  describe "#slice_axis" do
+    it "slices a region of the array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.slice_axis(axis: 2, begin: 0, end: 1).should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]]]))
     end
   end
 
@@ -350,7 +476,7 @@ describe "MXNet::NDArray" do
     end
 
     it "reduces dimensionality correctly" do
-      x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape([7, 5, 3, 1])
+      x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape(shape: [7, 5, 3, 1])
       x[1].shape.should eq([5_u32, 3_u32, 1_u32])
       x[0..-1, 1].shape.should eq([7_u32, 3_u32, 1_u32])
       x[0..-1, 0..-1, 1].shape.should eq([7_u32, 5_u32, 1_u32])

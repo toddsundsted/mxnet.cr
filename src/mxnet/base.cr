@@ -4,6 +4,11 @@ module MXNet
   # Base class for `NDArray` and `Symbol`.
   #
   class Base
+    private macro inherited
+      include MXNet::Operations
+      extend MXNet::Operations
+    end
+
     # Recursively pretty-print *arg* to *io*.
     #
     # Suitable for formatting MXNet keyword arguments.

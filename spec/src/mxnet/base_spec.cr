@@ -19,7 +19,7 @@ end
 
 describe "MXNet::NDArray" do
   it "pretty-prints keyword arguments" do
-    MXNet::NDArray::Internal._zeros(shape: [3_u8]).first.to_a.should eq([0.0, 0.0, 0.0])
+    MXNet::NDArray::Internal._zeros(shape: [3_u8]).to_a.should eq([0.0, 0.0, 0.0])
   end
 end
 

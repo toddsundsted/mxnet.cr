@@ -91,7 +91,7 @@ module MXNet
     #   * `:null`: do not compute gradient
     #
     def attach_grad(grad_req = :write)
-      MXNet::Autograd.mark_variables(self, Ops._zeros_like(self).first)
+      MXNet::Autograd.mark_variables(self, Ops._zeros_like(self))
       self
     end
 
@@ -115,9 +115,9 @@ module MXNet
     private macro arithmetic(op, array_mod, scalar_mod)
       def {{ op.id }}(other : self | Number)
         if other.is_a?(self)
-          NDArray::{{ array_mod }}(self, other).first
+          NDArray::{{ array_mod }}(self, other)
         else
-          NDArray::{{ scalar_mod }}(self, scalar: other).first
+          NDArray::{{ scalar_mod }}(self, scalar: other)
         end
       end
     end
@@ -274,7 +274,7 @@ module MXNet
     #
     def [](keys : Array(Int | Range(Int, Int)))
       ranges, dims = ranges_and_dims(keys, compact: true)
-      out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last)).first
+      out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last))
       dims = dims.size > 0 ? out.reshape(dims) : out
     end
 
@@ -427,7 +427,7 @@ module MXNet
     #   The output array.
     #
     def self.zeros(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      NDArray::Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Returns an MXNet array filled with all ones, with the given
@@ -444,7 +444,7 @@ module MXNet
     #   The output array.
     #
     def self.ones(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      NDArray::Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a uniform distribution.
@@ -474,7 +474,7 @@ module MXNet
     def self.random_uniform(low : Number = 0.0, high : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]?
-      NDArray::Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a normal (Gaussian) distribution.
@@ -504,7 +504,7 @@ module MXNet
     def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]?
-      NDArray::Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a Poisson distribution.
@@ -533,7 +533,7 @@ module MXNet
     def self.random_poisson(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
-      NDArray::Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from an exponential distribution.
@@ -561,7 +561,7 @@ module MXNet
     def self.random_exponential(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
-      NDArray::Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a gamma distribution.
@@ -591,7 +591,7 @@ module MXNet
     def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]?
-      NDArray::Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx})).first
+      NDArray::Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Returns an MXNet array of given shape and type, without initializing entries.
@@ -706,7 +706,7 @@ module MXNet
         kwargs.keys.map { |a| output(a).as(String).to_unsafe },
         kwargs.values.map { |a| output(a).as(String).to_unsafe }
       )
-      out ? [out] : num_outputs.times.map { |i| NDArray.new(outputs[i]) }
+      out || NDArray.new(outputs[0])
     end
   end
 end
@@ -714,27 +714,27 @@ end
 struct Number
   # Performs element-wise addition.
   def +(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._plus_scalar(other, scalar: self).first
+    MXNet::NDArray::Internal._plus_scalar(other, scalar: self)
   end
 
   # Performs element-wise subtraction.
   def -(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rminus_scalar(other, scalar: self).first
+    MXNet::NDArray::Internal._rminus_scalar(other, scalar: self)
   end
 
   # Performs element-wise multiplication.
   def *(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._mul_scalar(other, scalar: self).first
+    MXNet::NDArray::Internal._mul_scalar(other, scalar: self)
   end
 
   # Performs element-wise division.
   def /(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rdiv_scalar(other, scalar: self).first
+    MXNet::NDArray::Internal._rdiv_scalar(other, scalar: self)
   end
 
   # Returns the result of this number raised to powers from the array,
   # element-wise with broadcasting.
   def **(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rpower_scalar(other, scalar: self).first
+    MXNet::NDArray::Internal._rpower_scalar(other, scalar: self)
   end
 end

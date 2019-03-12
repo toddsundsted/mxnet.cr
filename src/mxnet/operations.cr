@@ -135,7 +135,7 @@ module MXNet
       {"_contrib_quantized_pooling","_contrib_quantized_pooling",["data","min_data","max_data"],nil,["kernel","pool_type","global_pool","cudnn_off","pooling_convention","stride","pad","p_value","count_include_pad"]},
       {"_contrib_requantize","_contrib_requantize",["data","min_range","max_range"],nil,["min_calib_range","max_calib_range"]},
       {"_copy","_copy",["data"],nil,nil},
-      {"_copyto","_copyto",nil,nil,nil},
+      {"_copyto","_copyto",["data"],nil,nil},
       {"_crop_assign","_slice_assign",["lhs","rhs"],["begin","end"],["step"]},
       {"_crop_assign_scalar","_slice_assign_scalar",["data"],["begin","end"],["scalar","step"]},
       {"_cvcopyMakeBorder","_cvcopyMakeBorder",nil,["top","bot","left","right"],["type","value","values"]},

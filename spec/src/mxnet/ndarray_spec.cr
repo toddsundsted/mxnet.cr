@@ -158,6 +158,15 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe "#copy_to" do
+    it "fails if the source and destination are the same" do
+      expect_raises(MXNet::NDArrayException, "cannot copy an array onto itself") do
+        a = MXNet::NDArray.array([1, 2, 3])
+        a.copy_to(a)
+      end
+    end
+  end
+
   describe "#as_type" do
     it "returns a copy after casting to the specified type" do
       MXNet::NDArray.array([1]).as_type(:float32).should eq(MXNet::NDArray.array([1_f32]))

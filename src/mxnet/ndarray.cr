@@ -60,17 +60,6 @@ module MXNet
       DT2T[dtype]
     end
 
-    def copy_to(other : self)
-      NDArray.imperative_invoke("_copyto", self, out: other)
-    end
-
-    def as_type(dtype : ::Symbol)
-      return self if dtype == self.dtype
-      NDArray.empty(shape, dtype: dtype).tap do |res|
-        copy_to(res)
-      end
-    end
-
     # Returns gradient buffer attached to this array.
     #
     def grad
@@ -254,6 +243,70 @@ module MXNet
         )
       end
       value
+    end
+
+    # Copies the values of this array to another array.
+    #
+    # If *other* is a `NDArray` object, then `other.shape` and
+    # `self.shape` must be the same. This method copies the data from
+    # *self* to *other*.
+    #
+    # If *other* is a `Context` object, then a new `NDArray` will be
+    # created on the target context, and the method copies the data
+    # from *self* to the new array.
+    #
+    # ### Parameters
+    # * *other* (`NDArray | Context`)
+    #   The destination array or context.
+    #
+    def copy_to(other : Context | self)
+      if other.is_a?(self)
+        if self.handle == other.handle
+          raise NDArrayException.new("cannot copy an array onto itself")
+        end
+        Internal._copyto(self, out: other)
+      else
+        NDArray.empty(shape: shape, dtype: dtype, ctx: other).tap do |res|
+          Internal._copyto(self, out: res)
+        end
+      end
+    end
+
+    # Returns a copy of the array after casting to a specified type.
+    #
+    # ### Parameters
+    # * *dtype* (`Symbol`)
+    #   The type of the copy.
+    # * *copy* (`Bool`, default = true)
+    #   By default, `#as_type` always returns a newly allocated array
+    #   on the same context. If *copy* is set to `false`, and the
+    #   *dtype* requested is the same as this array's dtype, this
+    #   array is returned instead of a copy.
+    #
+    def as_type(dtype : ::Symbol, copy = true)
+      return self if !copy && dtype == self.dtype
+      NDArray.empty(shape: shape, dtype: dtype, ctx: context).tap do |res|
+        copy_to(res)
+      end
+    end
+
+    # Returns an array on the target device with the same values
+    # as this array.
+    #
+    # ### Parameters
+    # * *context* (`Context`)
+    #   The target context.
+    # * *copy* (`Bool`, default = false)
+    #   By default, if the target context is the same as this context,
+    #   this array is returned and no copy is made. If *copy* is set
+    #   to `true`, and the target context is the same as this context,
+    #   a copy is returned instead.
+    #
+    def as_in_context(context : Context, copy = false)
+      return self if !copy && context == self.context
+      NDArray.empty(shape: shape, dtype: dtype, ctx: context).tap do |res|
+        copy_to(res)
+      end
     end
 
     # Returns a scalar whose value is copied from this array.

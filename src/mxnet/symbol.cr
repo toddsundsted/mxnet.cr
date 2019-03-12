@@ -150,7 +150,7 @@ module MXNet
       bind(ctx: ctx).forward
     end
 
-    macro arithmetic(op, array_mod, scalar_mod)
+    private macro arithmetic(op, array_mod, scalar_mod)
       def {{ op.id }}(other : self | Number)
         if other.is_a?(self)
           Symbol::{{ array_mod }}(self, other)
@@ -212,7 +212,7 @@ module MXNet
     #   Name of the resulting symbol.
     #
     def self.zeros(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Symbol::Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Create a symbol representing ones, with the given
@@ -229,7 +229,7 @@ module MXNet
     #   Name of the resulting symbol.
     #
     def self.ones(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Symbol::Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a uniform distribution.
@@ -259,7 +259,7 @@ module MXNet
     def self.random_uniform(low : Number = 0.0, high : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]? || "None"
-      Symbol::Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a normal (Gaussian) distribution.
@@ -289,7 +289,7 @@ module MXNet
     def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]? || "None"
-      Symbol::Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a Poisson distribution.
@@ -318,7 +318,7 @@ module MXNet
     def self.random_poisson(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
-      Symbol::Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from an exponential distribution.
@@ -346,7 +346,7 @@ module MXNet
     def self.random_exponential(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
-      Symbol::Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # Draw random samples from a gamma distribution.
@@ -376,7 +376,7 @@ module MXNet
     def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
       dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]? || "None"
-      Symbol::Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx}))
+      Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx}))
     end
 
     # TODO: cache op handles

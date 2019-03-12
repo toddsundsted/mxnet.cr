@@ -21,7 +21,7 @@ module MXNet
       alias NNUInt = UInt32
 
       fun MXGetLastError() : UInt8*
-      fun MXGetVersion(i : Int32*) : Int32
+      fun MXGetVersion(version : Int32*) : Int32
       fun MXNDArrayCreateEx(
         shape : UInt32*,
         ndim : UInt32,

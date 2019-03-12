@@ -2,7 +2,7 @@ module MXNet
   class SymbolException < Exception
   end
 
-  class Symbol
+  class Symbol < Base
     extend MXNet::Operations
 
     alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
@@ -476,8 +476,8 @@ module MXNet
         MXSymbolCreateAtomicSymbol,
         op_handle,
         kwargs.size,
-        kwargs.keys.map(&.to_s.as(String).to_unsafe),
-        kwargs.values.map(&.to_s.as(String).to_unsafe),
+        kwargs.keys.map { |a| output(a).as(String).to_unsafe },
+        kwargs.values.map { |a| output(a).as(String).to_unsafe },
         out sym_handle)
       sym = new(sym_handle)
       MXNet::Internal.libcall(

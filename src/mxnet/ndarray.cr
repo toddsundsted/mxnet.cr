@@ -2,7 +2,7 @@ module MXNet
   class NDArrayException < Exception
   end
 
-  class NDArray
+  class NDArray < Base
     extend MXNet::Operations
 
     alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
@@ -703,8 +703,8 @@ module MXNet
         pointerof(num_outputs),
         pointerof(outputs),
         kwargs.size,
-        kwargs.keys.map(&.to_s.as(String).to_unsafe),
-        kwargs.values.map(&.to_s.as(String).to_unsafe)
+        kwargs.keys.map { |a| output(a).as(String).to_unsafe },
+        kwargs.values.map { |a| output(a).as(String).to_unsafe }
       )
       out ? [out] : num_outputs.times.map { |i| NDArray.new(outputs[i]) }
     end

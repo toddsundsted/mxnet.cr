@@ -14,10 +14,11 @@ end
 
 require "./mxnet/libmxnet"
 require "./mxnet/name/manager"
-require "./mxnet/operations"
 require "./mxnet/autograd"
 require "./mxnet/context"
 require "./mxnet/random"
 require "./mxnet/executor"
+require "./mxnet/base"
+require "./mxnet/operations"
 require "./mxnet/ndarray"
 require "./mxnet/symbol"

@@ -486,7 +486,7 @@ module MXNet
         MXNet::Name::Manager.current.get(name, op.downcase),
         args.size,
         nil,
-        args.to_a.map(&.handle.as(SymbolHandle)))
+        args.map(&.handle.as(SymbolHandle)))
       sym
     end
   end

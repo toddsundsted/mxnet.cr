@@ -1,3 +1,5 @@
+require "./operations"
+
 module MXNet
   # Base class for `NDArray` and `Symbol`.
   #

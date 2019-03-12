@@ -340,10 +340,10 @@ module MXNet
     # ```
     #
     def as_scalar
-      unless (ar = raw).size == 1
+      unless shape == [1_u32]
         raise NDArrayException.new("the array is not scalar")
       end
-      ar[0]
+      raw[0]
     end
 
     # Returns an `Array` with values copied from this array.
@@ -473,7 +473,7 @@ module MXNet
     #
     def self.random_uniform(low : Number = 0.0, high : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]? || "None"
+      dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]?
       NDArray::Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx})).first
     end
 
@@ -503,7 +503,7 @@ module MXNet
     #
     def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]? || "None"
+      dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]?
       NDArray::Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx})).first
     end
 
@@ -532,7 +532,7 @@ module MXNet
     #
     def self.random_poisson(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
+      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
       NDArray::Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx})).first
     end
 
@@ -560,7 +560,7 @@ module MXNet
     #
     def self.random_exponential(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
+      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
       NDArray::Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx})).first
     end
 
@@ -590,7 +590,7 @@ module MXNet
     #
     def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
       shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]? || "None"
+      dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]?
       NDArray::Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx})).first
     end
 

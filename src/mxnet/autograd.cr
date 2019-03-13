@@ -12,40 +12,38 @@ module MXNet
   # ```
   #
   class Autograd
-    private def self.with_state(record_mode = nil, train_mode = nil, &block : -> _)
-      old_record_mode = -1
-      old_train_mode = -1
-      begin
-        unless record_mode.nil?
-          MXNet::Internal.libcall(
-            MXAutogradSetIsRecording,
-            record_mode ? 1 : 0,
-            pointerof(old_record_mode)
-          )
-        end
-        unless train_mode.nil?
-          MXNet::Internal.libcall(
-            MXAutogradSetIsTraining,
-            train_mode ? 1 : 0,
-            pointerof(old_train_mode)
-          )
-        end
-        yield
-      ensure
-        if !record_mode.nil? && old_record_mode != record_mode
-          MXNet::Internal.libcall(
-            MXAutogradSetIsRecording,
-            old_record_mode,
-            out _
-          )
-        end
-        if !train_mode.nil? && old_train_mode != train_mode
-          MXNet::Internal.libcall(
-            MXAutogradSetIsTraining,
-            old_train_mode,
-            out _
-          )
-        end
+    private def self.before(record_mode = nil, train_mode = nil)
+      unless record_mode.nil?
+        MXNet::Internal.libcall(
+          MXAutogradSetIsRecording,
+          record_mode ? 1 : 0,
+          out old_record_mode
+        )
+      end
+      unless train_mode.nil?
+        MXNet::Internal.libcall(
+          MXAutogradSetIsTraining,
+          train_mode ? 1 : 0,
+          out old_train_mode
+        )
+      end
+      {old_record_mode, old_train_mode}
+    end
+
+    private def self.after(old_record_mode, old_train_mode, record_mode = nil, train_mode = nil)
+      if old_record_mode && old_record_mode != record_mode
+        MXNet::Internal.libcall(
+          MXAutogradSetIsRecording,
+          old_record_mode,
+          out _
+        )
+      end
+      if old_train_mode && old_train_mode != train_mode
+        MXNet::Internal.libcall(
+          MXAutogradSetIsTraining,
+          old_train_mode,
+          out _
+        )
       end
     end
 
@@ -76,8 +74,13 @@ module MXNet
     #   mode. This controls the behavior of some layers such as
     #   Dropout and BatchNorm.
     #
-    def self.record(train_mode = true, &block : -> _)
-      with_state(record_mode: true, train_mode: train_mode, &block)
+    def self.record(train_mode = true)
+      old = before(record_mode: true, train_mode: train_mode)
+      begin
+        yield
+      ensure
+        after(*old, record_mode: true, train_mode: train_mode)
+      end
     end
 
     # Creates a scope context for code that does not need gradients to
@@ -88,22 +91,37 @@ module MXNet
     #   Whether the forward pass is in training or predicting
     #   mode.
     #
-    def self.pause(train_mode = false, &block : -> _)
-      with_state(record_mode: false, train_mode: train_mode, &block)
+    def self.pause(train_mode = false)
+      old = before(record_mode: false, train_mode: train_mode)
+      begin
+        yield
+      ensure
+        after(*old, record_mode: false, train_mode: train_mode)
+      end
     end
 
     # Creates a scope context in which forward pass behavior is set to
     # training mode, without changing the recording mode.
     #
-    def self.train_mode(&block : -> _)
-      with_state(train_mode: true, &block)
+    def self.train_mode
+      old = before(train_mode: true)
+      begin
+        yield
+      ensure
+        after(*old, train_mode: true)
+      end
     end
 
     # Creates a scope context in which forward pass behavior is set to
     # inference mode, without changing the recording mode.
     #
-    def self.predict_mode(&block : -> _)
-      with_state(train_mode: false, &block)
+    def self.predict_mode
+      old = before(train_mode: false)
+      begin
+        yield
+      ensure
+        after(*old, train_mode: false)
+      end
     end
 
     # :nodoc:

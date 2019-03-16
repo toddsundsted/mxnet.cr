@@ -9,7 +9,13 @@ module MXNet
       end
     end
 
-    @[Link("mxnet")]
+    {% begin %}
+      {% version = `python '#{__DIR__}/libmxnet.py' version`.stringify %}
+      puts "MXNet.cr version #{MXNet::VERSION} using MXNet library version " + {{ version }}
+      MXNET_VERSION = {{ version }}
+    {% end %}
+
+    @[Link(ldflags: "`python '#{__DIR__}/libmxnet.py' library`")]
 
     lib LibMXNet
       type NDArrayHandle = Void*

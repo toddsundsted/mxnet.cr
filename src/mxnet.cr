@@ -1,9 +1,5 @@
 module MXNet
-  # Get the MXNet library version.
-  def self.version
-    Internal.libcall(MXGetVersion, out version)
-    version
-  end
+  VERSION = "0.1.0"
 
   private module ClassMethods
     delegate cpu, gpu, to: MXNet::Context

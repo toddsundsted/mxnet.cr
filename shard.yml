@@ -1,0 +1,14 @@
+name: mxnet
+version: 0.1.0
+
+license: Apache License 2.0
+
+description: Crystal language bindings for the MXNet deep learning library.
+
+authors:
+  - Todd Sundsted
+
+libraries:
+  libmxnet: >= 1.2.1
+
+crystal: 0.27.2

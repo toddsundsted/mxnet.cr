@@ -1,6 +1,9 @@
 module MXNet
   VERSION = "0.1.0"
 
+  class MXNetException < Exception
+  end
+
   private module ClassMethods
     delegate cpu, gpu, to: MXNet::Context
   end

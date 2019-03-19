@@ -77,6 +77,43 @@ module MXNet
       new(:gpu, device_id)
     end
 
+    # Queries CUDA for the number of GPUs present.
+    #
+    # Returns the number of GPUs.
+    #
+    # Note: not supported on MXNet versions < 1.3.0.
+    #
+    def self.num_gpus
+      {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") >= 0 %}
+        Internal.libcall(MXGetGPUCount, out count)
+        count
+      {% else %}
+        raise MXNetException.new("not supported on MXNet version #{MXNet::Internal::MXNET_VERSION}")
+      {% end %}
+    end
+
+    # Queries CUDA for the free and total bytes of GPU global memory.
+    #
+    # Returns the free and total memory as a two-element tuple.
+    #
+    # ### Parameters
+    # * *device_id* (`Int32`, default = 0)
+    #   Device id of the device.
+    #
+    # Note: not supported on MXNet versions < 1.3.0.
+    #
+    def self.gpu_memory_info(device_id : Int32 = 0)
+      {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.4.0") >= 0 %}
+        Internal.libcall(MXGetGPUMemoryInformation64, device_id, out free_mem, out total_mem)
+        {free_mem, total_mem}
+      {% elsif compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") >= 0 %}
+        Internal.libcall(MXGetGPUMemoryInformation, device_id, out free_mem, out total_mem)
+        {free_mem.to_u64, total_mem.to_u64}
+      {% else %}
+        raise MXNetException.new("not supported on MXNet version #{MXNet::Internal::MXNET_VERSION}")
+      {% end %}
+    end
+
     # Returns the current context.
     #
     def self.current

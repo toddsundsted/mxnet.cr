@@ -28,6 +28,17 @@ module MXNet
 
       fun MXGetLastError() : UInt8*
       fun MXGetVersion(version : Int32*) : Int32
+      fun MXGetGPUCount(count : Int32*) : Int32
+      fun MXGetGPUMemoryInformation(
+        dev_id : Int32,
+        free_mem : Int32*,
+        total_mem : Int32*
+      ) : Int32
+      fun MXGetGPUMemoryInformation64(
+        dev_id : Int32,
+        free_mem : UInt64*,
+        total_mem : UInt64*
+      ) : Int32
       fun MXNDArrayCreateEx(
         shape : UInt32*,
         ndim : UInt32,

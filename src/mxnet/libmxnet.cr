@@ -88,6 +88,27 @@ module MXNet
         handle : SymbolHandle*
       ) : Int32
       fun MXSymbolGetName(handle : SymbolHandle, name : UInt8**, success : Int32*) : Int32
+      fun MXSymbolSetAttr(
+        handle : SymbolHandle,
+        key : UInt8*,
+        value : UInt8*
+      ) : Int32
+      fun MXSymbolGetAttr(
+        handle : SymbolHandle,
+        key : UInt8*,
+        value : UInt8**,
+        success : Int32*
+      ) : Int32
+      fun MXSymbolListAttrShallow(
+        handle : SymbolHandle,
+        size : MXUInt*,
+        out : UInt8***
+      ) : Int32
+      fun MXSymbolListAttr(
+        handle : SymbolHandle,
+        size : MXUInt*,
+        out : UInt8***
+      ) : Int32
       fun MXSymbolListArguments(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
       fun MXSymbolListOutputs(handle : SymbolHandle, size : MXUInt*, str_array : UInt8***) : Int32
       fun MXSymbolFree(handle : SymbolHandle) : Int32

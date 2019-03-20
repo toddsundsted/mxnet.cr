@@ -26,6 +26,79 @@ module MXNet
       success != 0 ? String.new(name) : nil
     end
 
+    # Gets the attribute for specified key.
+    #
+    # This function only works for non-grouped symbols.
+    #
+    # ```
+    # data = MXNet::Symbol.var("data", attr: {mood: "angry"})
+    # data.attr("mood") # => "angry"
+    # ```
+    #
+    # ### Parameters
+    # * *key* (`String`)
+    #   The key corresponding to the desired attribute.
+    #
+    def attr(key)
+      MXNet::Internal.libcall(MXSymbolGetAttr, @handle, key, out value, out success)
+      success != 0 ? String.new(value) : nil
+    end
+
+    # Gets all attributes.
+    #
+    # ```
+    # data = MXNet::Symbol.var("data", attr: {"mood" => "angry"})
+    # data.list_attr # => {"mood" => "angry"}
+    # ```
+    #
+    def list_attr
+      MXNet::Internal.libcall(
+        MXSymbolListAttrShallow,
+        @handle,
+        out size,
+        out pairs
+      )
+      Hash(String, String).new.tap do |ret|
+        size.times do |i|
+          key = String.new(pairs[i * 2])
+          value = String.new(pairs[i * 2 + 1])
+          ret[key] = value
+        end
+      end
+    end
+
+    # Recursively gets all attributes from the symbol and its
+    # children.
+    #
+    # There is a key in the returned hash for every child with a
+    # non-empty set of attributes. For each symbol, the name of the
+    # symbol is its key in the hash and the correspond value is that
+    # symbol's attribute list.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a", attr: {"a1" => "a2"})
+    # b = MXNet::Symbol.var("b", attr: {"b1" => "b2"})
+    # c = a + b
+    # c.attr_dict # => {"a" => {"a1" => "a2"}, "b" => {"b1" => "b2"}}
+    # ```
+    #
+    def attr_dict
+      MXNet::Internal.libcall(
+        MXSymbolListAttr,
+        @handle,
+        out size,
+        out pairs
+      )
+      Hash(String, Hash(String, String)).new.tap do |ret|
+        size.times do |i|
+          name, key = String.new(pairs[i * 2]).split("$")
+          value = String.new(pairs[i * 2 + 1])
+          ret[name] ||= Hash(String, String).new
+          ret[name][key] = value
+        end
+      end
+    end
+
     # Lists all the arguments of the symbol.
     #
     # ```
@@ -187,15 +260,41 @@ module MXNet
       MXNet::Internal.libcall(MXSymbolFree, @handle)
     end
 
+    # Sets attributes of the symbol.
+    #
+    protected def set_attr(attr)
+      attr.each do |key, value|
+        MXNet::Internal.libcall(
+          MXSymbolSetAttr,
+          @handle,
+          key.to_s,
+          value.to_s
+        )
+      end
+    end
+
     # Creates a symbolic variable with the specified name.
     #
     # ### Parameters
     # * *name* (`String`)
     #   Variable name.
+    # * *attr* (`Enumerable`)
+    #   Additional attributes to set on the variable.
+    # * *shape* (`Array(Int)`)
+    #   The shape of a variable. If specified, it may be used during
+    #   the shape inference.
+    # * *dtype* (`Symbol`)
+    #   The dtype for input variable. If not specified, this value
+    #   will be inferred.
     #
-    def self.var(name : String)
+    def self.var(name : String, attr = nil, shape = nil, dtype = nil)
       MXNet::Internal.libcall(MXSymbolCreateVariable, name, out handle)
-      new(handle)
+      new(handle).tap do |ret|
+        attr ||= {} of ::Symbol => String
+        attr[:__shape__] = shape.to_s if shape
+        attr[:__dtype__] = dtype.to_s if dtype
+        ret.set_attr(attr)
+      end
     end
 
     # Create a symbol representing zeros, with the given

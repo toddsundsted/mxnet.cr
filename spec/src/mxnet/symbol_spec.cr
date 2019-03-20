@@ -16,6 +16,21 @@ describe "MXNet::Symbol" do
     it "creates a symbolic variable" do
       MXNet::Symbol.var("s").should be_a(MXNet::Symbol)
     end
+
+    it "sets the given attributes" do
+      data = MXNet::Symbol.var("data", attr: {mood: "angry"})
+      data.attr("mood").should eq("angry")
+    end
+
+    it "sets the shape as an attribute" do
+      data = MXNet::Symbol.var("data", shape: [1, 2, 3])
+      data.attr("__shape__").should eq("[1, 2, 3]")
+    end
+
+    it "sets the dtype as an attribute" do
+      data = MXNet::Symbol.var("data", dtype: :float32)
+      data.attr("__dtype__").should eq("float32")
+    end
   end
 
   describe ".zeros" do
@@ -65,6 +80,22 @@ describe "MXNet::Symbol" do
   describe "#name" do
     it "returns the name of the symbol" do
       MXNet::Symbol.var("foo").name.should eq("foo")
+    end
+  end
+
+  describe "#list_attr" do
+    it "returns the attributes of the symbol" do
+      data = MXNet::Symbol.var("data", attr: {"mood" => "angry"})
+      data.list_attr.should eq({"mood" => "angry"})
+    end
+  end
+
+  describe "#attr_dict" do
+    it "returns the attributes of the symbol and its children" do
+      a = MXNet::Symbol.var("a", attr: {"a1" => "a2"})
+      b = MXNet::Symbol.var("b", attr: {"b1" => "b2"})
+      c = a + b
+      c.attr_dict.should eq({"a" => {"a1" => "a2"}, "b" => {"b1" => "b2"}})
     end
   end
 

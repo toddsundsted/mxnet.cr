@@ -140,8 +140,21 @@ module MXNet
       other.device_type == self.device_type && other.device_id == self.device_id
     end
 
+    # Writes this object to an `IO`.
+    #
     def to_s(io)
       io << device_type << "(" << device_id << ")"
+    end
+
+    # Sets the current context within the block.
+    #
+    def self.with(context : self)
+      previous, @@default = @@default, context
+      begin
+        yield context
+      ensure
+        @@default = previous
+      end
     end
   end
 end

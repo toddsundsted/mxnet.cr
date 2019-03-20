@@ -290,8 +290,8 @@ module MXNet
       end
     end
 
-    # Returns an array on the target device with the same values
-    # as this array.
+    # Returns a copy of the array on the target device with the same
+    # values as this array.
     #
     # ### Parameters
     # * *context* (`Context`)

@@ -178,6 +178,16 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe "#as_in_context" do
+    if gpu_enabled?
+      it "returns a copy on the target device" do
+        a = MXNet::NDArray.array([1]).as_in_context(MXNet.gpu(0))
+        a.should eq(MXNet::NDArray.array([1_i32]))
+        a.context.should eq(MXNet.gpu(0))
+      end
+    end
+  end
+
   describe "#as_scalar" do
     it "returns a scalar" do
       MXNet::NDArray.zeros([1], dtype: :float64).as_scalar.should eq(0.0)

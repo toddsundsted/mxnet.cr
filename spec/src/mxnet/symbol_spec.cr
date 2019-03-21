@@ -1,16 +1,5 @@
 require "../../spec_helper"
 
-class MXNet::NDArray
-  # Redefined this method for testing. The original method
-  # performs an element-wise comparison for equality.
-  def ==(other : self)
-    return false unless other.dtype == self.dtype
-    return false unless other.shape == self.shape
-    return false unless other.raw == self.raw
-    true
-  end
-end
-
 private macro random_spec_helper(random, *args)
   describe ".{{random}}" do
     it "returns an array of random numbers" do

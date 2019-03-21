@@ -11,6 +11,35 @@ class MXNet::NDArray
   end
 end
 
+private macro random_spec_helper(random, *args)
+  describe ".{{random}}" do
+    it "returns an array of random numbers" do
+      MXNet::NDArray.{{random}}({{*args}}, shape: 2).shape.should eq([2])
+      MXNet::NDArray.{{random}}({{*args}}, shape: [1, 2, 3]).shape.should eq([1, 2, 3])
+      MXNet::NDArray.{{random}}({{*args}}, shape: 1, dtype: :float32).dtype.should eq(:float32)
+    end
+
+    if gpu_enabled?
+      it "uses the specified context" do
+        MXNet::NDArray.{{random}}({{*args}}, shape: 1, ctx: MXNet.gpu(0)).context.should eq(MXNet.gpu(0))
+      end
+
+      it "uses the current context" do
+        MXNet::Context.with(MXNet.gpu(0)) do
+          MXNet::NDArray.{{random}}({{*args}}, shape: 1).context.should eq(MXNet.gpu(0))
+        end
+      end
+    end
+
+    it "writes the results to the output array" do
+      a = MXNet::NDArray.empty(1, dtype: :float64)
+      b = MXNet::NDArray.{{random}}({{*args}}, out: a)
+      a.as_scalar.should be_a(Float64)
+      a.should be(b)
+    end
+  end
+end
+
 describe "MXNet::NDArray" do
   describe ".array" do
     it "creates an NDArray from a Crystal array" do
@@ -79,6 +108,18 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.zeros(2, dtype: :int32).should eq(MXNet::NDArray.array([0, 0], dtype: :int32))
     end
 
+    if gpu_enabled?
+      it "uses the specified context" do
+        MXNet::NDArray.zeros(2, ctx: MXNet.gpu(0)).context.should eq(MXNet.gpu(0))
+       end
+
+      it "uses the current context" do
+        MXNet::Context.with(MXNet.gpu(0)) do
+          MXNet::NDArray.zeros(1).context.should eq(MXNet.gpu(0))
+        end
+      end
+    end
+
     it "writes the results to the output array" do
       a = MXNet::NDArray.array([99_f32])
       b = MXNet::NDArray.zeros(1, out: a)
@@ -93,6 +134,18 @@ describe "MXNet::NDArray" do
       MXNet::NDArray.ones(2, dtype: :int64).should eq(MXNet::NDArray.array([1, 1], dtype: :int64))
     end
 
+    if gpu_enabled?
+      it "uses the specified context" do
+        MXNet::NDArray.ones(2, ctx: MXNet.gpu(0)).context.should eq(MXNet.gpu(0))
+       end
+
+      it "uses the current context" do
+        MXNet::Context.with(MXNet.gpu(0)) do
+          MXNet::NDArray.ones(1).context.should eq(MXNet.gpu(0))
+        end
+      end
+    end
+
     it "writes the results to the output array" do
       a = MXNet::NDArray.array([99_f32])
       b = MXNet::NDArray.ones(1, out: a)
@@ -101,42 +154,18 @@ describe "MXNet::NDArray" do
     end
   end
 
-  describe ".random_uniform" do
-    it "returns an array of random numbers" do
-      MXNet::NDArray.random_uniform(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_normal" do
-    it "returns an array of random numbers" do
-      MXNet::NDArray.random_normal(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_poisson" do
-    it "returns an array of random numbers" do
-      MXNet::NDArray.random_poisson(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_exponential" do
-    it "returns an array of random numbers" do
-      MXNet::NDArray.random_exponential(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_gamma" do
-    it "returns an array of random numbers" do
-      MXNet::NDArray.random_gamma(1.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).should be_a(MXNet::NDArray)
-    end
-  end
+  random_spec_helper(random_uniform, 0.0, 1.0)
+  random_spec_helper(random_normal, 0.0, 1.0)
+  random_spec_helper(random_poisson, 1.0)
+  random_spec_helper(random_exponential, 1.0)
+  random_spec_helper(random_gamma, 1.0, 1.0)
 
   describe "#shape" do
     it "returns the shape of the array" do
-      MXNet::NDArray.array([1.0, 2.0, 3.0]).shape.should eq([3_u32])
-      MXNet::NDArray.array([[1_i64, 2_i64], [3_i64, 4_i64]]).shape.should eq([2_u32, 2_u32])
-      MXNet::NDArray.array([1, 2]).shape.should eq([2_u32])
-      MXNet::NDArray.array([1_u8]).shape.should eq([1_u32])
+      MXNet::NDArray.array([1.0, 2.0, 3.0]).shape.should eq([3])
+      MXNet::NDArray.array([[1_i64, 2_i64], [3_i64, 4_i64]]).shape.should eq([2, 2])
+      MXNet::NDArray.array([1, 2]).shape.should eq([2])
+      MXNet::NDArray.array([1_u8]).shape.should eq([1])
     end
   end
 
@@ -345,23 +374,23 @@ describe "MXNet::NDArray" do
 
     it "supports special values for dimensions" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.reshape(shape: [-1, 0], reverse: false).shape.should eq([2_u32, 4_u32])
-      c.reshape(shape: [-1, 0], reverse: true).shape.should eq([4_u32, 2_u32])
+      c.reshape(shape: [-1, 0], reverse: false).shape.should eq([2, 4])
+      c.reshape(shape: [-1, 0], reverse: true).shape.should eq([4, 2])
     end
   end
 
   describe "#flatten" do
     it "flattens the input array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.flatten.shape.should eq([1_u32, 8_u32])
+      c.flatten.shape.should eq([1, 8])
     end
   end
 
   describe "#expand_dims" do
     it "inserts a new axis into the input array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.expand_dims(axis: 1).shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
-      c.expand_dims(1).shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
+      c.expand_dims(axis: 1).shape.should eq([1, 1, 4, 2])
+      c.expand_dims(1).shape.should eq([1, 1, 4, 2])
     end
   end
 
@@ -496,11 +525,11 @@ describe "MXNet::NDArray" do
 
     it "reduces dimensionality correctly" do
       x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape(shape: [7, 5, 3, 1])
-      x[1].shape.should eq([5_u32, 3_u32, 1_u32])
-      x[0..-1, 1].shape.should eq([7_u32, 3_u32, 1_u32])
-      x[0..-1, 0..-1, 1].shape.should eq([7_u32, 5_u32, 1_u32])
-      x[0..-1, 1, 0..-1].shape.should eq([7_u32, 3_u32, 1_u32])
-      x[0..-1, 1, 1].shape.should eq([7_u32, 1_u32])
+      x[1].shape.should eq([5, 3, 1])
+      x[0..-1, 1].shape.should eq([7, 3, 1])
+      x[0..-1, 0..-1, 1].shape.should eq([7, 5, 1])
+      x[0..-1, 1, 0..-1].shape.should eq([7, 3, 1])
+      x[0..-1, 1, 1].shape.should eq([7, 1])
     end
   end
 

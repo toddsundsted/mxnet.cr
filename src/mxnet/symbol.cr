@@ -7,7 +7,7 @@ module MXNet
 
     @handle : SymbolHandle
 
-    def initialize(handle)
+    protected def initialize(handle)
       @handle = handle
     end
 
@@ -283,7 +283,7 @@ module MXNet
     # * *shape* (`Array(Int)`)
     #   The shape of a variable. If specified, it may be used during
     #   the shape inference.
-    # * *dtype* (`Symbol`)
+    # * *dtype* (`::Symbol`)
     #   The dtype for input variable. If not specified, this value
     #   will be inferred.
     #
@@ -303,15 +303,13 @@ module MXNet
     # ### Parameters
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the symbol.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the symbol. The default is `:float32`.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the symbol.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.zeros(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    def self.zeros(shape : Int | Array(Int), **kwargs)
+      Internal._zeros(**kwargs.merge({shape: shape}))
     end
 
     # Create a symbol representing ones, with the given
@@ -320,15 +318,13 @@ module MXNet
     # ### Parameters
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the symbol.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the symbol. The default is `:float32`.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the symbol.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.ones(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    def self.ones(shape : Int | Array(Int), **kwargs)
+      Internal._ones(**kwargs.merge({shape: shape}))
     end
 
     # Draw random samples from a uniform distribution.
@@ -337,7 +333,7 @@ module MXNet
     # [low, high) (includes low, but excludes high).
     #
     # ```
-    # MXNet::Symbol.random_uniform(0.0, 1.0, [2, 2]).eval.first # => MXNet::NDArray.array([[0.60276335, 0.85794562], [0.54488319, 0.84725171]])
+    # MXNet::Symbol.random_uniform(0.0, 1.0, shape: [2, 2]).eval.first # => [[0.60276335, 0.85794562], [0.54488319, 0.84725171]]
     # ```
     #
     # ### Parameters
@@ -347,18 +343,13 @@ module MXNet
     #   Upper bound of the distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.random_uniform(low : Number = 0.0, high : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]? || "None"
-      Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_uniform(low : Number = 0.0, high : Number = 1.0, **kwargs)
+      Internal._random_uniform(**kwargs.merge({low: low, high: high}))
     end
 
     # Draw random samples from a normal (Gaussian) distribution.
@@ -367,7 +358,7 @@ module MXNet
     # parametrized by loc (mean) and scale (standard deviation).
     #
     # ```
-    # MXNet::Symbol.random_normal(0.0, 1.0, [2, 2]).eval.first # => MXNet::NDArray.array([[1.89171135, -1.16881478], [-1.23474145, 1.55807114]])
+    # MXNet::Symbol.random_normal(0.0, 1.0, shape: [2, 2]).eval.first # => [[1.89171135, -1.16881478], [-1.23474145, 1.55807114]]
     # ```
     #
     # ### Parameters
@@ -377,18 +368,13 @@ module MXNet
     #   Standard deviation of the distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]? || "None"
-      Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, **kwargs)
+      Internal._random_normal(**kwargs.merge({loc: loc, scale: scale}))
     end
 
     # Draw random samples from a Poisson distribution.
@@ -398,7 +384,7 @@ module MXNet
     # as a floating point data type.
     #
     # ```
-    # MXNet::Symbol.random_poisson(4.0, [2, 2]).eval.first # => MXNet::NDArray.array([[5.0, 2.0], [4.0, 6.0]])
+    # MXNet::Symbol.random_poisson(4.0, shape: [2, 2]).eval.first # => [[5.0, 2.0], [4.0, 6.0]]
     # ```
     #
     # ### Parameters
@@ -406,18 +392,13 @@ module MXNet
     #   Lambda parameter (rate) of the Poisson distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.random_poisson(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
-      Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_poisson(lam : Number = 1.0, **kwargs)
+      Internal._random_poisson(**kwargs.merge({lam: lam}))
     end
 
     # Draw random samples from an exponential distribution.
@@ -426,7 +407,7 @@ module MXNet
     # parametrized by lambda (rate).
     #
     # ```
-    # MXNet::Symbol.random_exponential(4.0, [2, 2]).eval.first # => MXNet::NDArray.array([[0.0097189 , 0.08999364], [0.04146638, 0.31715935]])
+    # MXNet::Symbol.random_exponential(4.0, shape: [2, 2]).eval.first # => [[0.0097189 , 0.08999364], [0.04146638, 0.31715935]]
     # ```
     #
     # ### Parameters
@@ -434,18 +415,13 @@ module MXNet
     #   Lambda parameter (rate) of the exponential distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.random_exponential(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]? || "None"
-      Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_exponential(lam : Number = 1.0, **kwargs)
+      Internal._random_exponential(**kwargs.merge({lam: lam}))
     end
 
     # Draw random samples from a gamma distribution.
@@ -454,7 +430,7 @@ module MXNet
     # parametrized by alpha (shape) and beta (scale).
     #
     # ```
-    # MXNet::Symbol.random_exponential(9.0, 0.5, [2, 2]).eval.first # => MXNet::NDArray.array([[7.10486984, 3.37695289], [3.91697288, 3.65933681]])
+    # MXNet::Symbol.random_gamma(9.0, 0.5, shape: [2, 2]).eval.first # => [[6.2806954, 6.1658335], [4.5625057, 6.479337]]
     # ```
     #
     # ### Parameters
@@ -464,18 +440,13 @@ module MXNet
     #   Beta parameter (scale) of the gamma distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output.
     # * *name* (`String`, optional)
     #   Name of the resulting symbol.
     #
-    def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]? || "None"
-      Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, **kwargs)
+      Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta}))
     end
 
     # TODO: cache op handles

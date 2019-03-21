@@ -11,6 +11,21 @@ class MXNet::NDArray
   end
 end
 
+private macro random_spec_helper(random, *args)
+  describe ".{{random}}" do
+    it "returns an array of random numbers" do
+      MXNet::Symbol.{{random}}({{*args}}, shape: 2).eval.first.shape.should eq([2])
+      MXNet::Symbol.{{random}}({{*args}}, shape: [1, 2, 3]).eval.first.shape.should eq([1, 2, 3])
+      MXNet::Symbol.{{random}}({{*args}}, shape: 1, dtype: :float32).eval.first.dtype.should eq(:float32)
+    end
+
+    it "names the new symbol" do
+      a = MXNet::Symbol.{{random}}({{*args}}, name: "a")
+      a.name.should eq("a")
+    end
+  end
+end
+
 describe "MXNet::Symbol" do
   describe ".var" do
     it "creates a symbolic variable" do
@@ -38,6 +53,11 @@ describe "MXNet::Symbol" do
       MXNet::Symbol.zeros([1, 2]).eval.first.should eq(MXNet::NDArray.array([[0.0, 0.0]], dtype: :float32))
       MXNet::Symbol.zeros(2, dtype: :int32).eval.first.should eq(MXNet::NDArray.array([0, 0], dtype: :int32))
     end
+
+    it "names the new symbol" do
+      a = MXNet::Symbol.zeros(1, name: "a")
+      a.name.should eq("a")
+    end
   end
 
   describe ".ones" do
@@ -45,37 +65,18 @@ describe "MXNet::Symbol" do
       MXNet::Symbol.ones([1, 2]).eval.first.should eq(MXNet::NDArray.array([[1.0, 1.0]], dtype: :float32))
       MXNet::Symbol.ones(2, dtype: :int64).eval.first.should eq(MXNet::NDArray.array([1, 1], dtype: :int64))
     end
-  end
 
-  describe ".random_uniform" do
-    it "returns an array of random numbers" do
-      MXNet::Symbol.random_uniform(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
+    it "names the new symbol" do
+      a = MXNet::Symbol.ones(1, name: "a")
+      a.name.should eq("a")
     end
   end
 
-  describe ".random_normal" do
-    it "returns an array of random numbers" do
-      MXNet::Symbol.random_normal(0.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_poisson" do
-    it "returns an array of random numbers" do
-      MXNet::Symbol.random_poisson(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_exponential" do
-    it "returns an array of random numbers" do
-      MXNet::Symbol.random_exponential(1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
-    end
-  end
-
-  describe ".random_gamma" do
-    it "returns an array of random numbers" do
-      MXNet::Symbol.random_gamma(1.0, 1.0, shape: [1, 2, 3], dtype: :float32, ctx: MXNet.cpu).eval.first.should be_a(MXNet::NDArray)
-    end
-  end
+  random_spec_helper(random_uniform, 0.0, 1.0)
+  random_spec_helper(random_normal, 0.0, 1.0)
+  random_spec_helper(random_poisson, 1.0)
+  random_spec_helper(random_exponential, 1.0)
+  random_spec_helper(random_gamma, 1.0, 1.0)
 
   describe "#name" do
     it "returns the name of the symbol" do
@@ -250,23 +251,23 @@ describe "MXNet::Symbol" do
 
     it "supports special values for dimensions" do
       c = MXNet::Symbol.var("c")
-      c.reshape(shape: [-1, 0], reverse: false).eval(**args).first.shape.should eq([2_u32, 4_u32])
-      c.reshape(shape: [-1, 0], reverse: true).eval(**args).first.shape.should eq([4_u32, 2_u32])
+      c.reshape(shape: [-1, 0], reverse: false).eval(**args).first.shape.should eq([2, 4])
+      c.reshape(shape: [-1, 0], reverse: true).eval(**args).first.shape.should eq([4, 2])
     end
   end
 
   describe "#flatten" do
     it "flattens the input array" do
       c = MXNet::Symbol.var("c")
-      c.flatten.eval(**args).first.shape.should eq([1_u32, 8_u32])
+      c.flatten.eval(**args).first.shape.should eq([1, 8])
     end
   end
 
   describe "#expand_dims" do
     it "inserts a new axis into the input array" do
       c = MXNet::Symbol.var("c")
-      c.expand_dims(axis: 1).eval(**args).first.shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
-      c.expand_dims(1).eval(**args).first.shape.should eq([1_u32, 1_u32, 4_u32, 2_u32])
+      c.expand_dims(axis: 1).eval(**args).first.shape.should eq([1, 1, 4, 2])
+      c.expand_dims(1).eval(**args).first.shape.should eq([1, 1, 4, 2])
     end
   end
 

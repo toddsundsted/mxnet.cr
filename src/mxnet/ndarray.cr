@@ -36,7 +36,7 @@ module MXNet
       Array(Int64) => 6
     }
 
-    def initialize(handle)
+    protected def initialize(handle)
       @handle = handle
     end
 
@@ -47,7 +47,7 @@ module MXNet
 
     def shape
       MXNet::Internal.libcall(MXNDArrayGetShape, @handle, out dim, out pdata)
-      pdata.to_slice(dim).to_a
+      pdata.to_slice(dim).to_a.map(&.to_i32)
     end
 
     def context
@@ -72,7 +72,7 @@ module MXNet
     # can compute gradient with respect to it.
     #
     # ### Parameters
-    # * *grad_req* (`Symbol`, default `:write`)
+    # * *grad_req* (`::Symbol`, default = `:write`)
     #   * `:write`: gradient will be overwritten on every backward pass
     #   * `:add`: gradient will be added to existing value on every backward pass
     #   * `:null`: do not compute gradient
@@ -88,10 +88,10 @@ module MXNet
     # ### Parameters
     # * *gradient* (`MXNet::NDArray`, optional)
     #   Gradient with respect to this array.
-    # * *retain_graph* (`Bool`, default false)
+    # * *retain_graph* (`Bool`, default = `false`)
     #   Whether to keep computation graph to differentiate again,
     #   instead of clearing history and releasing memory.
-    # * *train_mode* (`Bool`, default true)
+    # * *train_mode* (`Bool`, default = `true`)
     #   Whether the backward pass is in training or predicting mode.
     #
     def backward(gradient = nil, retain_graph = false, train_mode = true)
@@ -275,9 +275,9 @@ module MXNet
     # Returns a copy of the array after casting to a specified type.
     #
     # ### Parameters
-    # * *dtype* (`Symbol`)
+    # * *dtype* (`::Symbol`)
     #   The type of the copy.
-    # * *copy* (`Bool`, default = true)
+    # * *copy* (`Bool`, default = `true`)
     #   By default, `#as_type` always returns a newly allocated array
     #   on the same context. If *copy* is set to `false`, and the
     #   *dtype* requested is the same as this array's dtype, this
@@ -296,7 +296,7 @@ module MXNet
     # ### Parameters
     # * *context* (`Context`)
     #   The target context.
-    # * *copy* (`Bool`, default = false)
+    # * *copy* (`Bool`, default = `false`)
     #   By default, if the target context is the same as this context,
     #   this array is returned and no copy is made. If *copy* is set
     #   to `true`, and the target context is the same as this context,
@@ -397,15 +397,15 @@ module MXNet
     # ### Parameters
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the array.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output array. The default is `:float32`.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.zeros(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Internal._zeros(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    def self.zeros(shape : Int | Array(Int), ctx = Context.current, **kwargs)
+      Internal._zeros(**kwargs.merge({shape: shape, ctx: ctx}))
     end
 
     # Returns an MXNet array filled with all ones, with the given
@@ -414,15 +414,15 @@ module MXNet
     # ### Parameters
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the array.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output array. The default is `:float32`.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.ones(shape : Int | Array(Int), dtype : ::Symbol = :float32, ctx : Context = Context.current, **kwargs)
-      Internal._ones(**kwargs.merge({shape: shape, dtype: dtype, ctx: ctx}))
+    def self.ones(shape : Int | Array(Int), ctx = Context.current, **kwargs)
+      Internal._ones(**kwargs.merge({shape: shape, ctx: ctx}))
     end
 
     # Draw random samples from a uniform distribution.
@@ -431,7 +431,7 @@ module MXNet
     # [low, high) (includes low, but excludes high).
     #
     # ```
-    # MXNet::NDArray.random_uniform(0.0, 1.0, [2, 2]) # => MXNet::NDArray.array([[0.60276335, 0.85794562], [0.54488319, 0.84725171]])
+    # MXNet::NDArray.random_uniform(0.0, 1.0, shape: [2, 2]) # => [[0.60276335, 0.85794562], [0.54488319, 0.84725171]]
     # ```
     #
     # ### Parameters
@@ -441,18 +441,17 @@ module MXNet
     #   Upper bound of the distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output. If unspecified, the type is
+    #   `:float32` unless the type can be inferred from the output
+    #   array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.random_uniform(low : Number = 0.0, high : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[low.class]?
-      Internal._random_uniform(**kwargs.merge({low: low, high: high, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_uniform(low : Number = 0.0, high : Number = 1.0, ctx = Context.current, **kwargs)
+      Internal._random_uniform(**kwargs.merge({low: low, high: high, ctx: ctx}))
     end
 
     # Draw random samples from a normal (Gaussian) distribution.
@@ -461,7 +460,7 @@ module MXNet
     # parametrized by loc (mean) and scale (standard deviation).
     #
     # ```
-    # MXNet::NDArray.random_normal(0.0, 1.0, [2, 2]) # => MXNet::NDArray.array([[1.89171135, -1.16881478], [-1.23474145, 1.55807114]])
+    # MXNet::NDArray.random_normal(0.0, 1.0, shape: [2, 2]) # => [[1.89171135, -1.16881478], [-1.23474145, 1.55807114]]
     # ```
     #
     # ### Parameters
@@ -471,18 +470,17 @@ module MXNet
     #   Standard deviation of the distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output. If unspecified, the type is
+    #   `:float32` unless the type can be inferred from the output
+    #   array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[loc.class]?
-      Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, ctx = Context.current, **kwargs)
+      Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, ctx: ctx}))
     end
 
     # Draw random samples from a Poisson distribution.
@@ -492,7 +490,7 @@ module MXNet
     # as a floating point data type.
     #
     # ```
-    # MXNet::NDArray.random_poisson(4.0, [2, 2]) # => MXNet::NDArray.array([[5.0, 2.0], [4.0, 6.0]])
+    # MXNet::NDArray.random_poisson(4.0, shape: [2, 2]) # => [[5.0, 2.0], [4.0, 6.0]]
     # ```
     #
     # ### Parameters
@@ -500,18 +498,17 @@ module MXNet
     #   Lambda parameter (rate) of the Poisson distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output. If unspecified, the type is
+    #   `:float32` unless the type can be inferred from the output
+    #   array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.random_poisson(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
-      Internal._random_poisson(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_poisson(lam : Number = 1.0, ctx = Context.current, **kwargs)
+      Internal._random_poisson(**kwargs.merge({lam: lam, ctx: ctx}))
     end
 
     # Draw random samples from an exponential distribution.
@@ -520,7 +517,7 @@ module MXNet
     # parametrized by lambda (rate).
     #
     # ```
-    # MXNet::NDArray.random_exponential(4.0, [2, 2]) # => MXNet::NDArray.array([[0.0097189 , 0.08999364], [0.04146638, 0.31715935]])
+    # MXNet::NDArray.random_exponential(4.0, shape: [2, 2]) # => [[0.0097189 , 0.08999364], [0.04146638, 0.31715935]]
     # ```
     #
     # ### Parameters
@@ -528,18 +525,17 @@ module MXNet
     #   Lambda parameter (rate) of the exponential distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output. If unspecified, the type is
+    #   `:float32` unless the type can be inferred from the output
+    #   array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.random_exponential(lam : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[lam.class]?
-      Internal._random_exponential(**kwargs.merge({lam: lam, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_exponential(lam : Number = 1.0, ctx = Context.current, **kwargs)
+      Internal._random_exponential(**kwargs.merge({lam: lam, ctx: ctx}))
     end
 
     # Draw random samples from a gamma distribution.
@@ -548,7 +544,7 @@ module MXNet
     # parametrized by alpha (shape) and beta (scale).
     #
     # ```
-    # MXNet::NDArray.random_exponential(9.0, 0.5, [2, 2]) # => MXNet::NDArray.array([[7.10486984, 3.37695289], [3.91697288, 3.65933681]])
+    # MXNet::NDArray.random_gamma(9.0, 0.5, shape: [2, 2]) # => [[6.2806954, 6.1658335], [4.5625057, 6.479337]]
     # ```
     #
     # ### Parameters
@@ -558,34 +554,43 @@ module MXNet
     #   Beta parameter (scale) of the gamma distribution.
     # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the output.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output. The default is `:float32` if the
-    #   data type can't be inferred.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output. If unspecified, the type is
+    #   `:float32` unless the type can be inferred from the output
+    #   array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     # * *out* (`NDArray`, optional)
     #   The output array.
     #
-    def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, shape : Int | Array(Int) = 1, dtype : ::Symbol? = nil, ctx = MXNet::Context.current, **kwargs)
-      shape = shape.is_a?(Int32) ? [shape] : shape
-      dtype ||= {Float32 => :float32, Float64 => :float64}[alpha.class]?
-      Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape, dtype: dtype, ctx: ctx}))
+    def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, ctx = Context.current, **kwargs)
+      Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, ctx: ctx}))
     end
 
-    # Returns an MXNet array of given shape and type, without initializing entries.
+    # Returns an MXNet array of given shape and type, without
+    # initializing entries.
     #
     # ### Parameters
-    # * *shape* (`UInt32` or `Array(UInt32)`)
+    # * *shape* (`Int` or `Array(Int)`)
     #   The shape of the empty array.
-    # * *dtype* (`Symbol`, optional)
-    #   The data type of the output array. The default is `:float32`.
+    # * *dtype* (`::Symbol`, default = `:float32`)
+    #   The data type of the output array.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     #
-    def self.empty(shape : UInt32 | Array(UInt32), dtype : ::Symbol = :float32, ctx : Context = Context.current)
-      shape = shape.is_a?(UInt32) ? [shape] : shape
+    def self.empty(shape : Int | Array(Int), dtype = :float32, ctx = nil)
+      shape = shape.is_a?(Int) ? [shape] : shape
       dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
-      MXNet::Internal.libcall(MXNDArrayCreateEx, shape, shape.size, *ctx.device, 0, dtype, out handle)
+      ctx ||= Context.current
+      MXNet::Internal.libcall(
+        MXNDArrayCreateEx,
+        shape.map(&.to_u32),
+        shape.size,
+        *ctx.device,
+        0,
+        dtype,
+        out handle
+      )
       new(handle)
     end
 
@@ -594,20 +599,18 @@ module MXNet
     # ### Parameters
     # * *source* (`Enumerable(T)`)
     #   Any enumerable object, or nested objects.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
-    # * *dtype* (`Symbol`, optional)
+    # * *dtype* (`::Symbol`, optional)
     #   The data type of the output array. If unspecified, the type is
     #   inferred from the source type.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
     #
-    def self.array(source : Enumerable(T), ctx : Context | Nil = nil, dtype : ::Symbol | Nil = nil) forall T
+    def self.array(source : Enumerable(T), dtype = nil, ctx = nil) forall T
       source = source.to_a
       shape_and_type = infer_shape_and_type(source)
       inferred_shape = shape_and_type.map(&.first)
       inferred_type = shape_and_type.last.last
       elements = source.flatten
-
-      ctx ||= Context.current
 
       if dtype
         dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
@@ -617,6 +620,8 @@ module MXNet
       else
         raise MXNet::NDArrayException.new("type can't be inferred")
       end
+
+      ctx ||= Context.current
 
       MXNet::Internal.libcall(MXNDArrayCreateEx, inferred_shape, inferred_shape.size, *ctx.device, 0, inferred_type, out handle)
       MXNet::Internal.libcall(MXNDArraySyncCopyFromCPU, handle, elements, elements.size)

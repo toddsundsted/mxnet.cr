@@ -250,6 +250,15 @@ module MXNet
     # from the second array (or scalar), element-wise with broadcasting.
     arithmetic(:**, Internal._power, Internal._power_scalar)
 
+    # Performs element-wize numerical negative.
+    def -
+      Symbol::Internal._mul_scalar(self, scalar: -1)
+    end
+
+    def +
+      self
+    end
+
     def to_s(io)
       io << "<Symbol"
       io << " " << name

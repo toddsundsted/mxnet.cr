@@ -268,6 +268,12 @@ describe "MXNet::NDArray" do
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
       (a + b).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
     end
+    context "unary" do
+      it "leaves the array unchanged" do
+        (+MXNet::NDArray.array([1.0, 2.0])).should eq(MXNet::NDArray.array([1.0, 2.0]))
+        (+MXNet::NDArray.array([1, 2])).should eq(MXNet::NDArray.array([1, 2]))
+      end
+    end
   end
 
   describe "#-" do
@@ -280,6 +286,12 @@ describe "MXNet::NDArray" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
       (a - b).should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+    context "unary" do
+      it "negates the array" do
+        (-MXNet::NDArray.array([1.0, 2.0])).should eq(MXNet::NDArray.array([-1.0, -2.0]))
+        (-MXNet::NDArray.array([1, 2])).should eq(MXNet::NDArray.array([-1, -2]))
+      end
     end
   end
 

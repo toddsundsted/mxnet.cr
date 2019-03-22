@@ -145,6 +145,12 @@ describe "MXNet::Symbol" do
       b = MXNet::Symbol.var("b")
       (a + b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
     end
+    context "unary" do
+      it "leaves the array unchanged" do
+        (+MXNet::Symbol.var("a")).eval(MXNet::NDArray.array([1.0, 2.0])).first.should eq(MXNet::NDArray.array([1.0, 2.0]))
+        (+MXNet::Symbol.var("b")).eval(MXNet::NDArray.array([1, 2])).first.should eq(MXNet::NDArray.array([1, 2]))
+      end
+    end
   end
 
   describe "#-" do
@@ -157,6 +163,12 @@ describe "MXNet::Symbol" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
       (a - b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+    context "unary" do
+      it "negates the array" do
+        (-MXNet::Symbol.var("a")).eval(MXNet::NDArray.array([1.0, 2.0])).first.should eq(MXNet::NDArray.array([-1.0, -2.0]))
+        (-MXNet::Symbol.var("b")).eval(MXNet::NDArray.array([1, 2])).first.should eq(MXNet::NDArray.array([-1, -2]))
+      end
     end
   end
 

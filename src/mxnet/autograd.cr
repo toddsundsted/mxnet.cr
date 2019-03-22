@@ -142,20 +142,25 @@ module MXNet
     #   * `:null`: do not compute gradient
     #
     def self.mark_variables(variables, gradients, grad_reqs = :write)
-      variables = variables.responds_to?(:each) ? variables.map(&.handle).to_a : [variables.handle]
-      gradients = gradients.responds_to?(:each) ? gradients.map(&.handle).to_a : [gradients.handle]
+      variables = [variables] unless variables.responds_to?(:each)
+      gradients = [gradients] unless gradients.responds_to?(:each)
+
       if grad_reqs.is_a?(::Symbol)
         grad_reqs = [GRAD_REQ_MAP[grad_reqs]] * variables.size
       else
         grad_reqs = grad_reqs.map { |gr| GRAD_REQ_MAP[gr] }
       end
 
+      unless variables.size == gradients.size
+        raise ArgumentError.new("Arrays must be the same size")
+      end
+
       MXNet::Internal.libcall(
         MXAutogradMarkVariables,
         variables.size.to_i32,
-        variables,
+        variables.map(&.handle).to_a,
         grad_reqs,
-        gradients
+        gradients.map(&.handle).to_a
       )
     end
 

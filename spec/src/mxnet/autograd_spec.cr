@@ -53,6 +53,30 @@ describe "MXNet::Autograd" do
     end
   end
 
+  describe ".mark_variables" do
+    context "first and second arguments" do
+      it "must be the same length" do
+        expect_raises(ArgumentError) do
+          MXNet::Autograd.mark_variables(
+            [MXNet::NDArray.array([1]), MXNet::NDArray.array([2, 3])],
+            [MXNet::NDArray.array([1, 2, 3])]
+          )
+        end
+        MXNet::Autograd.mark_variables(
+          [] of MXNet::NDArray,
+          [] of MXNet::NDArray
+        )
+      end
+    end
+
+    it "attaches grads to vars" do
+      vars = [MXNet::NDArray.random_uniform(shape: 1)]
+      grads = [MXNet::NDArray.random_uniform(shape: 1)]
+      MXNet::Autograd.mark_variables(vars, grads)
+      vars.first.grad.should eq(grads.first)
+    end
+  end
+
   it "computes gradient" do
     x = MXNet::NDArray.array([1.0, 2.0, 3.0, 4.0]).attach_grad
     y = MXNet::Autograd.record do

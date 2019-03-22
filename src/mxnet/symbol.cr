@@ -3,6 +3,7 @@ module MXNet
   end
 
   class Symbol < Base
+    # :nodoc:
     alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
 
     @handle : SymbolHandle

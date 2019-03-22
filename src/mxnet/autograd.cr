@@ -134,9 +134,9 @@ module MXNet
     # Mark arrays as variables to compute gradients for autograd.
     #
     # ### Parameters
-    # * *variables* (`MXNet::NDArray` or `Enumerable(MXNet::NDArray)`)
-    # * *gradients* (`MXNet::NDArray` or `Enumerable(MXNet::NDArray)`)
-    # * *grad_reqs* (`Symbol` or `Enumerable(Symbol)`, default `:write`)
+    # * *variables* (`NDArray` or `Enumerable(NDArray)`)
+    # * *gradients* (`NDArray` or `Enumerable(NDArray)`)
+    # * *grad_reqs* (`::Symbol` or `Enumerable(::Symbol)`, default `:write`)
     #   * `:write`: gradient will be overwritten on every backward pass
     #   * `:add`: gradient will be added to existing value on every backward pass
     #   * `:null`: do not compute gradient
@@ -162,9 +162,9 @@ module MXNet
     # Compute the gradients with respect to previously marked variables.
     #
     # ### Parameters
-    # * *outputs* (`MXNet::NDArray` or `Enumerable(MXNet::NDArray)`)
+    # * *outputs* (`NDArray` or `Enumerable(NDArray)`)
     #   Output arrays.
-    # * *gradients* (`MXNet::NDArray` or `Enumerable(MXNet::NDArray)`)
+    # * *gradients* (`NDArray` or `Enumerable(NDArray)`)
     #   Gradients with respect to outputs.
     # * *retain_graph* (`Bool`, default false)
     #   Whether to keep computation graph to differentiate again,

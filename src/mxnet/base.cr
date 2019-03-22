@@ -9,7 +9,7 @@ module MXNet
       extend MXNet::Operations
     end
 
-    # Recursively pretty-print *arg* to *io*.
+    # Recursively pretty-prints *arg* to *io*.
     #
     # Suitable for formatting MXNet keyword arguments.
     #
@@ -32,7 +32,7 @@ module MXNet
       end
     end
 
-    # Recursively pretty-print *arg*.
+    # Recursively pretty-prints *arg*.
     #
     # Suitable for formatting MXNet keyword arguments.
     #

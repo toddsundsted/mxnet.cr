@@ -1,5 +1,5 @@
 module MXNet
-  class Internal
+  module Internal
     class LibraryException < Exception
     end
 

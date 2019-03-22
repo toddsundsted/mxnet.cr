@@ -3,6 +3,7 @@ module MXNet
   end
 
   class NDArray < Base
+    # :nodoc:
     alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
 
     @handle : NDArrayHandle

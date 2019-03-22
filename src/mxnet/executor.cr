@@ -39,10 +39,10 @@ module MXNet
     # Do backward pass to calculate the gradients.
     #
     # ### Parameters
-    # * *out_grads* (`MXNet::NDArray`, optional)
+    # * *out_grads* (`NDArray`, optional)
     #   Gradients on the outputs to be propagated back. This parameter
-    #   is only needed when `MXNet::Symbol#bind` is called on outputs
-    #   that are not a loss function.
+    #   is only needed when `Symbol#bind` is called on outputs that
+    #   are not a loss function.
     # * *is_train* (`Bool`, default `true`)
     #   Whether this `#backward` call is for training. Note, in rare
     #   cases you may want to call `#backward` with `is_train: false`

@@ -578,20 +578,23 @@ module MXNet
     private macro included
       {%
         if @type == MXNet::NDArray
+          type = "NDArray".id
           prefix =
-            "# * *data* (`NDArray`)
+            "# * *data* (`NDArray`, required)
              #   Input data.".id
           suffix =
             "# * *out* (`NDArray`, optional)
              #   The output array.".id
         elsif @type == MXNet::Symbol
+          type = "Symbol".id
           prefix =
-            "# * *data* (`Symbol`)
+            "# * *data* (`Symbol`, required)
              #   Input data.".id
           suffix =
             "# * *name* (`String`, optional)
              #   Name of the symbol.".id
         else
+          type = "".id
           prefix = "".id
           suffix = "".id
         end
@@ -618,7 +621,7 @@ module MXNet
       # `.add_n` is potentially more efficient than calling `.add` *n* times.
       #
       # ### Parameters
-      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
+      # * *data* (`Array({{type}})`, required)
       #   List of arrays to add.
       {{suffix}}
       #
@@ -666,7 +669,7 @@ module MXNet
       #     concat(x, y) # => [[1, 2, 1, 4], [3, 4, 1, 1]]
       #
       # ### Parameters
-      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
+      # * *data* (`Array({{type}})`, required)
       #   List of arrays to concatenate.
       # * *dim* (`Int`, default = 1)
       #   The dimension to be concated.
@@ -692,9 +695,9 @@ module MXNet
       #     dot(x, y) # => [[8, 5], [20, 13]]
       #
       # ### Parameters
-      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *lhs* (`{{type}}`, required)
       #   The first input.
-      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *rhs* (`{{type}}`, required)
       #   The second input.
       # * *transpose_a* (`Bool`, default = false)
       #   If true then transpose the first input before dot.
@@ -789,10 +792,10 @@ module MXNet
       {{prefix}}
       # * *axis* (`Int`, optional, default = -1)
       #   The axis along which to compute softmax.
-      # * *temperature* (`Double`, optional, default = 1.0)
+      # * *temperature* (`Float`, optional, default = 1.0)
       #   Temperature parameter in softmax.
-      # * *dtype* (`::Symbol`, either `:float16`, `:float32`, `:float64`, optional)
-      #   Type of the output in case this can’t be inferred. Defaults
+      # * *dtype* (`::Symbol`, `:float16`, `:float32` or `:float64`, optional)
+      #   Type of the output in case this can't be inferred. Defaults
       #   to the same type as the input if not defined.
       {{suffix}}
       #
@@ -884,7 +887,7 @@ module MXNet
       #     one_hot(x, 3) # => [[0, 1, 0], [1, 0, 0], [0, 0, 1], [1, 0, 0]]
       #
       # ### Parameters
-      # * *indices* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *indices* (`{{type}}`, required)
       #   Array of locations where to set *on_value*.
       # * *depth* (`Int`, required)
       #   Depth of the one hot dimension.
@@ -930,9 +933,9 @@ module MXNet
       #     pick(x, index: k, 1, keepdims: true) # => [[2], [3], [6]]
       #
       # ### Parameters
-      # * *data* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *data* (`{{type}}`, required)
       #   The input array.
-      # * *index* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *index* (`{{type}}`, required)
       #   The index array.
       # * *axis* (`Int` or `nil`, optional, default = -1)
       #   The axis to pick the elements. Negative values mean
@@ -1021,9 +1024,9 @@ module MXNet
       #
       #
       # ### Parameters
-      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *lhs* (`{{type}}`, required)
       #   The first input.
-      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *rhs* (`{{type}}`, required)
       #   The second input.
       {{suffix}}
       #
@@ -1079,7 +1082,7 @@ module MXNet
       # results in an array with the shape *(|e_0-b_0|/|s_0|, ...,
       # |e_m-1-b_m-1|/|s_m-1|, d_m, ..., d_n-1)*.
       #
-      # The resulting array’s _k_-th dimension contains elements from
+      # The resulting array's _k_-th dimension contains elements from
       # the _k_-th dimension of the input array starting from index
       # *b_k* (inclusive) with step *s_k* until reaching *e_k*
       # (exclusive).
@@ -1144,10 +1147,10 @@ module MXNet
       {{prefix}}
       # * *axis* (`Int`, optional, default = -1)
       #   The axis along which to compute softmax.
-      # * *temperature* (`Double`, optional, default = 1.0)
+      # * *temperature* (`Float`, optional, default = 1.0)
       #   Temperature parameter in softmax.
-      # * *dtype* (`::Symbol`, either `:float16`, `:float32`, `:float64`, optional)
-      #   Type of the output in case this can’t be inferred. Defaults
+      # * *dtype* (`::Symbol`, `:float16`, `:float32` or `:float64`, optional)
+      #   Type of the output in case this can't be inferred. Defaults
       #   to the same type as the input if not defined.
       {{suffix}}
       #
@@ -1233,14 +1236,14 @@ module MXNet
       #     take(x, indices: i) # => [[[1, 2], [3, 4]], [[3, 4], [5, 6]]]
       #
       # ### Parameters
-      # * *a* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *a* (`{{type}}`, required)
       #   The input array.
-      # * *indices* (`{{@type.stringify.split("::").last.id}}`, required)
+      # * *indices* (`{{type}}`, required)
       #   The indices of the values to be extracted.
       # * *axis* (`Int`, optional, default = 0)
       #   The axis of input array to be taken. For input tensor of
       #   rank *r*, it could be in the range of *[-r, r-1]*.
-      # * *mode* (`::Symbol`, either `:clip` or `:wrap`, optional, default = :clip)
+      # * *mode* (`::Symbol`, `:clip` or `:wrap`, optional, default = :clip)
       #   Specify how out-of-bound indices bahave. *:clip* means to
       #   clip to the range. If all indices mentioned are too large,
       #   they are replaced by the index that addresses the last

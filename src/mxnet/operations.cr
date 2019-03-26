@@ -597,200 +597,6 @@ module MXNet
         end
       %}
 
-      # Reshapes the input array.
-      #
-      # Returns a copy of the array with a new shape without altering
-      # any data.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [1, 2, 3, 4]
-      #
-      # Then:
-      #     reshape(shape: [2, 2]) # => [[1, 2], [3, 4]]
-      #
-      # Some dimensions of the shape can take special values from the
-      # set *{0, -1, -2, -3, -4}*. The significance of each is explained
-      # below:
-      #
-      # * *0* copies this dimension from the input to the output shape:
-      #     zeros([2, 3, 4]).reshape([4, 0, 2]).shape # => [4, 3, 2]
-      #     zeros([2, 3, 4]).reshape([2, 0, 0]).shape # => [2, 3, 4]
-      # * *-1* infers the dimension of the output shape by using the
-      #   remainder of the input dimensions, keeping the size of the
-      #   new array the same as that of the input array. At most one
-      #   dimension can be *-1*:
-      #     zeros([2, 3, 4]).reshape([6, 1, -1]).shape # => [6, 1, 4]
-      #     zeros([2, 3, 4]).reshape([3, -1, 8]).shape # => [3, 1, 8]
-      #     zeros([2, 3, 4]).reshape([-1]).shape # => [24]
-      # * *-2* copies all/the remainder of the input dimensions to the
-      #   output shape:
-      #     zeros([2, 3, 4]).reshape([-2]).shape # => [2, 3, 4]
-      #     zeros([2, 3, 4]).reshape([2, -2]).shape # => [2, 3, 4]
-      #     zeros([2, 3, 4]).reshape([-2, 1, 1]).shape # => [2, 3, 4, 1, 1]
-      # * *-3* uses the product of two consecutive dimensions of the
-      #   input shape as the output dimension:
-      #     zeros([2, 3, 4]).reshape([-3, 4]).shape # => [6, 4]
-      #     zeros([2, 3, 4, 5]).reshape([-3, -3]).shape # => [6, 20]
-      #     zeros([2, 3, 4]).reshape([0, -3]).shape # => [2, 12]
-      #     zeros([2, 3, 4]).reshape([-3, -2]).shape # => [6, 4]
-      # * *-4* splits one dimension of the input into the two dimensions
-      #   passed subsequent to *-4* (which can contain *-1*):
-      #     zeros([2, 3, 4]).reshape([-4, 1, 2, -2]).shape # => [1, 2, 3, 4]
-      #     zeros([2, 3, 4]).reshape([2, -4, -1, 3, -2]).shape # => [2, 1, 3, 4]
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *shape* (`Int` or `Array(Int)`)
-      #   The target shape.
-      # * *reverse* (`Bool`, optional, default `false`)
-      #   If `true` then the special values are inferred from right to left.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, reshape)
-
-      # Reshape some or all dimensions of *lhs* to have the same shape
-      # as some or all dimensions of *rhs*.
-      #
-      # Returns a view of the *lhs* array with a new shape without
-      # altering any data.
-      #
-      # Assume *x* and *y* are arrays with the following elements:
-      #     [1, 2, 3, 4, 5, 6]        # x
-      #     [[0, -4], [3, 2], [2, 2]] # y
-      #
-      # Then:
-      #     reshape_like(x, y) # => [[1, 2], [3, 4], [5, 6]]
-      #
-      #
-      # ### Parameters
-      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The first input.
-      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The second input.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, reshape_like)
-
-      # Flattens the input array into a 2-D array by collapsing the
-      # higher dimensions.
-      #
-      # For an input array with shape *(d1, d2, ..., dk)*, `#flatten`
-      # reshapes the input array into an output array of shape
-      # _(d1, d2 * ... * dk)_.
-      #
-      # Note that the bahavior of this function is different from
-      # `Array#flatten`, which behaves similar to `#reshape(shape: [-1])`.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]]
-      #
-      # Then:
-      #     flatten(x).shape # => [2, 6]
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, flatten)
-
-      # Inserts a new axis of size 1 into the array shape.
-      #
-      # For example, given *x* with shape *[2, 3, 4]*, then
-      # `expand_dims(x, axis: 1)` will return a new array with shape
-      # *[2, 1, 3, 4]*.
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int`, required)
-      #   Position where new axis is to be inserted. Suppose that the
-      #   input array‘s dimension is `ndim`, the range of the inserted
-      #   axis is `[-ndim, ndim]`.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, expand_dims)
-
-      # Returns element-wise natural logarithmic value of the input.
-      #
-      # The natural logarithm is the logarithm in base *e*, so that
-      # `log(exp(x)) = x`.
-      #
-      # The storage type of `.log` output is always dense.
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, log)
-
-      # Computes the mean of array elements over given axes.
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int` or `Array(Int)`, optional)
-      #   The axis or axes along which to perform the reduction.
-      #   By default it computes over all elements into a scalar array
-      #   with shape `[1]`. If axis is `Int`, a reduction is performed
-      #   on a particular axis. If axis is `Array(Int)`, a reduction is
-      #   performed on all the axes specified in the list. If *exclude*
-      #   is `true`, reduction will be performed on the axes that are
-      #   **not** in axis instead. Negative values means indexing from
-      #   right to left.
-      # * *keepdims* (`Bool`, optional, default = false)
-      #   If `true`, the reduced axes are left in the result as
-      #   a dimension with size one.
-      # * *exclude* (`Bool`, optional, default = false)
-      #   Whether to perform reduction on axes that are not in *axis*
-      #   instead.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, mean)
-
-      # Computes the max of array elements over given axes.
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int` or `Array(Int)`, optional)
-      #   The axis or axes along which to perform the reduction.
-      #   By default it computes over all elements into a scalar array
-      #   with shape `[1]`. If axis is `Int`, a reduction is performed
-      #   on a particular axis. If axis is `Array(Int)`, a reduction is
-      #   performed on all the axes specified in the list. If *exclude*
-      #   is `true`, reduction will be performed on the axes that are
-      #   **not** in axis instead. Negative values means indexing from
-      #   right to left.
-      # * *keepdims* (`Bool`, optional, default = false)
-      #   If `true`, the reduced axes are left in the result as
-      #   a dimension with size one.
-      # * *exclude* (`Bool`, optional, default = false)
-      #   Whether to perform reduction on axes that are not in *axis*
-      #   instead.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, max)
-
-      # Computes the min of array elements over given axes.
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int` or `Array(Int)`, optional)
-      #   The axis or axes along which to perform the reduction.
-      #   By default it computes over all elements into a scalar array
-      #   with shape `[1]`. If axis is `Int`, a reduction is performed
-      #   on a particular axis. If axis is `Array(Int)`, a reduction is
-      #   performed on all the axes specified in the list. If *exclude*
-      #   is `true`, reduction will be performed on the axes that are
-      #   **not** in axis instead. Negative values means indexing from
-      #   right to left.
-      # * *keepdims* (`Bool`, optional, default = false)
-      #   If `true`, the reduced axes are left in the result as
-      #   a dimension with size one.
-      # * *exclude* (`Bool`, optional, default = false)
-      #   Whether to perform reduction on axes that are not in *axis*
-      #   instead.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, min)
-
       # Returns the element-wise absolute value of the input.
       #
       # Assume *x* is an array with the following elements:
@@ -804,6 +610,21 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, abs)
+
+      # Adds all input arguments element-wise.
+      #
+      # *add_n(a1,a2,...,an)=a1+a2+...+an*
+      #
+      # `.add_n` is potentially more efficient than calling `.add` *n* times.
+      #
+      # ### Parameters
+      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
+      #   List of arrays to add.
+      {{suffix}}
+      #
+      def self.add_n(*data : self, **kwargs)
+        Ops._add_n(*data, **kwargs.merge({num_args: data.size}))
+      end
 
       # Clips (limits) the values in an array.
       #
@@ -829,44 +650,129 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, clip)
 
-      # Returns the element-wise sign of the input.
+      # Joins input arrays along a given axis.
       #
-      # Assume *x* is an array with the following elements:
-      #     [-2, 0, 3]
+      # The dimensions of the input arrays should be the same except
+      # for the axis along which they will be concatenated. The
+      # dimension of the output array along the concatenated axis will
+      # be equal to the sum of the corresponding dimensions of the
+      # input arrays.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 2], [3, 4]] # x
+      #     [[1, 4], [1, 1]] # y
       #
       # Then:
-      #     sign(x) # => [-1, 0, 1]
+      #     concat(x, y) # => [[1, 2, 1, 4], [3, 4, 1, 1]]
       #
       # ### Parameters
-      {{prefix}}
+      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
+      #   List of arrays to concatenate.
+      # * *dim* (`Int`, default = 1)
+      #   The dimension to be concated.
       {{suffix}}
       #
-      def_class_and_fluent_method(Ops, sign)
+      def self.concat(*data : self, **kwargs)
+        Ops._concat(*data, **kwargs.merge({num_args: data.size}))
+      end
 
-      # Applies the softmax function.
+      # Computes the dot product of two arrays.
       #
-      # The resulting array contains elements in the range *(0, 1)*
-      # and the elements along the given axis sum up to 1.
+      # `.dot`‘s behavior depends on the input array dimensions:
+      #   * *1-D* arrays: inner product of vectors
+      #   * *2-D* arrays: matrix multiplication
+      #   * *N-D* arrays: a sum product over the last axis of the first
+      #   input and the first axis of the second input
       #
-      # Assume *x* is an array with the following elements:
-      #     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 2], [3, 4]] # x
+      #     [[4, 3], [1, 1]] # y
       #
       # Then:
-      #     softmax(x, axis: 0) # => [[0.5, 0.5, 0.5], [0.5, 0.5, 0.5]]
-      #     softmax(x, axis: 1) # => [[0.3334, 0.3334, 0.3334], [0.3334, 0.3334, 0.3334]]
+      #     dot(x, y) # => [[8, 5], [20, 13]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The first input.
+      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The second input.
+      # * *transpose_a* (`Bool`, default = false)
+      #   If true then transpose the first input before dot.
+      # * *transpose_b* (`Bool`, default = false)
+      #   If true then transpose the second input before dot.
+      {{suffix}}
+      #
+      def self.dot(lhs : self, rhs : self, **kwargs)
+        Ops._dot(lhs, rhs, **kwargs)
+      end
+
+      # Inserts a new axis of size 1 into the array shape.
+      #
+      # For example, given *x* with shape *[2, 3, 4]*, then
+      # `expand_dims(x, axis: 1)` will return a new array with shape
+      # *[2, 1, 3, 4]*.
       #
       # ### Parameters
       {{prefix}}
-      # * *axis* (`Int`, optional, default = -1)
-      #   The axis along which to compute softmax.
-      # * *temperature* (`Double`, optional, default = 1.0)
-      #   Temperature parameter in softmax.
-      # * *dtype* (`::Symbol`, either `:float16`, `:float32`, `:float64`, optional)
-      #   Type of the output in case this can’t be inferred. Defaults
-      #   to the same type as the input if not defined.
+      # * *axis* (`Int`, required)
+      #   Position where new axis is to be inserted. Suppose that the
+      #   input array‘s dimension is `ndim`, the range of the inserted
+      #   axis is `[-ndim, ndim]`.
       {{suffix}}
       #
-      def_class_and_fluent_method(Ops, softmax)
+      def_class_and_fluent_method(Ops, expand_dims)
+
+      # Flattens the input array into a 2-D array by collapsing the
+      # higher dimensions.
+      #
+      # For an input array with shape *(d1, d2, ..., dk)*, `#flatten`
+      # reshapes the input array into an output array of shape
+      # _(d1, d2 * ... * dk)_.
+      #
+      # Note that the bahavior of this function is different from
+      # `Array#flatten`, which behaves similar to `#reshape(shape: [-1])`.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]]
+      #
+      # Then:
+      #     flatten(x).shape # => [2, 6]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, flatten)
+
+      # Reverses the order of elements along given axis while preserving array shape.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+      #
+      # Then:
+      #     flip(x, axis: 0) # => [[5, 6, 7, 8, 9], [0, 1, 2, 3, 4]]
+      #     flip(x, axis: 1) # => [[4, 3, 2, 1, 0], [9, 8, 7, 6, 5]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int`, required)
+      #   The axis on which to reverse elements.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, flip)
+
+      # Returns element-wise natural logarithmic value of the input.
+      #
+      # The natural logarithm is the logarithm in base *e*, so that
+      # `log(exp(x)) = x`.
+      #
+      # The storage type of `.log` output is always dense.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, log)
 
       # Computes the log softmax of the input.
       #
@@ -891,6 +797,75 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, log_softmax)
+
+      # Computes the max of array elements over given axes.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the reduction.
+      #   By default it computes over all elements into a scalar array
+      #   with shape `[1]`. If axis is `Int`, a reduction is performed
+      #   on a particular axis. If axis is `Array(Int)`, a reduction is
+      #   performed on all the axes specified in the list. If *exclude*
+      #   is `true`, reduction will be performed on the axes that are
+      #   **not** in axis instead. Negative values means indexing from
+      #   right to left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If `true`, the reduced axes are left in the result as
+      #   a dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axes that are not in *axis*
+      #   instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, max)
+
+      # Computes the mean of array elements over given axes.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the reduction.
+      #   By default it computes over all elements into a scalar array
+      #   with shape `[1]`. If axis is `Int`, a reduction is performed
+      #   on a particular axis. If axis is `Array(Int)`, a reduction is
+      #   performed on all the axes specified in the list. If *exclude*
+      #   is `true`, reduction will be performed on the axes that are
+      #   **not** in axis instead. Negative values means indexing from
+      #   right to left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If `true`, the reduced axes are left in the result as
+      #   a dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axes that are not in *axis*
+      #   instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, mean)
+
+      # Computes the min of array elements over given axes.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the reduction.
+      #   By default it computes over all elements into a scalar array
+      #   with shape `[1]`. If axis is `Int`, a reduction is performed
+      #   on a particular axis. If axis is `Array(Int)`, a reduction is
+      #   performed on all the axes specified in the list. If *exclude*
+      #   is `true`, reduction will be performed on the axes that are
+      #   **not** in axis instead. Negative values means indexing from
+      #   right to left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If `true`, the reduced axes are left in the result as
+      #   a dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axes that are not in *axis*
+      #   instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, min)
 
       # Returns a one-hot array.
       #
@@ -970,138 +945,6 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, pick)
 
-      # Takes elements from an input array along the given axis.
-      #
-      # This function slices the input array along a particular axis
-      # with the provided indices.
-      #
-      # Given data tensor of rank *r >= 1*, and indices tensor of rank
-      # *q*, gather entries of the axis dimension of data (by default
-      # outer-most one as axis=0) indexed by indices, and concatenate
-      # them in an output tensor of rank *q + (r - 1)*.
-      #
-      # Assume *x* and *i* are arrays with the following elements:
-      #     [[1, 2], [3, 4], [5, 6]] # x
-      #     [[0, 1], [1, 2]]]        # i
-      #
-      # Then:
-      #     # get rows 0 and 1, then 1 and 2, along axis 0
-      #     take(x, indices: i) # => [[[1, 2], [3, 4]], [[3, 4], [5, 6]]]
-      #
-      # ### Parameters
-      # * *a* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The input array.
-      # * *indices* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The indices of the values to be extracted.
-      # * *axis* (`Int`, optional, default = 0)
-      #   The axis of input array to be taken. For input tensor of
-      #   rank *r*, it could be in the range of *[-r, r-1]*.
-      # * *mode* (`::Symbol`, either `:clip` or `:wrap`, optional, default = :clip)
-      #   Specify how out-of-bound indices bahave. *:clip* means to
-      #   clip to the range. If all indices mentioned are too large,
-      #   they are replaced by the index that addresses the last
-      #   element along an axis. *:wrap* means to wrap around.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, take)
-
-      # Computes the sum of array elements over given axes.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [[[1, 2], [2, 3], [1, 3]],
-      #      [[1, 4], [4, 3], [5, 2]],
-      #      [[7, 1], [7, 2], [7, 3]]]
-      #
-      # Then:
-      #     sum(x, axis: 1) # => [[4, 8], [10, 9], [21, 6]]
-      #     sum(x, axis: [1, 2]) # => [12, 19, 27]
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int` or `Array(Int)`, optional)
-      #   The axis or axes along which to perform the
-      #   reduction. `axis: []` or `axis: nil` will compute over all
-      #   elements into a scalar array with shape `[1]`. If *axis* is
-      #   an `Int`, a reduction is performed on a particular axis. If
-      #   *axis* is an array of `Int`, a reduction is performed on all
-      #   the axes specified in the array. If *exclude* is true,
-      #   reduction will be performed on the axes that are **not** in
-      #   *axis* instead. Negative values means indexing from right to
-      #   left.
-      # * *keepdims* (`Bool`, optional, default = false)
-      #   If this is set to true, the reduced axes are left in the
-      #   result as dimension with size one.
-      # * *exclude* (`Bool`, optional, default = false)
-      #   Whether to perform reduction on axis that are **not** in
-      #   axis instead.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, sum)
-
-      # Permutes the dimensions of an array.
-      #
-      # Assume *x* and *y* are arrays with the following elements:
-      #     [[[1, 2], [3, 4], [5, 6], [7, 8]]] # x
-      #     [[1, 2], [3, 4]]                   # y
-      #
-      # Then:
-      #     transpose(x) # => [[[1], [3], [5], [7]], [[2], [4], [6], [8]]]
-      #     transpose(x, axes: [1, 0, 2]) # => [[[1, 2]], [[3, 4]], [[5, 6]], [[7, 8]]]
-      #     transpose(y) # => [[1, 3], [2, 4]]
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axes* (`Int` or `Array(Int)`, optional)
-      #   Target axis order. By default the axes will be inverted.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, transpose)
-
-      # Reverses the order of elements along given axis while preserving array shape.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
-      #
-      # Then:
-      #     flip(x, axis: 0) # => [[5, 6, 7, 8, 9], [0, 1, 2, 3, 4]]
-      #     flip(x, axis: 1) # => [[4, 3, 2, 1, 0], [9, 8, 7, 6, 5]]
-      #
-      # ### Parameters
-      {{prefix}}
-      # * *axis* (`Int`, required)
-      #   The axis on which to reverse elements.
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, flip)
-
-      # Returns element-wise square-root value of the input.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [4, 9, 16]
-      #
-      # Then:
-      #     sqrt(x) # => [2, 3, 4]
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, sqrt)
-
-      # Returns element-wise squared value of the input.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [2, 3, 4]
-      #
-      # Then:
-      #     square(x) # => [4, 9, 16]
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, square)
-
       # Computes the rectified linear activation.
       #
       # _y=max(input,0)_
@@ -1112,6 +955,95 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, relu)
 
+      # Reshapes the input array.
+      #
+      # Returns a copy of the array with a new shape without altering
+      # any data.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [1, 2, 3, 4]
+      #
+      # Then:
+      #     reshape(shape: [2, 2]) # => [[1, 2], [3, 4]]
+      #
+      # Some dimensions of the shape can take special values from the
+      # set *{0, -1, -2, -3, -4}*. The significance of each is explained
+      # below:
+      #
+      # * *0* copies this dimension from the input to the output shape:
+      #     zeros([2, 3, 4]).reshape([4, 0, 2]).shape # => [4, 3, 2]
+      #     zeros([2, 3, 4]).reshape([2, 0, 0]).shape # => [2, 3, 4]
+      # * *-1* infers the dimension of the output shape by using the
+      #   remainder of the input dimensions, keeping the size of the
+      #   new array the same as that of the input array. At most one
+      #   dimension can be *-1*:
+      #     zeros([2, 3, 4]).reshape([6, 1, -1]).shape # => [6, 1, 4]
+      #     zeros([2, 3, 4]).reshape([3, -1, 8]).shape # => [3, 1, 8]
+      #     zeros([2, 3, 4]).reshape([-1]).shape # => [24]
+      # * *-2* copies all/the remainder of the input dimensions to the
+      #   output shape:
+      #     zeros([2, 3, 4]).reshape([-2]).shape # => [2, 3, 4]
+      #     zeros([2, 3, 4]).reshape([2, -2]).shape # => [2, 3, 4]
+      #     zeros([2, 3, 4]).reshape([-2, 1, 1]).shape # => [2, 3, 4, 1, 1]
+      # * *-3* uses the product of two consecutive dimensions of the
+      #   input shape as the output dimension:
+      #     zeros([2, 3, 4]).reshape([-3, 4]).shape # => [6, 4]
+      #     zeros([2, 3, 4, 5]).reshape([-3, -3]).shape # => [6, 20]
+      #     zeros([2, 3, 4]).reshape([0, -3]).shape # => [2, 12]
+      #     zeros([2, 3, 4]).reshape([-3, -2]).shape # => [6, 4]
+      # * *-4* splits one dimension of the input into the two dimensions
+      #   passed subsequent to *-4* (which can contain *-1*):
+      #     zeros([2, 3, 4]).reshape([-4, 1, 2, -2]).shape # => [1, 2, 3, 4]
+      #     zeros([2, 3, 4]).reshape([2, -4, -1, 3, -2]).shape # => [2, 1, 3, 4]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The target shape.
+      # * *reverse* (`Bool`, optional, default `false`)
+      #   If `true` then the special values are inferred from right to left.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, reshape)
+
+      # Reshape some or all dimensions of *lhs* to have the same shape
+      # as some or all dimensions of *rhs*.
+      #
+      # Returns a view of the *lhs* array with a new shape without
+      # altering any data.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [1, 2, 3, 4, 5, 6]        # x
+      #     [[0, -4], [3, 2], [2, 2]] # y
+      #
+      # Then:
+      #     reshape_like(x, y) # => [[1, 2], [3, 4], [5, 6]]
+      #
+      #
+      # ### Parameters
+      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The first input.
+      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, reshape_like)
+
+      # Randomly shuffles the elements.
+      #
+      # Shuffles the array along the first axis. The order of the
+      # elements in each subarray does not change. For example, if a
+      # 2-D array is given, the order of the rows randomly changes,
+      # but the order of the elements in each row does not change.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def self.shuffle(data : self, **kwargs)
+        Ops._shuffle(data, **kwargs)
+      end
+
       # Computes the sigmoid activation.
       #
       # _y=1/(1+exp(−x))_
@@ -1121,6 +1053,20 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, sigmoid)
+
+      # Returns the element-wise sign of the input.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2, 0, 3]
+      #
+      # Then:
+      #     sign(x) # => [-1, 0, 1]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, sign)
 
       # Slices a region of the array.
       #
@@ -1182,91 +1128,145 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, slice_axis)
 
-      # Computes the dot product of two arrays.
+      # Applies the softmax function.
       #
-      # `.dot`‘s behavior depends on the input array dimensions:
-      #   * *1-D* arrays: inner product of vectors
-      #   * *2-D* arrays: matrix multiplication
-      #   * *N-D* arrays: a sum product over the last axis of the first
-      #   input and the first axis of the second input
+      # The resulting array contains elements in the range *(0, 1)*
+      # and the elements along the given axis sum up to 1.
       #
-      # Assume *x* and *y* are arrays with the following elements:
-      #     [[1, 2], [3, 4]] # x
-      #     [[4, 3], [1, 1]] # y
+      # Assume *x* is an array with the following elements:
+      #     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
       #
       # Then:
-      #     dot(x, y) # => [[8, 5], [20, 13]]
+      #     softmax(x, axis: 0) # => [[0.5, 0.5, 0.5], [0.5, 0.5, 0.5]]
+      #     softmax(x, axis: 1) # => [[0.3334, 0.3334, 0.3334], [0.3334, 0.3334, 0.3334]]
       #
       # ### Parameters
-      # * *lhs* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The first input.
-      # * *rhs* (`{{@type.stringify.split("::").last.id}}`, required)
-      #   The second input.
-      # * *transpose_a* (`Bool`, default = false)
-      #   If true then transpose the first input before dot.
-      # * *transpose_b* (`Bool`, default = false)
-      #   If true then transpose the second input before dot.
+      {{prefix}}
+      # * *axis* (`Int`, optional, default = -1)
+      #   The axis along which to compute softmax.
+      # * *temperature* (`Double`, optional, default = 1.0)
+      #   Temperature parameter in softmax.
+      # * *dtype* (`::Symbol`, either `:float16`, `:float32`, `:float64`, optional)
+      #   Type of the output in case this can’t be inferred. Defaults
+      #   to the same type as the input if not defined.
       {{suffix}}
       #
-      def self.dot(lhs : self, rhs : self, **kwargs)
-        Ops._dot(lhs, rhs, **kwargs)
-      end
+      def_class_and_fluent_method(Ops, softmax)
 
-      # Joins input arrays along a given axis.
+      # Returns element-wise square-root value of the input.
       #
-      # The dimensions of the input arrays should be the same except
-      # for the axis along which they will be concatenated. The
-      # dimension of the output array along the concatenated axis will
-      # be equal to the sum of the corresponding dimensions of the
-      # input arrays.
-      #
-      # Assume *x* and *y* are arrays with the following elements:
-      #     [[1, 2], [3, 4]] # x
-      #     [[1, 4], [1, 1]] # y
+      # Assume *x* is an array with the following elements:
+      #     [4, 9, 16]
       #
       # Then:
-      #     concat(x, y) # => [[1, 2, 1, 4], [3, 4, 1, 1]]
-      #
-      # ### Parameters
-      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
-      #   List of arrays to concatenate.
-      # * *dim* (`Int`, default = 1)
-      #   The dimension to be concated.
-      {{suffix}}
-      #
-      def self.concat(*data : self, **kwargs)
-        Ops._concat(*data, **kwargs.merge({num_args: data.size}))
-      end
-
-      # Adds all input arguments element-wise.
-      #
-      # *add_n(a1,a2,...,an)=a1+a2+...+an*
-      #
-      # `.add_n` is potentially more efficient than calling `.add` *n* times.
-      #
-      # ### Parameters
-      # * *data* (`Array({{@type.stringify.split("::").last.id}})`, required)
-      #   List of arrays to add.
-      {{suffix}}
-      #
-      def self.add_n(*data : self, **kwargs)
-        Ops._add_n(*data, **kwargs.merge({num_args: data.size}))
-      end
-
-      # Randomly shuffles the elements.
-      #
-      # Shuffles the array along the first axis. The order of the
-      # elements in each subarray does not change. For example, if a
-      # 2-D array is given, the order of the rows randomly changes,
-      # but the order of the elements in each row does not change.
+      #     sqrt(x) # => [2, 3, 4]
       #
       # ### Parameters
       {{prefix}}
       {{suffix}}
       #
-      def self.shuffle(data : self, **kwargs)
-        Ops._shuffle(data, **kwargs)
-      end
+      def_class_and_fluent_method(Ops, sqrt)
+
+      # Returns element-wise squared value of the input.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [2, 3, 4]
+      #
+      # Then:
+      #     square(x) # => [4, 9, 16]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, square)
+
+      # Computes the sum of array elements over given axes.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[[1, 2], [2, 3], [1, 3]],
+      #      [[1, 4], [4, 3], [5, 2]],
+      #      [[7, 1], [7, 2], [7, 3]]]
+      #
+      # Then:
+      #     sum(x, axis: 1) # => [[4, 8], [10, 9], [21, 6]]
+      #     sum(x, axis: [1, 2]) # => [12, 19, 27]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the
+      #   reduction. `axis: []` or `axis: nil` will compute over all
+      #   elements into a scalar array with shape `[1]`. If *axis* is
+      #   an `Int`, a reduction is performed on a particular axis. If
+      #   *axis* is an array of `Int`, a reduction is performed on all
+      #   the axes specified in the array. If *exclude* is true,
+      #   reduction will be performed on the axes that are **not** in
+      #   *axis* instead. Negative values means indexing from right to
+      #   left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If this is set to true, the reduced axes are left in the
+      #   result as dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axis that are **not** in
+      #   axis instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, sum)
+
+      # Takes elements from an input array along the given axis.
+      #
+      # This function slices the input array along a particular axis
+      # with the provided indices.
+      #
+      # Given data tensor of rank *r >= 1*, and indices tensor of rank
+      # *q*, gather entries of the axis dimension of data (by default
+      # outer-most one as axis=0) indexed by indices, and concatenate
+      # them in an output tensor of rank *q + (r - 1)*.
+      #
+      # Assume *x* and *i* are arrays with the following elements:
+      #     [[1, 2], [3, 4], [5, 6]] # x
+      #     [[0, 1], [1, 2]]]        # i
+      #
+      # Then:
+      #     # get rows 0 and 1, then 1 and 2, along axis 0
+      #     take(x, indices: i) # => [[[1, 2], [3, 4]], [[3, 4], [5, 6]]]
+      #
+      # ### Parameters
+      # * *a* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The input array.
+      # * *indices* (`{{@type.stringify.split("::").last.id}}`, required)
+      #   The indices of the values to be extracted.
+      # * *axis* (`Int`, optional, default = 0)
+      #   The axis of input array to be taken. For input tensor of
+      #   rank *r*, it could be in the range of *[-r, r-1]*.
+      # * *mode* (`::Symbol`, either `:clip` or `:wrap`, optional, default = :clip)
+      #   Specify how out-of-bound indices bahave. *:clip* means to
+      #   clip to the range. If all indices mentioned are too large,
+      #   they are replaced by the index that addresses the last
+      #   element along an axis. *:wrap* means to wrap around.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, take)
+
+      # Permutes the dimensions of an array.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[[1, 2], [3, 4], [5, 6], [7, 8]]] # x
+      #     [[1, 2], [3, 4]]                   # y
+      #
+      # Then:
+      #     transpose(x) # => [[[1], [3], [5], [7]], [[2], [4], [6], [8]]]
+      #     transpose(x, axes: [1, 0, 2]) # => [[[1, 2]], [[3, 4]], [[5, 6]], [[7, 8]]]
+      #     transpose(y) # => [[1, 3], [2, 4]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axes* (`Int` or `Array(Int)`, optional)
+      #   Target axis order. By default the axes will be inverted.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, transpose)
     end
   end
 end

@@ -341,10 +341,26 @@ describe "MXNet::NDArray" do
     end
   end
 
+  describe ".add_n" do
+    it "adds arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      MXNet::NDArray.add_n(a, b).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+    end
+  end
+
   describe ".clip" do
     it "clips the values in an array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
       c.clip(2.0, 7.0).should eq(MXNet::NDArray.array([[[2.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 7.0]]]))
+    end
+  end
+
+  describe ".concat" do
+    it "concatenates arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      MXNet::NDArray.concat(a, b).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
     end
   end
 
@@ -357,26 +373,91 @@ describe "MXNet::NDArray" do
     end
   end
 
-  describe ".concat" do
-    it "concatenates arrays" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
-      MXNet::NDArray.concat(a, b).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+  describe "#expand_dims" do
+    it "inserts a new axis into the input array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.expand_dims(axis: 1).shape.should eq([1, 1, 4, 2])
+      c.expand_dims(1).shape.should eq([1, 1, 4, 2])
     end
   end
 
-  describe ".add_n" do
-    it "adds arrays" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
-      MXNet::NDArray.add_n(a, b).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+  describe "#flatten" do
+    it "flattens the input array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.flatten.shape.should eq([1, 8])
     end
   end
 
-  describe ".shuffle" do
-    it "randomly shuffles the elements" do
+  describe "#flip" do
+    it "reverses the order of elements" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.flip(axis: 1).should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
+      c.flip(axis: 2).should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+    end
+  end
+
+  describe "#log" do
+    it "computes the natural logarithm" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      MXNet::NDArray.shuffle(a).should be_a(MXNet::NDArray)
+      a.log.should be_close(MXNet::NDArray.array([[0.0, 0.69314], [1.0986, 1.3862]]), 0.001)
+    end
+  end
+
+  describe "#log_softmax" do
+    it "computes the log softmax of the input" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.log_softmax(axis: 0).should be_close(MXNet::NDArray.array([[-2.1269, -2.1269], [-0.1269, -0.1269]]), 0.05)
+      a.log_softmax(axis: 1).should be_close(MXNet::NDArray.array([[-1.3133, -0.3133], [-1.3133, -0.3133]]), 0.05)
+    end
+  end
+
+  describe "#max" do
+    it "computes the max" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.max(axis: 1).should eq(MXNet::NDArray.array([[7.0, 8.0]]))
+      c.max(axis: 2).should eq(MXNet::NDArray.array([[2.0, 4.0, 6.0, 8.0]]))
+      c.max.should eq(MXNet::NDArray.array([8.0]))
+    end
+  end
+
+  describe "#mean" do
+    it "computes the mean" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.mean(axis: 1).should eq(MXNet::NDArray.array([[4.0, 5.0]]))
+      c.mean(axis: 2).should eq(MXNet::NDArray.array([[1.5, 3.5, 5.5, 7.5]]))
+      c.mean.should eq(MXNet::NDArray.array([4.5]))
+    end
+  end
+
+  describe "#min" do
+    it "computes the min" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.min(axis: 1).should eq(MXNet::NDArray.array([[1.0, 2.0]]))
+      c.min(axis: 2).should eq(MXNet::NDArray.array([[1.0, 3.0, 5.0, 7.0]]))
+      c.min.should eq(MXNet::NDArray.array([1.0]))
+    end
+  end
+
+  describe "#one_hot" do
+    it "returns a one-hot array" do
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      o = MXNet::NDArray.array([[0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]], dtype: :float32)
+      b.reshape(shape: [-1]).one_hot(5).should eq(o)
+    end
+  end
+
+  describe "#pick" do
+    it "picks elements from an input array" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      i = MXNet::NDArray.array([0.0, 1.0])
+      a.pick(i, axis: 0).should eq(MXNet::NDArray.array([1.0, 4.0]))
+    end
+  end
+
+  describe "#relu" do
+    it "computes the rectified linear activation of the input" do
+      e = MXNet::NDArray.array([[-1.0], [1.0]])
+      e.relu.should eq(MXNet::NDArray.array([[0.0], [1.0]]))
     end
   end
 
@@ -402,79 +483,17 @@ describe "MXNet::NDArray" do
     end
   end
 
-  describe "#flatten" do
-    it "flattens the input array" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.flatten.shape.should eq([1, 8])
-    end
-  end
-
-  describe "#expand_dims" do
-    it "inserts a new axis into the input array" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.expand_dims(axis: 1).shape.should eq([1, 1, 4, 2])
-      c.expand_dims(1).shape.should eq([1, 1, 4, 2])
-    end
-  end
-
-  describe "#log" do
-    it "computes the natural logarithm" do
+  describe ".shuffle" do
+    it "randomly shuffles the elements" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      a.log.should be_close(MXNet::NDArray.array([[0.0, 0.69314], [1.0986, 1.3862]]), 0.001)
+      MXNet::NDArray.shuffle(a).should be_a(MXNet::NDArray)
     end
   end
 
-  describe "#mean" do
-    it "computes the mean" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.mean(axis: 1).should eq(MXNet::NDArray.array([[4.0, 5.0]]))
-      c.mean(axis: 2).should eq(MXNet::NDArray.array([[1.5, 3.5, 5.5, 7.5]]))
-      c.mean.should eq(MXNet::NDArray.array([4.5]))
-    end
-  end
-
-  describe "#max" do
-    it "computes the max" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.max(axis: 1).should eq(MXNet::NDArray.array([[7.0, 8.0]]))
-      c.max(axis: 2).should eq(MXNet::NDArray.array([[2.0, 4.0, 6.0, 8.0]]))
-      c.max.should eq(MXNet::NDArray.array([8.0]))
-    end
-  end
-
-  describe "#min" do
-    it "computes the min" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.min(axis: 1).should eq(MXNet::NDArray.array([[1.0, 2.0]]))
-      c.min(axis: 2).should eq(MXNet::NDArray.array([[1.0, 3.0, 5.0, 7.0]]))
-      c.min.should eq(MXNet::NDArray.array([1.0]))
-    end
-  end
-
-  describe "#sum" do
-    it "computes the sum" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.sum(axis: 1).should eq(MXNet::NDArray.array([[16.0, 20.0]]))
-      c.sum(axis: 2).should eq(MXNet::NDArray.array([[3.0, 7.0, 11.0, 15.0]]))
-      c.sum.should eq(MXNet::NDArray.array([36.0]))
-    end
-  end
-
-  describe "#transpose" do
-    it "permutes the dimensions of the array" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      a.transpose.should eq(MXNet::NDArray.array([[1.0, 3.0], [2.0, 4.0]]))
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.transpose.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
-      c.transpose(axes: [1, 0, 2]).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
-    end
-  end
-
-  describe "#flip" do
-    it "reverses the order of elements" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.flip(axis: 1).should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
-      c.flip(axis: 2).should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+  describe "#sigmoid" do
+    it "computes the sigmoid activation of the input" do
+      z = MXNet::NDArray.zeros([1])
+      z.sigmoid.as_scalar.should eq(0.5)
     end
   end
 
@@ -482,6 +501,28 @@ describe "MXNet::NDArray" do
     it "returns element-wise sign of the input" do
       e = MXNet::NDArray.array([[-1.0], [1.0]])
       e.sign.should eq(MXNet::NDArray.array([[-1.0], [1.0]]))
+    end
+  end
+
+  describe "#slice" do
+    it "slices a region of the array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.slice(begin: [0, 0, 1], end: [1, 2, 2]).should eq(MXNet::NDArray.array([[[2.0], [4.0]]]))
+    end
+  end
+
+  describe "#slice_axis" do
+    it "slices a region of the array" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.slice_axis(axis: 2, begin: 0, end: 1).should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]]]))
+    end
+  end
+
+  describe "#softmax" do
+    it "applies the softmax function" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.softmax(axis: 0).should be_close(MXNet::NDArray.array([[0.1192, 0.1192], [0.8807, 0.8807]]), 0.05)
+      a.softmax(axis: 1).should be_close(MXNet::NDArray.array([[0.2689, 0.7310], [0.2689, 0.7310]]), 0.05)
     end
   end
 
@@ -499,49 +540,12 @@ describe "MXNet::NDArray" do
     end
   end
 
-  describe "#relu" do
-    it "computes the rectified linear activation of the input" do
-      e = MXNet::NDArray.array([[-1.0], [1.0]])
-      e.relu.should eq(MXNet::NDArray.array([[0.0], [1.0]]))
-    end
-  end
-
-  describe "#sigmoid" do
-    it "computes the sigmoid activation of the input" do
-      z = MXNet::NDArray.zeros([1])
-      z.sigmoid.as_scalar.should eq(0.5)
-    end
-  end
-
-  describe "#log_softmax" do
-    it "computes the log softmax of the input" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      a.log_softmax(axis: 0).should be_close(MXNet::NDArray.array([[-2.1269, -2.1269], [-0.1269, -0.1269]]), 0.05)
-      a.log_softmax(axis: 1).should be_close(MXNet::NDArray.array([[-1.3133, -0.3133], [-1.3133, -0.3133]]), 0.05)
-    end
-  end
-
-  describe "#softmax" do
-    it "applies the softmax function" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      a.softmax(axis: 0).should be_close(MXNet::NDArray.array([[0.1192, 0.1192], [0.8807, 0.8807]]), 0.05)
-      a.softmax(axis: 1).should be_close(MXNet::NDArray.array([[0.2689, 0.7310], [0.2689, 0.7310]]), 0.05)
-    end
-  end
-
-  describe "#one_hot" do
-    it "returns a one-hot array" do
-      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
-      o = MXNet::NDArray.array([[0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]], dtype: :float32)
-      b.reshape(shape: [-1]).one_hot(5).should eq(o)
-    end
-  end
-
-  describe "#pick" do
-    it "picks elements from an input array" do
-      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      i = MXNet::NDArray.array([0.0, 1.0])
-      a.pick(i, axis: 0).should eq(MXNet::NDArray.array([1.0, 4.0]))
+  describe "#sum" do
+    it "computes the sum" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.sum(axis: 1).should eq(MXNet::NDArray.array([[16.0, 20.0]]))
+      c.sum(axis: 2).should eq(MXNet::NDArray.array([[3.0, 7.0, 11.0, 15.0]]))
+      c.sum.should eq(MXNet::NDArray.array([36.0]))
     end
   end
 
@@ -553,17 +557,13 @@ describe "MXNet::NDArray" do
     end
   end
 
-  describe "#slice" do
-    it "slices a region of the array" do
+  describe "#transpose" do
+    it "permutes the dimensions of the array" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.transpose.should eq(MXNet::NDArray.array([[1.0, 3.0], [2.0, 4.0]]))
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.slice(begin: [0, 0, 1], end: [0, 2, 2]).should eq(MXNet::NDArray.array([[[2.0], [4.0]]]))
-    end
-  end
-
-  describe "#slice_axis" do
-    it "slices a region of the array" do
-      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
-      c.slice_axis(axis: 2, begin: 0, end: 1).should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]]]))
+      c.transpose.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
+      c.transpose(axes: [1, 0, 2]).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
     end
   end
 

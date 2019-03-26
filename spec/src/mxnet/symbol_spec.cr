@@ -219,10 +219,26 @@ describe "MXNet::Symbol" do
     end
   end
 
+  describe ".add_n" do
+    it "adds arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      MXNet::Symbol.add_n(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+    end
+  end
+
   describe ".clip" do
     it "clips the values in an array" do
       c = MXNet::Symbol.var("c")
       c.clip(2.0, 7.0).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 7.0]]]))
+    end
+  end
+
+  describe ".concat" do
+    it "concatenates arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      MXNet::Symbol.concat(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
     end
   end
 
@@ -235,26 +251,91 @@ describe "MXNet::Symbol" do
     end
   end
 
-  describe ".concat" do
-    it "concatenates arrays" do
-      a = MXNet::Symbol.var("a")
-      b = MXNet::Symbol.var("b")
-      MXNet::Symbol.concat(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+  describe "#expand_dims" do
+    it "inserts a new axis into the input array" do
+      c = MXNet::Symbol.var("c")
+      c.expand_dims(axis: 1).eval(**args).first.shape.should eq([1, 1, 4, 2])
+      c.expand_dims(1).eval(**args).first.shape.should eq([1, 1, 4, 2])
     end
   end
 
-  describe ".add_n" do
-    it "adds arrays" do
-      a = MXNet::Symbol.var("a")
-      b = MXNet::Symbol.var("b")
-      MXNet::Symbol.add_n(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+  describe "#flatten" do
+    it "flattens the input array" do
+      c = MXNet::Symbol.var("c")
+      c.flatten.eval(**args).first.shape.should eq([1, 8])
     end
   end
 
-  describe ".shuffle" do
-    it "randomly shuffles the elements" do
+  describe "#flip" do
+    it "reverses the order of elements" do
+      c = MXNet::Symbol.var("c")
+      c.flip(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
+      c.flip(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+    end
+  end
+
+  describe "#log" do
+    it "computes the natural logarithm" do
       a = MXNet::Symbol.var("a")
-      MXNet::Symbol.shuffle(a).eval(**args).first.should be_a(MXNet::NDArray)
+      a.log.eval(**args).first.should be_close(MXNet::NDArray.array([[0.0, 0.69314], [1.0986, 1.3862]]), 0.001)
+    end
+  end
+
+  describe "#log_softmax" do
+    it "computes the log softmax of the input" do
+      a = MXNet::Symbol.var("a")
+      a.log_softmax(axis: 0).eval(**args).first.should be_close(MXNet::NDArray.array([[-2.1269, -2.1269], [-0.1269, -0.1269]]), 0.05)
+      a.log_softmax(axis: 1).eval(**args).first.should be_close(MXNet::NDArray.array([[-1.3133, -0.3133], [-1.3133, -0.3133]]), 0.05)
+    end
+  end
+
+  describe "#max" do
+    it "computes the max" do
+      c = MXNet::Symbol.var("c")
+      c.max(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[7.0, 8.0]]))
+      c.max(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 4.0, 6.0, 8.0]]))
+      c.max.eval(**args).first.should eq(MXNet::NDArray.array([8.0]))
+    end
+  end
+
+  describe "#mean" do
+    it "computes the mean" do
+      c = MXNet::Symbol.var("c")
+      c.mean(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[4.0, 5.0]]))
+      c.mean(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.5, 3.5, 5.5, 7.5]]))
+      c.mean.eval(**args).first.should eq(MXNet::NDArray.array([4.5]))
+    end
+  end
+
+  describe "#min" do
+    it "computes the min" do
+      c = MXNet::Symbol.var("c")
+      c.min(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0]]))
+      c.min(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 3.0, 5.0, 7.0]]))
+      c.min.eval(**args).first.should eq(MXNet::NDArray.array([1.0]))
+    end
+  end
+
+  describe "#one_hot" do
+    it "returns a one-hot array" do
+      b = MXNet::Symbol.var("b")
+      o = MXNet::NDArray.array([[0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]], dtype: :float32)
+      b.reshape(shape: [-1]).one_hot(5).eval(**args).first.should eq(o)
+    end
+  end
+
+  describe "#pick" do
+    it "picks elements from an input array" do
+      a = MXNet::Symbol.var("a")
+      i = MXNet::Symbol.var("i")
+      a.pick(i, axis: 0).eval(**args).first.should eq(MXNet::NDArray.array([1.0, 4.0]))
+    end
+  end
+
+  describe "#relu" do
+    it "computes the rectified linear activation of the input" do
+      e = MXNet::Symbol.var("e")
+      e.relu.eval(**args).first.should eq(MXNet::NDArray.array([[0.0], [1.0]]))
     end
   end
 
@@ -280,79 +361,17 @@ describe "MXNet::Symbol" do
     end
   end
 
-  describe "#flatten" do
-    it "flattens the input array" do
-      c = MXNet::Symbol.var("c")
-      c.flatten.eval(**args).first.shape.should eq([1, 8])
-    end
-  end
-
-  describe "#expand_dims" do
-    it "inserts a new axis into the input array" do
-      c = MXNet::Symbol.var("c")
-      c.expand_dims(axis: 1).eval(**args).first.shape.should eq([1, 1, 4, 2])
-      c.expand_dims(1).eval(**args).first.shape.should eq([1, 1, 4, 2])
-    end
-  end
-
-  describe "#log" do
-    it "computes the natural logarithm" do
+  describe ".shuffle" do
+    it "randomly shuffles the elements" do
       a = MXNet::Symbol.var("a")
-      a.log.eval(**args).first.should be_close(MXNet::NDArray.array([[0.0, 0.69314], [1.0986, 1.3862]]), 0.001)
+      MXNet::Symbol.shuffle(a).eval(**args).first.should be_a(MXNet::NDArray)
     end
   end
 
-  describe "#mean" do
-    it "computes the mean" do
-      c = MXNet::Symbol.var("c")
-      c.mean(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[4.0, 5.0]]))
-      c.mean(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.5, 3.5, 5.5, 7.5]]))
-      c.mean.eval(**args).first.should eq(MXNet::NDArray.array([4.5]))
-    end
-  end
-
-  describe "#max" do
-    it "computes the max" do
-      c = MXNet::Symbol.var("c")
-      c.max(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[7.0, 8.0]]))
-      c.max(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 4.0, 6.0, 8.0]]))
-      c.max.eval(**args).first.should eq(MXNet::NDArray.array([8.0]))
-    end
-  end
-
-  describe "#min" do
-    it "computes the min" do
-      c = MXNet::Symbol.var("c")
-      c.min(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0]]))
-      c.min(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 3.0, 5.0, 7.0]]))
-      c.min.eval(**args).first.should eq(MXNet::NDArray.array([1.0]))
-    end
-  end
-
-  describe "#sum" do
-    it "computes the sum" do
-      c = MXNet::Symbol.var("c")
-      c.sum(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[16.0, 20.0]]))
-      c.sum(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[3.0, 7.0, 11.0, 15.0]]))
-      c.sum.eval(**args).first.should eq(MXNet::NDArray.array([36.0]))
-    end
-  end
-
-  describe "#transpose" do
-    it "permutes the dimensions of the array" do
-      a = MXNet::Symbol.var("a")
-      a.transpose.eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 3.0], [2.0, 4.0]]))
-      c = MXNet::Symbol.var("c")
-      c.transpose.eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
-      c.transpose(axes: [1, 0, 2]).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
-    end
-  end
-
-  describe "#flip" do
-    it "reverses the order of elements" do
-      c = MXNet::Symbol.var("c")
-      c.flip(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
-      c.flip(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+  describe "#sigmoid" do
+    it "computes the sigmoid activation of the input" do
+      z = MXNet::Symbol.var("z")
+      z.sigmoid.eval(**args).first.as_scalar.should eq(0.5)
     end
   end
 
@@ -360,6 +379,28 @@ describe "MXNet::Symbol" do
     it "returns element-wise sign of the input" do
       e = MXNet::Symbol.var("e")
       e.sign.eval(**args).first.should eq(MXNet::NDArray.array([[-1.0], [1.0]]))
+    end
+  end
+
+  describe "#slice" do
+    it "slices a region of the array" do
+      c = MXNet::Symbol.var("c")
+      c.slice(begin: [0, 0, 1], end: [1, 2, 2]).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0], [4.0]]]))
+    end
+  end
+
+  describe "#slice_axis" do
+    it "slices a region of the array" do
+      c = MXNet::Symbol.var("c")
+      c.slice_axis(axis: 2, begin: 0, end: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]]]))
+    end
+  end
+
+  describe "#softmax" do
+    it "applies the softmax function" do
+      a = MXNet::Symbol.var("a")
+      a.softmax(axis: 0).eval(**args).first.should be_close(MXNet::NDArray.array([[0.1192, 0.1192], [0.8807, 0.8807]]), 0.05)
+      a.softmax(axis: 1).eval(**args).first.should be_close(MXNet::NDArray.array([[0.2689, 0.7310], [0.2689, 0.7310]]), 0.05)
     end
   end
 
@@ -377,49 +418,12 @@ describe "MXNet::Symbol" do
     end
   end
 
-  describe "#relu" do
-    it "computes the rectified linear activation of the input" do
-      e = MXNet::Symbol.var("e")
-      e.relu.eval(**args).first.should eq(MXNet::NDArray.array([[0.0], [1.0]]))
-    end
-  end
-
-  describe "#sigmoid" do
-    it "computes the sigmoid activation of the input" do
-      z = MXNet::Symbol.var("z")
-      z.sigmoid.eval(**args).first.as_scalar.should eq(0.5)
-    end
-  end
-
-  describe "#log_softmax" do
-    it "computes the log softmax of the input" do
-      a = MXNet::Symbol.var("a")
-      a.log_softmax(axis: 0).eval(**args).first.should be_close(MXNet::NDArray.array([[-2.1269, -2.1269], [-0.1269, -0.1269]]), 0.05)
-      a.log_softmax(axis: 1).eval(**args).first.should be_close(MXNet::NDArray.array([[-1.3133, -0.3133], [-1.3133, -0.3133]]), 0.05)
-    end
-  end
-
-  describe "#softmax" do
-    it "applies the softmax function" do
-      a = MXNet::Symbol.var("a")
-      a.softmax(axis: 0).eval(**args).first.should be_close(MXNet::NDArray.array([[0.1192, 0.1192], [0.8807, 0.8807]]), 0.05)
-      a.softmax(axis: 1).eval(**args).first.should be_close(MXNet::NDArray.array([[0.2689, 0.7310], [0.2689, 0.7310]]), 0.05)
-    end
-  end
-
-  describe "#one_hot" do
-    it "returns a one-hot array" do
-      b = MXNet::Symbol.var("b")
-      o = MXNet::NDArray.array([[0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0]], dtype: :float32)
-      b.reshape(shape: [-1]).one_hot(5).eval(**args).first.should eq(o)
-    end
-  end
-
-  describe "#pick" do
-    it "picks elements from an input array" do
-      a = MXNet::Symbol.var("a")
-      i = MXNet::Symbol.var("i")
-      a.pick(i, axis: 0).eval(**args).first.should eq(MXNet::NDArray.array([1.0, 4.0]))
+  describe "#sum" do
+    it "computes the sum" do
+      c = MXNet::Symbol.var("c")
+      c.sum(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[16.0, 20.0]]))
+      c.sum(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[3.0, 7.0, 11.0, 15.0]]))
+      c.sum.eval(**args).first.should eq(MXNet::NDArray.array([36.0]))
     end
   end
 
@@ -431,17 +435,13 @@ describe "MXNet::Symbol" do
     end
   end
 
-  describe "#slice" do
-    it "slices a region of the array" do
+  describe "#transpose" do
+    it "permutes the dimensions of the array" do
+      a = MXNet::Symbol.var("a")
+      a.transpose.eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 3.0], [2.0, 4.0]]))
       c = MXNet::Symbol.var("c")
-      c.slice(begin: [0, 0, 1], end: [0, 2, 2]).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0], [4.0]]]))
-    end
-  end
-
-  describe "#slice_axis" do
-    it "slices a region of the array" do
-      c = MXNet::Symbol.var("c")
-      c.slice_axis(axis: 2, begin: 0, end: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]]]))
+      c.transpose.eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
+      c.transpose(axes: [1, 0, 2]).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
     end
   end
 end

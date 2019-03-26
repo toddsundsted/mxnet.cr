@@ -227,6 +227,126 @@ describe "MXNet::Symbol" do
     end
   end
 
+  describe ".broadcast_add" do
+    it "adds two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_add(b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+    end
+  end
+
+  describe ".broadcast_div" do
+    it "divides two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_div(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 0.5], [3.0, 4.0]]))
+    end
+  end
+
+  describe ".broadcast_equal" do
+    it "performs element-wise equal" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_equal(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 0.0], [0.0, 0.0]]))
+    end
+  end
+
+  describe ".broadcast_greater" do
+    it "performs element-wise greater than" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_greater(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 0.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe ".broadcast_greater_equal" do
+    it "performs element-wise greater than or equal to" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_greater_equal(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 0.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe ".broadcast_lesser" do
+    it "performs element-wise less than" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_lesser(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 1.0], [0.0, 0.0]]))
+    end
+  end
+
+  describe ".broadcast_lesser_equal" do
+    it "performs element-wise less than or equal to" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_lesser_equal(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [0.0, 0.0]]))
+    end
+  end
+
+  describe ".broadcast_maximum" do
+    it "returns the maximum" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_maximum(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 4.0], [3.0, 4.0]]))
+    end
+  end
+
+  describe ".broadcast_minimum" do
+    it "returns the minimum" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_minimum(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe ".broadcast_minus" do
+    it "subtracts two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_minus(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+  end
+
+  describe ".broadcast_mul" do
+    it "multiplies two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_mul(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 8.0], [3.0, 4.0]]))
+    end
+  end
+
+  describe ".broadcast_not_equal" do
+    it "performs element-wise not equal" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_not_equal(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe ".broadcast_plus" do
+    it "adds two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_plus(b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+    end
+  end
+
+  describe ".broadcast_power" do
+    it "exponentiates two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_power(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 16.0], [3.0, 4.0]]))
+    end
+  end
+
+  describe ".broadcast_sub" do
+    it "subtracts two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      a.broadcast_sub(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+  end
+
   describe ".clip" do
     it "clips the values in an array" do
       c = MXNet::Symbol.var("c")

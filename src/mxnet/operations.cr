@@ -629,6 +629,297 @@ module MXNet
         Ops._add_n(*data, **kwargs.merge({num_args: data.size}))
       end
 
+      # Returns element-wise sum of the input arrays with broadcasting.
+      #
+      # `.broadcast_add` is an alias for `.broadcast_plus`.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_add(x, y) # => [[1, 1, 1], [2, 2, 2]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_add)
+
+      # Returns element-wise division of the input arrays with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[6, 6, 6], [6, 6, 6]] # x
+      #     [[2], [3]]             # y
+      #
+      # Then:
+      #     broadcast_div(x, y) # => [[3, 3, 3], [2, 2, 2]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_div)
+
+      # Returns the result of element-wise equal to (`==`) comparison
+      # operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_equal(x, y) # => [[0, 0, 0], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_equal)
+
+      # Returns the result of element-wise greater than (`>`) comparison
+      # operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_greater(x, y) # => [[1, 1, 1], [0, 0, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_greater)
+
+      # Returns the result of element-wise greater than or equal to
+      # (`>=`) comparison operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_greater_equal(x, y) # => [[1, 1, 1], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_greater_equal)
+
+      # Returns the result of element-wise less than (`<`) comparison
+      # operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_lesser(x, y) # => [[0, 0, 0], [0, 0, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_lesser)
+
+      # Returns the result of element-wise less than or equal to (`<=`)
+      # comparison operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_lesser_equal(x, y) # => [[0, 0, 0], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_lesser_equal)
+
+      # Returns element-wise maximum of the input arrays with broadcasting.
+      #
+      # This function compares two input arrays and returns a new array
+      # having the element-wise maxima.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_maximum(x, y) # => [[1, 1, 1], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_maximum)
+
+      # Returns element-wise minimum of the input arrays with broadcasting.
+      #
+      # This function compares two input arrays and returns a new array
+      # having the element-wise minima.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_minimum(x, y) # => [[0, 0, 0], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_minimum)
+
+      # Returns element-wise difference of the input arrays with broadcasting.
+      #
+      # `.broadcast_minus` is an alias to the function `.broadcast_sub`.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_minus(x, y) # => [[1, 1, 1], [0, 0, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_minus)
+
+      # Returns element-wise product of the input arrays with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_mul(x, y) # => [[0, 0, 0], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_mul)
+
+      # Returns the result of element-wise not equal to (`!=`)
+      # comparison operation with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_not_equal(x, y) # => [[1, 1, 1], [0, 0, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input to be compared.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input to be compared.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_not_equal)
+
+      # Returns element-wise sum of the input arrays with broadcasting.
+      #
+      # `.broadcast_plus` is an alias for `.broadcast_add`.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_plus(x, y) # => [[1, 1, 1], [2, 2, 2]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_plus)
+
+      # Returns result of first array elements raised to powers from
+      # second array, element-wise with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[2, 2, 2], [2, 2, 2]] # x
+      #     [[1], [2]]             # y
+      #
+      # Then:
+      #     broadcast_power(x, y) # => [[2, 2, 2], [4, 4, 4]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The base input.
+      # * *rhs* (`{{type}}`, required)
+      #   The exponent input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_power)
+
+      # Returns element-wise difference of the input arrays with broadcasting.
+      #
+      # `.broadcast_sub` is an alias to the function `.broadcast_minus`.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_sub(x, y) # => [[1, 1, 1], [0, 0, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_sub)
+
       # Clips (limits) the values in an array.
       #
       # Given an interval, values outside the interval are clipped to

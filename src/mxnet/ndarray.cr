@@ -126,7 +126,7 @@ module MXNet
     # from the second array (or scalar), element-wise with broadcasting.
     arithmetic(:**, Ops._broadcast_power, Internal._power_scalar)
 
-    # Performs element-wize numerical negative.
+    # Performs element-wise numerical negative.
     def -
       NDArray::Internal._mul_scalar(self, scalar: -1)
     end

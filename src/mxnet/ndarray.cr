@@ -100,31 +100,408 @@ module MXNet
       self
     end
 
-    private macro arithmetic(op, array_mod, scalar_mod)
-      def {{ op.id }}(other : self | Number)
-        if other.is_a?(self)
-          NDArray::{{ array_mod }}(self, other)
-        else
-          NDArray::{{ scalar_mod }}(self, scalar: other)
-        end
-      end
-    end
+    # Returns element-wise sum of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs + rhs`. Equivalent to `.broadcast_add` and
+    # `.broadcast_plus` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be added.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be added.
+    #
+    bifunc_helper(
+      add,
+      lhs, rhs,
+      Ops._broadcast_add,
+      :+,
+      Internal._plus_scalar,
+      Internal._plus_scalar
+    )
+
+    # Returns element-wise difference of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs - rhs`. Equivalent to `.broadcast_sub` and
+    # `.broadcast_minus` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be subtracted.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be subtracted.
+    #
+    bifunc_helper(
+      subtract,
+      lhs, rhs,
+      Ops._broadcast_sub,
+      :-,
+      Internal._rminus_scalar,
+      Internal._minus_scalar
+    )
+
+    # Returns element-wise product of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs * rhs`. Equivalent to `.broadcast_mul` for
+    # `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be multiplied.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be multiplied.
+    #
+    bifunc_helper(
+      multiply,
+      lhs, rhs,
+      Ops._broadcast_mul,
+      :*,
+      Internal._mul_scalar,
+      Internal._mul_scalar
+    )
+
+    # Returns element-wise division of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs / rhs`. Equivalent to `.broadcast_div` for
+    # `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be divided.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be divided.
+    #
+    bifunc_helper(
+      divide,
+      lhs, rhs,
+      Ops._broadcast_div,
+      :/,
+      Internal._rdiv_scalar,
+      Internal._div_scalar
+    )
+
+    # Returns result of first array elements raised to powers from
+    # second array, element-wise.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `base ** exp`. Equivalent to `.broadcast_power`
+    # for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *base* (`NDArray` or `Number`)
+    #   The base value.
+    # * *exp* (`NDArray` or `Number`)
+    #   The exponent value.
+    #
+    bifunc_helper(
+      power,
+      base, exp,
+      Ops._broadcast_power,
+      :**,
+      Internal._rpower_scalar,
+      Internal._power_scalar
+    )
+
+    # Returns element-wise maximum of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `.broadcast_maximum` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      maximum,
+      lhs, rhs,
+      Ops._broadcast_maximum,
+      lhs > rhs ? lhs : rhs,
+      Internal._maximum_scalar,
+      Internal._maximum_scalar
+    )
+
+    # Returns element-wise minimum of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `.broadcast_minimum` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      minimum,
+      lhs, rhs,
+      Ops._broadcast_minimum,
+      lhs < rhs ? lhs : rhs,
+      Internal._minimum_scalar,
+      Internal._minimum_scalar
+    )
+
+    # Returns the result of element-wise equal to (`==`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if
+    # corresponding elements are same, otherwise return 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs == rhs`. Equivalent to `.broadcast_equal` for
+    # `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      equal,
+      lhs, rhs,
+      Ops._broadcast_equal,
+      lhs == rhs ? 1.0 : 0.0,
+      Internal._equal_scalar,
+      Internal._equal_scalar
+    )
+
+    # Returns the result of element-wise not equal to (`!=`)
+    # comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if
+    # corresponding elements are different, otherwise return 0
+    # (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs != rhs`. Equivalent to `.broadcast_not_equal`
+    # for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      not_equal,
+      lhs, rhs,
+      Ops._broadcast_not_equal,
+      lhs == rhs ? 0.0 : 1.0,
+      Internal._not_equal_scalar,
+      Internal._not_equal_scalar
+    )
+
+    # Returns the result of element-wise greater than (`>`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is greater than corresponding *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs > rhs`. Equivalent to `.broadcast_greater`
+    # for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      greater,
+      lhs, rhs,
+      Ops._broadcast_greater,
+      lhs > rhs ? 1.0 : 0.0,
+      Internal._lesser_scalar,
+      Internal._greater_scalar
+    )
+
+    # Returns the result of element-wise greater than or equal to
+    # (`>=`) comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is greater than or equal to *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs >= rhs`. Equivalent to
+    # `.broadcast_greater_equal` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      greater_equal,
+      lhs, rhs,
+      Ops._broadcast_greater_equal,
+      lhs >= rhs ? 1.0 : 0.0,
+      Internal._lesser_equal_scalar,
+      Internal._greater_equal_scalar
+    )
+
+    # Returns the result of element-wise less than (`<`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is less than corresponding *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs < rhs`. Equivalent to `.broadcast_lesser`
+    # for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      lesser,
+      lhs, rhs,
+      Ops._broadcast_lesser,
+      lhs < rhs ? 1.0 : 0.0,
+      Internal._greater_scalar,
+      Internal._lesser_scalar
+    )
+
+    # Returns the result of element-wise less than or equal to (`<=`)
+    # comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is less than or equal to *rhs* element, otherwise return
+    # 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs <= rhs`. Equivalent to
+    # `.broadcast_lesser_equal` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      lesser_equal,
+      lhs, rhs,
+      Ops._broadcast_lesser_equal,
+      lhs <= rhs ? 1.0 : 0.0,
+      Internal._greater_equal_scalar,
+      Internal._lesser_equal_scalar
+    )
 
     # Performs element-wise addition with broadcasting.
-    arithmetic(:+, Ops._broadcast_add, Internal._plus_scalar)
+    def +(other)
+      self.class.add(self, other)
+    end
 
     # Performs element-wise subtraction with broadcasting.
-    arithmetic(:-, Ops._broadcast_sub, Internal._minus_scalar)
+    def -(other)
+      self.class.subtract(self, other)
+    end
 
     # Performs element-wise multiplication with broadcasting.
-    arithmetic(:*, Ops._broadcast_mul, Internal._mul_scalar)
+    def *(other)
+      self.class.multiply(self, other)
+    end
 
     # Performs element-wise division with broadcasting.
-    arithmetic(:/, Ops._broadcast_div, Internal._div_scalar)
+    def /(other)
+      self.class.divide(self, other)
+    end
 
     # Returns the result of the first array elements raised to powers
-    # from the second array (or scalar), element-wise with broadcasting.
-    arithmetic(:**, Ops._broadcast_power, Internal._power_scalar)
+    # from the second array (or scalar), element-wise with
+    # broadcasting.
+    def **(other)
+      self.class.power(self, other)
+    end
+
+    # Performs element-wise equal to (`==`) comparison operation with
+    # broadcasting.
+    def ==(other)
+      self.class.equal(self, other)
+    end
+
+    # Performs element-wise not equal to (`!=`) comparison operation
+    # with broadcasting.
+    def !=(other)
+      self.class.not_equal(self, other)
+    end
+
+    # Performs element-wise greater than (`>`) comparison operation
+    # with broadcasting.
+    def >(other)
+      self.class.greater(self, other)
+    end
+
+    # Performs element-wise greater than or equal to (`>=`) comparison
+    # operation with broadcasting.
+    def >=(other)
+      self.class.greater_equal(self, other)
+    end
+
+    # Performs element-wise less than (`<`) comparison operation
+    # with broadcasting.
+    def <(other)
+      self.class.lesser(self, other)
+    end
+
+    # Performs element-wise less than or equal to (`<=`) comparison
+    # operation with broadcasting.
+    def <=(other)
+      self.class.lesser_equal(self, other)
+    end
 
     # Performs element-wise numerical negative.
     def -
@@ -211,7 +588,7 @@ module MXNet
     # ### Parameters
     # * *keys* (`Array(Int | Range(Int, Int))`)
     #   Indexing key.
-    # * *value* (`Number | MXNet::NDArray)`)
+    # * *value* (`Number` or `MXNet::NDArray)`)
     #   The value to set.
     #
     # Using variable argument syntax:
@@ -266,7 +643,7 @@ module MXNet
     # from *self* to the new array.
     #
     # ### Parameters
-    # * *other* (`NDArray | Context`)
+    # * *other* (`NDArray` or `Context`)
     #   The destination array or context.
     #
     def copy_to(other : Context | self)
@@ -707,27 +1084,57 @@ end
 struct Number
   # Performs element-wise addition.
   def +(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._plus_scalar(other, scalar: self)
+    MXNet::NDArray.add(self, other)
   end
 
   # Performs element-wise subtraction.
   def -(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rminus_scalar(other, scalar: self)
+    MXNet::NDArray.subtract(self, other)
   end
 
   # Performs element-wise multiplication.
   def *(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._mul_scalar(other, scalar: self)
+    MXNet::NDArray.multiply(self, other)
   end
 
   # Performs element-wise division.
   def /(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rdiv_scalar(other, scalar: self)
+    MXNet::NDArray.divide(self, other)
   end
 
   # Returns the result of this number raised to powers from the array,
-  # element-wise with broadcasting.
+  # element-wise.
   def **(other : MXNet::NDArray)
-    MXNet::NDArray::Internal._rpower_scalar(other, scalar: self)
+    MXNet::NDArray.power(self, other)
+  end
+
+  # Performs element-wise equal to (`==`) comparison.
+  def ==(other : MXNet::NDArray)
+    MXNet::NDArray.equal(self, other)
+  end
+
+  # Performs element-wise not equal to (`!=`) comparison.
+  def !=(other : MXNet::NDArray)
+    MXNet::NDArray.not_equal(self, other)
+  end
+
+  # Performs element-wise greater than (`>`) comparison.
+  def >(other : MXNet::NDArray)
+    MXNet::NDArray.greater(self, other)
+  end
+
+  # Performs element-wise greater than or equal to (`>=`) comparison.
+  def >=(other : MXNet::NDArray)
+    MXNet::NDArray.greater_equal(self, other)
+  end
+
+  # Performs element-wise less than (`<`) comparison.
+  def <(other : MXNet::NDArray)
+    MXNet::NDArray.lesser(self, other)
+  end
+
+  # Performs element-wise less than or equal to (`<=`) comparison.
+  def <=(other : MXNet::NDArray)
+    MXNet::NDArray.lesser_equal(self, other)
   end
 end

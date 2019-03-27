@@ -224,31 +224,380 @@ module MXNet
       bind(ctx: ctx).forward
     end
 
-    private macro arithmetic(op, array_mod, scalar_mod)
-      def {{ op.id }}(other : self | Number)
-        if other.is_a?(self)
-          Symbol::{{ array_mod }}(self, other)
-        else
-          Symbol::{{ scalar_mod }}(self, scalar: other)
-        end
-      end
-    end
+    # Returns element-wise sum of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs + rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be added.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be added.
+    #
+    bifunc_helper(
+      add,
+      lhs, rhs,
+      Internal._plus,
+      :+,
+      Internal._plus_scalar,
+      Internal._plus_scalar
+    )
+
+    # Returns element-wise difference of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs - rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be subtracted.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be subtracted.
+    #
+    bifunc_helper(
+      subtract,
+      lhs, rhs,
+      Internal._minus,
+      :-,
+      Internal._rminus_scalar,
+      Internal._minus_scalar
+    )
+
+    # Returns element-wise product of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs * rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be multiplied.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be multiplied.
+    #
+    bifunc_helper(
+      multiply,
+      lhs, rhs,
+      Internal._mul,
+      :*,
+      Internal._mul_scalar,
+      Internal._mul_scalar
+    )
+
+    # Returns element-wise division of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs / rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be divided.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be divided.
+    #
+    bifunc_helper(
+      divide,
+      lhs, rhs,
+      Internal._div,
+      :/,
+      Internal._rdiv_scalar,
+      Internal._div_scalar
+    )
+
+    # Returns result of first array elements raised to powers from
+    # second array, element-wise.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `base ** exp`.
+    #
+    # ### Parameters
+    # * *base* (`Symbol` or `Number`)
+    #   The base value.
+    # * *exp* (`Symbol` or `Number`)
+    #   The exponent value.
+    #
+    bifunc_helper(
+      power,
+      base, exp,
+      Internal._power,
+      :**,
+      Internal._rpower_scalar,
+      Internal._power_scalar
+    )
+
+    # Returns element-wise maximum of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      maximum,
+      lhs, rhs,
+      Internal._maximum,
+      lhs > rhs ? lhs : rhs,
+      Internal._maximum_scalar,
+      Internal._maximum_scalar
+    )
+
+    # Returns element-wise minimum of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      minimum,
+      lhs, rhs,
+      Internal._minimum,
+      lhs < rhs ? lhs : rhs,
+      Internal._minimum_scalar,
+      Internal._minimum_scalar
+    )
+
+    # Returns the result of element-wise equal to (`==`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if
+    # corresponding elements are same, otherwise return 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs == rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      equal,
+      lhs, rhs,
+      Internal._equal,
+      lhs == rhs ? 1.0 : 0.0,
+      Internal._equal_scalar,
+      Internal._equal_scalar
+    )
+
+    # Returns the result of element-wise not equal to (`!=`)
+    # comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if
+    # corresponding elements are different, otherwise return 0
+    # (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs != rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      not_equal,
+      lhs, rhs,
+      Internal._not_equal,
+      lhs == rhs ? 0.0 : 1.0,
+      Internal._not_equal_scalar,
+      Internal._not_equal_scalar
+    )
+
+    # Returns the result of element-wise greater than (`>`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is greater than corresponding *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs > rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      greater,
+      lhs, rhs,
+      Internal._greater,
+      lhs > rhs ? 1.0 : 0.0,
+      Internal._lesser_scalar,
+      Internal._greater_scalar
+    )
+
+    # Returns the result of element-wise greater than or equal to
+    # (`>=`) comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is greater than or equal to *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs >= rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      greater_equal,
+      lhs, rhs,
+      Internal._greater_equal,
+      lhs >= rhs ? 1.0 : 0.0,
+      Internal._lesser_equal_scalar,
+      Internal._greater_equal_scalar
+    )
+
+    # Returns the result of element-wise less than (`<`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is less than corresponding *rhs* element, otherwise
+    # return 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs < rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      lesser,
+      lhs, rhs,
+      Internal._lesser,
+      lhs < rhs ? 1.0 : 0.0,
+      Internal._greater_scalar,
+      Internal._lesser_scalar
+    )
+
+    # Returns the result of element-wise less than or equal to (`<=`)
+    # comparison operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element is less than or equal to *rhs* element, otherwise return
+    # 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs <= rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      lesser_equal,
+      lhs, rhs,
+      Internal._lesser_equal,
+      lhs <= rhs ? 1.0 : 0.0,
+      Internal._greater_equal_scalar,
+      Internal._lesser_equal_scalar
+    )
 
     # Performs element-wise addition (without broadcasting).
-    arithmetic(:+, Internal._plus, Internal._plus_scalar)
+    def +(other)
+      self.class.add(self, other)
+    end
 
     # Performs element-wise subtraction (without broadcasting).
-    arithmetic(:-, Internal._minus, Internal._minus_scalar)
+    def -(other)
+      self.class.subtract(self, other)
+    end
 
     # Performs element-wise multiplication (without broadcasting).
-    arithmetic(:*, Internal._mul, Internal._mul_scalar)
+    def *(other)
+      self.class.multiply(self, other)
+    end
 
     # Performs element-wise division (without broadcasting).
-    arithmetic(:/, Internal._div, Internal._div_scalar)
+    def /(other)
+      self.class.divide(self, other)
+    end
 
     # Returns the result of the first array elements raised to powers
-    # from the second array (or scalar), element-wise with broadcasting.
-    arithmetic(:**, Internal._power, Internal._power_scalar)
+    # from the second array (or scalar), element-wise (without
+    # broadcasting).
+    def **(other)
+      self.class.power(self, other)
+    end
+
+    # Performs element-wise equal to (`==`) comparison operation
+    # (without broadcasting).
+    def ==(other)
+      self.class.equal(self, other)
+    end
+
+    # Performs element-wise not equal to (`!=`) comparison operation
+    # (without broadcasting).
+    def !=(other)
+      self.class.not_equal(self, other)
+    end
+
+    # Performs element-wise greater than (`>`) comparison operation
+    # (without broadcasting).
+    def >(other)
+      self.class.greater(self, other)
+    end
+
+    # Performs element-wise greater than or equal to (`>=`) comparison
+    # operation (without broadcasting).
+    def >=(other)
+      self.class.greater_equal(self, other)
+    end
+
+    # Performs element-wise less than (`<`) comparison operation
+    # (without broadcasting).
+    def <(other)
+      self.class.lesser(self, other)
+    end
+
+    # Performs element-wise less than or equal to (`<=`) comparison
+    # operation (without broadcasting).
+    def <=(other)
+      self.class.lesser_equal(self, other)
+    end
 
     # Performs element-wise numerical negative.
     def -
@@ -496,27 +845,57 @@ end
 struct Number
   # Performs element-wise addition.
   def +(other : MXNet::Symbol)
-    MXNet::Symbol::Internal._plus_scalar(other, scalar: self)
+    MXNet::Symbol.add(self, other)
   end
 
   # Performs element-wise subtraction.
   def -(other : MXNet::Symbol)
-    MXNet::Symbol::Internal._rminus_scalar(other, scalar: self)
+    MXNet::Symbol.subtract(self, other)
   end
 
   # Performs element-wise multiplication.
   def *(other : MXNet::Symbol)
-    MXNet::Symbol::Internal._mul_scalar(other, scalar: self)
+    MXNet::Symbol.multiply(self, other)
   end
 
   # Performs element-wise division.
   def /(other : MXNet::Symbol)
-    MXNet::Symbol::Internal._rdiv_scalar(other, scalar: self)
+    MXNet::Symbol.divide(self, other)
   end
 
   # Returns the result of this number raised to powers from the array,
-  # element-wise with broadcasting.
+  # element-wise.
   def **(other : MXNet::Symbol)
-    MXNet::Symbol::Internal._rpower_scalar(other, scalar: self)
+    MXNet::Symbol.power(self, other)
+  end
+
+  # Performs element-wise equal to (`==`) comparison.
+  def ==(other : MXNet::Symbol)
+    MXNet::Symbol.equal(self, other)
+  end
+
+  # Performs element-wise not equal to (`!=`) comparison.
+  def !=(other : MXNet::Symbol)
+    MXNet::Symbol.not_equal(self, other)
+  end
+
+  # Performs element-wise greater than (`>`) comparison.
+  def >(other : MXNet::Symbol)
+    MXNet::Symbol.greater(self, other)
+  end
+
+  # Performs element-wise greater than or equal to (`>=`) comparison.
+  def >=(other : MXNet::Symbol)
+    MXNet::Symbol.greater_equal(self, other)
+  end
+
+  # Performs element-wise less than (`<`) comparison.
+  def <(other : MXNet::Symbol)
+    MXNet::Symbol.lesser(self, other)
+  end
+
+  # Performs element-wise less than or equal to (`<=`) comparison.
+  def <=(other : MXNet::Symbol)
+    MXNet::Symbol.lesser_equal(self, other)
   end
 end

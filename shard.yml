@@ -9,6 +9,6 @@ authors:
   - Todd Sundsted
 
 libraries:
-  libmxnet: >= 1.2.1
+  libmxnet: ">= 1.2.1"
 
 crystal: 0.27.2

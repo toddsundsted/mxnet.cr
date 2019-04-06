@@ -1,0 +1,21 @@
+language: crystal
+
+crystal:
+  - latest
+
+script:
+  - crystal spec
+  - crystal docs
+
+before_script: |
+  sudo apt install gfortran
+  sudo pip install mxnet==1.4.0
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  project_name: toddsundsted/mxnet.cr
+  on:
+    branch: master
+  local_dir: docs

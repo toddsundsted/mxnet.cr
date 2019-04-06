@@ -1,5 +1,9 @@
 # Deep Learning for Crystal
 
+[![GitHub Release](https://img.shields.io/github/release/toddsundsted/mxnet.cr.svg)](https://github.com/toddsundsted/mxnet.cr/releases)
+[![Build Status](https://travis-ci.org/toddsundsted/mxnet.cr.svg?branch=master)](https://travis-ci.org/toddsundsted/mxnet.cr)
+[![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://toddsundsted.github.io/mxnet.cr/)
+
 [MXNet](https://mxnet.incubator.apache.org/) is a library for deep
 learning, written in C++. It provides bindings for many popular
 languages (Python, Scala, R, etc.). [MXNet.cr](https://github.com/toddsundsted/mxnet.cr)

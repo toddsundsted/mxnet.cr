@@ -9,12 +9,6 @@ module MXNet
       end
     end
 
-    {% begin %}
-      {% version = `python '#{__DIR__}/libmxnet.py' version`.stringify %}
-      puts "MXNet.cr version #{MXNet::VERSION} using MXNet library version " + {{ version }}
-      MXNET_VERSION = {{ version }}
-    {% end %}
-
     @[Link(ldflags: "`python '#{__DIR__}/libmxnet.py' library`")]
 
     lib LibMXNet

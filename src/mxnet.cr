@@ -10,11 +10,31 @@ module MXNet
   class MXNetException < Exception
   end
 
-  private module ClassMethods
-    delegate cpu, gpu, to: MXNet::Context
+  # Returns a CPU context.
+  #
+  # This function is equivalent to `MXNet::Context.cpu`.
+  #
+  # ### Parameters
+  # * *device_id* (`Int32`, default = 0)
+  #   Device id of the device. Not required for the CPU
+  #   context. Included to make the interface compatible with GPU
+  #   contexts.
+  #
+  def self.cpu(device_id : Int32 = 0)
+    MXNet::Context.cpu(device_id)
   end
 
-  extend ClassMethods
+  # Returns a GPU context.
+  #
+  # This function is equivalent to `MXNet::Context.gpu`.
+  #
+  # ### Parameters
+  # * *device_id* (`Int32`, default = 0)
+  #   Device id of the device. Required for the GPU contexts.
+  #
+  def self.gpu(device_id : Int32 = 0)
+    MXNet::Context.gpu(device_id)
+  end
 end
 
 require "./mxnet/libmxnet"

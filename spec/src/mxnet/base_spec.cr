@@ -6,7 +6,7 @@ class BaseTest < MXNet::Base
   end
 end
 
-describe "MXNet::Base" do
+describe MXNet::Base do
   describe ".output" do
     it "recursively pretty-prints it's argument" do
       BaseTest.output([1_u8, 2_i64, -3_f32]).should eq("[1,2,-3.0]")
@@ -17,13 +17,13 @@ describe "MXNet::Base" do
   end
 end
 
-describe "MXNet::NDArray" do
+describe MXNet::NDArray do
   it "pretty-prints keyword arguments" do
     MXNet::NDArray::Internal._zeros(shape: [3_u8]).to_a.should eq([0.0, 0.0, 0.0])
   end
 end
 
-describe "MXNet::Symbol" do
+describe MXNet::Symbol do
   it "pretty-prints keyword arguments" do
     MXNet::Symbol::Internal._zeros(shape: [3_u8]).eval.first.to_a.should eq([0.0, 0.0, 0.0])
   end

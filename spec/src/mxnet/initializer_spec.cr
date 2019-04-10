@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe "MXNet::Initializer" do
+describe MXNet::Initializer do
   describe ".create" do
     it "accepts a class" do
       init = MXNet::Initializer.create(MXNet::Initializer::Zero)

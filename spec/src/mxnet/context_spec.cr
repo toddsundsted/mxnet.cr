@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe "MXNet::Context" do
+describe MXNet::Context do
   describe ".cpu" do
     it "is a shortcut for .new(:cpu, ...)" do
       MXNet::Context.cpu.should eq(MXNet::Context.new(:cpu, 0))

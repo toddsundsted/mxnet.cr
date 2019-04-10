@@ -37,8 +37,8 @@ module MXNet
       Array(Int64) => 6
     }
 
-    protected def initialize(handle)
-      @handle = handle
+    # :nodoc:
+    protected def initialize(@handle)
     end
 
     # :nodoc:
@@ -508,6 +508,7 @@ module MXNet
       NDArray::Internal._mul_scalar(self, scalar: -1)
     end
 
+    # Leaves the values unchanged.
     def +
       self
     end
@@ -576,7 +577,7 @@ module MXNet
     def [](keys : Array(Int | Range(Int, Int)))
       ranges, dims = ranges_and_dims(keys, compact: true)
       out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last))
-      dims = dims.size > 0 ? out.reshape(shape: dims) : out
+      dims.size > 0 ? out.reshape(shape: dims) : out
     end
 
     # Sets sliced view of this array to the specified value.
@@ -1076,7 +1077,7 @@ module MXNet
         kwargs.keys.map { |a| output(a).as(String).to_unsafe },
         kwargs.values.map { |a| output(a).as(String).to_unsafe }
       )
-      out || NDArray.new(outputs[0])
+      out || new(outputs[0])
     end
   end
 end

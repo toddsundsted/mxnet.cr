@@ -29,7 +29,7 @@ private macro random_spec_helper(random, *args)
   end
 end
 
-describe "MXNet::NDArray" do
+describe MXNet::NDArray do
   describe ".array" do
     it "creates an NDArray from a Crystal array" do
       MXNet::NDArray.array([[[[1]]]]).should be_a(MXNet::NDArray)

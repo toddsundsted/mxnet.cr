@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-describe "MXNet::Name::Manager" do
+describe MXNet::Name::Manager do
   describe "#get" do
     it "returns the name if specified" do
       MXNet::Name::Manager.current.get("foobar", "test").should eq("foobar")

@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe "MXNet::Autograd" do
+describe MXNet::Autograd do
   describe ".is_recording" do
     it "is false, by default" do
       MXNet::Autograd.is_recording.should be_false

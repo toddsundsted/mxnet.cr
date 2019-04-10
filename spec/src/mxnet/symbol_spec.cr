@@ -15,7 +15,7 @@ private macro random_spec_helper(random, *args)
   end
 end
 
-describe "MXNet::Symbol" do
+describe MXNet::Symbol do
   describe ".var" do
     it "creates a symbolic variable" do
       MXNet::Symbol.var("s").should be_a(MXNet::Symbol)

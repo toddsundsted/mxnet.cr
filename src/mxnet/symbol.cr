@@ -8,8 +8,8 @@ module MXNet
 
     @handle : SymbolHandle
 
-    protected def initialize(handle)
-      @handle = handle
+    # :nodoc:
+    protected def initialize(@handle)
     end
 
     # :nodoc:
@@ -604,6 +604,7 @@ module MXNet
       Symbol::Internal._mul_scalar(self, scalar: -1)
     end
 
+    # Leaves the values unchanged.
     def +
       self
     end
@@ -828,7 +829,8 @@ module MXNet
         kwargs.size,
         kwargs.keys.map { |a| output(a).as(String).to_unsafe },
         kwargs.values.map { |a| output(a).as(String).to_unsafe },
-        out sym_handle)
+        out sym_handle
+      )
       sym = new(sym_handle)
       MXNet::Internal.libcall(
         NNSymbolCompose,
@@ -836,7 +838,8 @@ module MXNet
         MXNet::Name::Manager.current.get(name, op.downcase),
         args.size,
         nil,
-        args.map(&.handle.as(SymbolHandle)))
+        args.map(&.handle.as(SymbolHandle))
+      )
       sym
     end
   end

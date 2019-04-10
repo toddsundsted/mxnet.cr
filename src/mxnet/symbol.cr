@@ -2,6 +2,39 @@ module MXNet
   class SymbolException < Exception
   end
 
+  # The `Symbol` API provides neural network graphs and
+  # auto-differentiation. A symbol represents a multi-output symbolic
+  # expression. Symbols are composited by operators, such as simple
+  # matrix operations (e.g. “+”), or a neural network layer (e.g.
+  # convolution layer). An operator can take several input variables,
+  # produce more than one output variable, and have internal state
+  # variables. A variable can be either free, which we can bind with
+  # values later, or can be an output of another symbol.
+  #
+  # ```
+  # a = MXNet::Symbol.var("a")
+  # b = MXNet::Symbol.var("b")
+  # c = 2 * a + b
+  # e = c.bind({"a" => MXNet::NDArray.array([1, 2]), "b" => MXNet::NDArray.array([2, 3])}, MXNet.cpu)
+  # e.forward.first # => [4, 7]
+  #                 #    <NDArray 2 int32 cpu(0)>
+  # ```
+  #
+  # A detailed (albeit in Python) tutorial is available at
+  # [Symbol - Neural network graphs](https://mxnet.incubator.apache.org/versions/master/tutorials/basic/symbol.html).
+  #
+  # Note: most operators provided in `Symbol` are similar to those in
+  # `NDArray` although there are few differences:
+  #
+  # * `Symbol` adopts a declarative programming style. In other words,
+  #   we need to first compose the computations, and then feed the
+  #   computation with data for execution, whereas `NDArray` adopts an
+  #   imperative programming style.
+  #
+  # * Most binary operators in `Symbol` such as `+` and `>` don’t
+  #   broadcast. You need to call the broadcast version of the
+  #   operator, such as `broadcast_plus`, explicitly.
+  #
   class Symbol < Base
     # :nodoc:
     alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle

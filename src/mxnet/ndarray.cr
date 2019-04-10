@@ -2,6 +2,35 @@ module MXNet
   class NDArrayException < Exception
   end
 
+  # The `NDArray` API provides imperative tensor operations on
+  # CPU/GPU. An `NDArray` represents a multi-dimensional, fixed-size
+  # homogeneous array.
+  #
+  # ```
+  # x = MXNet::NDArray.array([[1, 2, 3], [4, 5, 6]], dtype: :float32)
+  # x.shape      # [2, 3]
+  # y = x + MXNet::NDArray.ones(x.shape) * 3
+  # puts y       # [[4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+  #              # <NDArray 2x3 float32 cpu(0)>
+  # z = y.as_in_context(MXNet.gpu(0))
+  # puts z       # [[4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+  #              # <NDArray 2x3 float32 gpu(0)>
+  # ```
+  #
+  # A detailed (albeit in Python) tutorial is available at
+  # [NDArray - Imperative tensor operations on CPU/GPU](https://mxnet.incubator.apache.org/versions/master/tutorials/basic/ndarray.html).
+  #
+  # Note: `NDArray` provides almost the same routines as `Symbol`.
+  # Most routines between these two packages share source code. But
+  # `NDArray` differs from `Symbol` in few aspects:
+  #
+  # * `NDArray` adopts an imperative programming style -- namely
+  #   expressions are executed step-by-step so that the results can be
+  #   obtained immediately, whereas `Symbol` adopts a declarative
+  #   style.
+  # * Most binary operators in `NDArray` such as `+` and `>` have
+  #   broadcasting enabled by default.
+  #
   class NDArray < Base
     # :nodoc:
     alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle

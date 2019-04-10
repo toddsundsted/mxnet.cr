@@ -82,3 +82,12 @@ library, or 2) move or copy the library into a well-known location.
 The Crystal build step does not currently set the path to the library
 explicitly and OSX does not currently look for shared libraries in
 non-standard locations without guidance.
+
+# Status
+
+MXNet.cr currently focuses on supporting most of the basic arithmetic
+operations on arrays and symbols, with support for symbolic evaluation
+and some support for automatic differentiation thrown in. Almost all
+operations in the library are exposed, however, via the automatically
+generated `Ops`, `Sparse`, `Linalg`, etc. modules but documentation
+and guidance are nonexistent at this time.

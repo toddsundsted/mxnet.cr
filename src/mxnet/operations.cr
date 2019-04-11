@@ -643,6 +643,26 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, abs)
 
+      # Applies an activation function element-wise to the input.
+      #
+      # The following activation functions are supported:
+      #   * **relu**: Rectified Linear Unit, _y = max(x, 0)_
+      #   * **softrelu**: Soft ReLU or SoftPlus, _y = log(1 + exp(x))_
+      #   * **tanh**: Hyperbolic tangent, _y = exp(x) − exp(−x) / exp(x) + exp(−x)_
+      #   * **sigmoid**: _y = 1 / 1 + exp(−x)_
+      #   * **softsign**: _y = x / 1 + abs(x)_
+      #
+      # ### Parameters
+      # * *data* (`{{type}}`, required)
+      #   The input array.
+      # * *act_type* (`::Symbol`, `:relu`, `:softrelu`, `:tanh`, `:sigmoid`, or `:softsign`, required)
+      #   Activation function to be applied.
+      {{suffix}}
+      #
+      def self.activation(data : self, act_type, **kwargs)
+        Ops._Activation(data, **kwargs.merge({act_type: act_type}))
+      end
+
       # Adds all input arguments element-wise.
       #
       # *add_n(a1,a2,...,an)=a1+a2+...+an*
@@ -999,6 +1019,102 @@ module MXNet
         Ops._concat(*data, **kwargs.merge({num_args: data.size}))
       end
 
+      # Compute *N*-D convolution on *(N+2)*-D input.
+      #
+      # For general 2-D convolution, the shapes are:
+      #   * **data**: *[batch_size, channel, height, width]*
+      #   * **weight**: *[num_filter, channel, kernel[0], kernel[1]]*
+      #   * **bias**: *[num_filter]*
+      #   * **out**: *[batch_size, num_filter, out_height, out_width]*
+      #
+      # If *no_bias* is set to be true, then the *bias* term is
+      # ignored.
+      #
+      # The default data *layout* is *NCHW*, namely *(batch_size,
+      # channel, height, width)*. We can choose other layouts such as
+      # *NWC*.
+      #
+      # If *num_group* is larger than 1, denoted by *g*, then split
+      # the input data evenly into *g* parts along the channel axis,
+      # and also evenly split *weight* along the first dimension. Next
+      # compute the convolution on the *i*-th part of the data with
+      # the *i*-th weight part. The output is obtained by
+      # concatenating all the *g* results.
+      #
+      # 1-D convolution does not have *height* dimension but only
+      # *width* in space.  The shapes are:
+      #   * **data**: *[batch_size, channel, width]*
+      #   * **weight**: *[num_filter, channel, kernel[0]]*
+      #   * **bias**: *[num_filter]*
+      #   * **out**: *[batch_size, num_filter, out_width]*
+      #
+      # 3-D convolution adds an additional *depth* dimension besides
+      # *height* and *width*. The shapes are:
+      #   * **data**: *[batch_size, channel, depth, height, width]*
+      #   * **weight**: *[num_filter, channel, kernel[0], kernel[1], kernel[2]]*
+      #   * **bias**: *[num_filter]*
+      #   * **out**: *[batch_size, num_filter, out_depth, out_height, out_width]*
+      #
+      # Both *weight* and *bias* are learnable parameters.
+      #
+      # There are other options to tune the performance:
+      #   * **cudnn_tune**: enabling this option leads to higher
+      #   startup time but may give faster speed. Options are: "off" -
+      #   no tuning, "limited_workspace" - run test and pick the
+      #   fastest algorithm that doesn't exceed workspace limit,
+      #   "fastest" - pick the fastest algorithm and ignore workspace
+      #   limit, `nil` (default) - the behavior is determined by the
+      #   environment variable "MXNET_CUDNN_AUTOTUNE_DEFAULT" -- 0 for
+      #   off, 1 for limited workspace (default), 2 for fastest.
+      #   * **workspace**: a larger number leads to more (GPU) memory
+      #   usage but may improve the performance.
+      #
+      # ### Parameters
+      # * *data* (`{{type}}`, required)
+      #   Input data.
+      # * *weight* (`{{type}}`, required)
+      #   Weight matrix.
+      # * *bias* (`{{type}}`, required)
+      #   Bias parameter.
+      # * *kernel* (`Array(Int)`, shape, required)
+      #   Convolution kernel size: `[w]`, `[h, w]` or `[d, h, w]`.
+      # * *stride* (`Array(Int)`, shape, optional, default = [])
+      #   Convolution stride: `[w]`, `[h, w]` or `[d, h, w]`. Defaults
+      #   to 1 for each dimension.
+      # * *dilate* (`Array(Int)`, shape, optional, default = [])
+      #   Convolution dilation: `[w]`, `[h, w]` or `[d, h, w]`.
+      #   Defaults to 1 for each dimension.
+      # * *pad* (`Array(Int)`, shape, optional, default = [])
+      #   Zero pad for convolution: `[w]`, `[h, w]` or `[d, h, w]`.
+      #   Defaults to no padding.
+      # * *num_filter* (`Int::Unsigned`, required)
+      #   Convolution filter (channel) number.
+      # * *num_group* (`Int::Unsigned`, optional, default = 1)
+      #   Number of group partitions.
+      # * *workspace* (`Int::Unsigned`, optional, default = 1024)
+      #   Maximum temporary workspace allowed (MB) for convolution.
+      #   This parameter has two usages. When CUDNN is not used, it
+      #   determines the effective batch size of the convolution
+      #   kernel. When CUDNN is used, it controls the maximum
+      #   temporary storage used for tuning the best CUDNN kernel
+      #   when "limited_workspace" strategy is used.
+      # * *no_bias* (`Bool`, optional, default = false)
+      #   Whether to disable bias parameter.
+      # * *cudnn_tune* (`::Symbol`, `:fastest`, `:limited_workspace`, `:off` or `nil`, optional)
+      #   Whether to pick the convolution algorithm by running a
+      #   performance test.
+      # * *cudnn_off* (`Bool`, optional, default = false)
+      #   Turn off cudnn for this layer.
+      # * *layout* (`String`, `"NCDHW"`, `"NCHW"`, `"NCW"`, `"NDHWC"`, `"NHWC"`, `"NWC"` or `nil`, optional)
+      #   Set layout for input, output and weight. Empty for default
+      #   layout: "NCW" for 1D, "NCHW" for 2D and "NCDHW" for
+      #   3D. "NHWC" and "NDHWC" are only supported on GPU.
+      {{suffix}}
+      #
+      def self.convolution(data : self, weight : self?, bias : self?, kernel, num_filter, **kwargs)
+        Ops._Convolution(data, weight, bias, **kwargs.merge({kernel: kernel, num_filter: num_filter}))
+      end
+
       # Computes the dot product of two arrays.
       #
       # `.dot`‘s behavior depends on the input array dimensions:
@@ -1083,6 +1199,44 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, flip)
+
+      # Applies a linear transformation: _Y = XWᵀ + b_.
+      #
+      # If *flatten* is true, then the shapes are:
+      #   * **data**: *[batch_size, x1, x2, ..., xn]*
+      #   * **weight**: *[num_hidden, x1 * x2 * ... * xn]*
+      #   * **bias**: *[num_hidden]*
+      #   * **out**: *[batch_size, num_hidden]*
+      #
+      # If *flatten* is false, then the shapes are:
+      #   * **data**: *[x1, x2, ..., xn, input_dim]*
+      #   * **weight**: *[num_hidden, input_dim]*
+      #   * **bias**: *[num_hidden]*
+      #   * **out**: *[x1, x2, ..., xn, num_hidden]*
+      #
+      # The learnable parameters include both *weight* and *bias*.
+      #
+      # If *no_bias* is true, then the *bias* term is ignored.
+      #
+      # ### Parameters
+      # * *data* (`{{type}}`, required)
+      #   Input data.
+      # * *weight* (`{{type}}`, required)
+      #   Weight matrix.
+      # * *bias* (`{{type}}`, required)
+      #   Bias parameter.
+      # * *num_hidden* (`Int`, required)
+      #   Number of hidden nodes of the output.
+      # * *no_bias* (`Bool`, optional, default = false)
+      #   Whether to disable bias parameter.
+      # * *flatten* (`Bool`, optional, default = true)
+      #   Whether to collapse all but the first axis of the input data
+      #   tensor.
+      {{suffix}}
+      #
+      def self.fully_connected(data : self, weight : self?, bias : self?, num_hidden : Int, **kwargs)
+        Ops._FullyConnected(data, weight, bias, **kwargs.merge({num_hidden: num_hidden}))
+      end
 
       # Returns element-wise natural logarithmic value of the input.
       #
@@ -1268,6 +1422,78 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, pick)
 
+      # Performs pooling on the input.
+      #
+      # The shapes for 1-D pooling are:
+      #   * **data** and **out**:
+      #   *[batch_size, channel, width]* ("NCW" layout) or
+      #   *[batch_size, width, channel]* ("NWC" layout)
+      #
+      # The shapes for 2-D pooling are:
+      #   * **data** and **out**:
+      #   *[batch_size, channel, height, width]* ("NCHW" layout) or
+      #   *[batch_size, height, width, channel]* ("NHWC" layout)
+      #
+      # Three pooling options are supported by *pool_type*:
+      #   * **avg**: average pooling
+      #   * **max**: max pooling
+      #   * **sum**: sum pooling
+      #   * **lp**: Lp pooling
+      #
+      # For 3-D pooling, an additional *depth* dimension is added
+      # before *height*. Namely the input data and output will have
+      # shape:
+      #   *[batch_size, channel, depth, height, width]* ("NCDHW" layout) or
+      #   *[batch_size, depth, height, width, channel]* ("NDHWC" layout).
+      #
+      # Notes on Lp pooling:
+      #
+      # Lp pooling was first introduced by this paper:
+      # https://arxiv.org/pdf/1204.3968.pdf. L-1 pooling is simply
+      # sum pooling, while L-inf pooling is simply max pooling. We can
+      # see that Lp pooling stands between those two, in practice the
+      # most common value for *p* is 2.
+      #
+      # ### Parameters
+      # * *data* (`{{type}}`, required)
+      #   Input data.
+      # * *kernel* (`Array(Int)`, shape, optional, default = [])
+      #   Pooling kernel size: *[y, x]* or *[d, y, x]*.
+      # * *pool_type* (`::Symbol`, `:avg`, `:lp`, `:max` or `:sum`, optional, default = `:max`)
+      #   Pooling type to be applied.
+      # * *global_pool* (`Bool`, optional, default = false)
+      #   Ignore kernel size; do global pooling based on current input
+      #   feature map.
+      # * *cudnn_off* (`Bool`, optional, default = false)
+      #   Turn off cudnn pooling and use MXNet pooling operator.
+      # * *pooling_convention* (`::Symbol`, `:full`, `:same`, or `:valid`, optional, default = `:valid`)
+      #   Pooling convention to be applied.
+      # * *stride* (`Array(Int)`, shape, optional, default = [])
+      #   Stride for pooling: *[y, x]* or *[d, y, x]*. Defaults to 1
+      #   for each dimension.
+      # * *pad* (`Array(Int)`, shape, optional, default = [])
+      #   Pad for pooling: *[y, x]* or *[d, y, x]*. Defaults to no
+      #   padding.
+      # * *p_value* (`Int`, optional)
+      #   Value of *p* for Lp pooling, can be 1 or 2, required for Lp
+      #   pooling.
+      # * *count_include_pad* (`Bool`, optional)
+      #   Only used for average pooling. Specify whether to count
+      #   padding elements for average calculation. For example, with
+      #   a 5*5 kernel on a 3*3 corner of a image, the sum of the 9
+      #   valid elements will be divided by 25 if this is set to
+      #   true, or it will be divided by 9 if this is set to
+      #   false. Defaults to true.
+      # * *layout* (`String`, `"NCDHW"`, `"NCHW"`, `"NCW"`, `"NDHWC"`, `"NHWC"`, `"NWC"` or `nil`, optional)
+      #   Set layout for input, output and weight. Empty for default
+      #   layout: "NCW" for 1D, "NCHW" for 2D and "NCDHW" for
+      #   3D. "NHWC" and "NDHWC" are only supported on GPU.
+      {{suffix}}
+      #
+      def self.pooling(data : self, **kwargs)
+        Ops._Pooling(data, **kwargs)
+      end
+
       # Computes the rectified linear activation.
       #
       # _y=max(input,0)_
@@ -1351,6 +1577,76 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, reshape_like)
+
+      # Update function for Stochastic Gradient Descent (SGD)
+      # optimizer.
+      #
+      # SGD updates the weights using:
+      #     weight = weight - learning_rate * (gradient + wd * weight)
+      #
+      # ### Parameters
+      # * *weight* (`{{type}}`, required)
+      #   Weights.
+      # * *grad* (`{{type}}`, required)
+      #   Gradients.
+      # * *lr* (`Float`, required)
+      #   Learning rate.
+      # * *wd* (`Float`, optional, default = 0)
+      #   Weight decay augments the objective function with a
+      #   regularization term that penalizes large weights. The
+      #   penalty scales with the square of the magnitude of each
+      #   weight.
+      # * *rescale_grad* (`Float`, optional, default = 1.0)
+      #   Rescale gradient to `grad = rescale_grad * grad`.
+      # * *clip_gradient* (`Float`, optional, default = -1.0)
+      #   Clip gradient to the range of *[-clip_gradient,
+      #   clip_gradient]*. If `clip_gradient <= 0`, gradient clipping
+      #   is turned off.
+      # * *lazy_update* (`Bool`, optional, default = true)
+      #   If true, lazy updates are applied if gradient's stype is
+      #   row_sparse.
+      {{suffix}}
+      #
+      def self.sgd_update(weight : self, grad : self, lr : Float, **kwargs)
+        Ops._sgd_update(weight, grad, **kwargs.merge({lr: lr}))
+      end
+
+      # Momentum update function for Stochastic Gradient Descent (SGD)
+      # optimizer.
+      #
+      # Momentum update has better convergence rates on neural
+      # networks.
+      #
+      # ### Parameters:
+      # * *weight* (`{{type}}`, required)
+      #   Weights.
+      # * *grad* (`{{type}}`, required)
+      #   Gradients.
+      # * *mom* (`{{type}}`, required)
+      #   Momentum.
+      # * *lr* (`Float`, required)
+      #   Learning rate.
+      # * *momentum* (`Float`, optional, default = 0)
+      #   The decay rate of momentum estimates at each epoch.
+      # * *wd* (`Float`, optional, default = 0)
+      #   Weight decay augments the objective function with a
+      #   regularization term that penalizes large weights. The
+      #   penalty scales with the square of the magnitude of each
+      #   weight.
+      # * *rescale_grad* (`Float`, optional, default = 1.0)
+      #   Rescale gradient to `grad = rescale_grad * grad`.
+      # * *clip_gradient* (`Float`, optional, default = -1.0)
+      #   Clip gradient to the range of *[-clip_gradient,
+      #   clip_gradient]*. If `clip_gradient <= 0`, gradient clipping
+      #   is turned off.
+      # * *lazy_update* (`Bool`, optional, default = true)
+      #   If true, lazy updates are applied if gradient's stype is
+      #   row_sparse.
+      {{suffix}}
+      #
+      def self.sgd_mom_update(weight : self, grad : self, mom : self, lr : Float, **kwargs)
+        Ops._sgd_mom_update(weight, grad, mom, **kwargs.merge({lr: lr}))
+      end
 
       # Randomly shuffles the elements.
       #

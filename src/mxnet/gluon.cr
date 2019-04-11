@@ -10,3 +10,5 @@ module MXNet
   module Gluon
   end
 end
+
+require "./gluon/parameter"

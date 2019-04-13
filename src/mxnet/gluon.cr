@@ -12,4 +12,5 @@ module MXNet
 end
 
 require "./gluon/parameter"
+require "./gluon/block"
 require "./gluon/trainer"

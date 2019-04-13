@@ -21,6 +21,7 @@ module MXNet
       @grad : Array(NDArray)?
       @init : Initializer?
       @ctx : Array(Context)?
+      @trainer : Trainer?
       @var : Symbol?
 
       # :nodoc:
@@ -76,6 +77,8 @@ module MXNet
         @dtype = dtype
       end
 
+      property :trainer
+
       # Initializes parameter and gradient arrays. Only used with
       # `NDArray` API.
       #
@@ -87,7 +90,8 @@ module MXNet
       #   Initialize `Parameter` on given `Context`s. A copy will be
       #   created for each context. Note: copies are independent
       #   arrays. The programmer is responsible for keeping values
-      #   consistent when updating.
+      #   consistent when updating. Normally `Trainer` does this for
+      #   you.
       # * *default_init* (`Initializer`, default = `:uniform`)
       #   Default initializer.
       # * *force_reinit* (`Bool`, default = `false`)
@@ -334,9 +338,9 @@ module MXNet
 
     # A constant parameter for holding immutable tensors.
     #
-    # `Constant`s are ignored by `Autograd`, thus their values will
-    # not change during training. But you can still update their
-    # values manually with the `set_data` method.
+    # `Constant`s are ignored by `Autograd` and `Trainer`, thus their
+    # values will not change during training. But you can still update
+    # their values manually with the `set_data` method.
     #
     class Constant < Parameter
       # :nodoc:

@@ -2,6 +2,7 @@ require "spec"
 require "../src/mxnet"
 require "../src/mxnet/gluon"
 require "./expectations"
+require "./doubles"
 
 def gpu_enabled?
   {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") >= 0 %}

@@ -14,3 +14,4 @@ end
 require "./gluon/parameter"
 require "./gluon/block"
 require "./gluon/trainer"
+require "./gluon/loss"

@@ -1070,6 +1070,85 @@ module MXNet
       end
     end
 
+    # Saves arrays to a file.
+    #
+    # Examples of filenames:
+    # - `/path/to/file`
+    # - `s3://my-bucket/path/to/file` (if MXNet is compiled with AWS S3 supports)
+    # - `hdfs://path/to/file` (if MXNet is compiled with HDFS supports)
+    #
+    # ### Parameters
+    # * *fname* (`String`)
+    #   The filename.
+    # * *data* (`NDArray` or `Enumerable({String, NDArray})` or `Enumerable(NDArray)`)
+    #   The data to save.
+    #
+    def self.save(fname, data)
+      case data
+      when NDArray
+        data = [data]
+        keys = [] of String
+      when Enumerable({String, NDArray})
+        keys = data.map(&.first)
+        data = data.map(&.last)
+      when Enumerable(NDArray)
+        data = data.to_a
+        keys = [] of String
+      else
+        raise ArgumentError.new(
+          "Data must either be an NDArray, an enumerable of NDArrays, " \
+          "or a enumerable of String, NDArray tuples."
+        )
+      end
+      MXNet::Internal.libcall(
+        MXNDArraySave,
+        fname,
+        data.size,
+        data.map(&.handle.as(NDArrayHandle)),
+        keys.map(&.to_unsafe)
+      )
+    end
+
+    # Loads arrays from a file.
+    #
+    # Returns `Array(NDArray)` or `Hash(String, NDArray)`.
+    # See `.save` for more detail on format.
+    #
+    # Examples of filenames:
+    # - `/path/to/file`
+    # - `s3://my-bucket/path/to/file` (if MXNet is compiled with AWS S3 supports)
+    # - `hdfs://path/to/file` (if MXNet is compiled with HDFS supports)
+    #
+    # ### Parameters
+    # * *fname* (`String`)
+    #   The filename.
+    #
+    def self.load(fname)
+      MXNet::Internal.libcall(
+        MXNDArrayLoad,
+        fname,
+        out size,
+        out arr,
+        out name_size,
+        out names
+      )
+      if name_size == 0
+        size.times.reduce([] of NDArray) do |array, i|
+          value = new(arr[i])
+          array << value
+        end
+      elsif name_size == size
+        size.times.reduce({} of String => NDArray) do |hash, i|
+          key = String.new(names[i])
+          value = new(arr[i])
+          hash[key] = value
+          hash
+        end
+      else
+        raise Exception.new("invalid file format")
+      end
+    end
+
     # TODO: cache op handles
     def self.imperative_invoke(op, *ndargs, out _out : self? = nil, **kwargs)
       ndargs = ndargs.size > 0 ?

@@ -216,6 +216,19 @@ module MXNet
         seed : Int32,
         dev_type : Int32, dev_id : Int32
       ) : Int32
+      fun MXNDArraySave(
+        fname : UInt8*,
+        num_args : MXUInt,
+        args : NDArrayHandle*,
+        keys : UInt8**
+      ) : Int32
+      fun MXNDArrayLoad(
+        fname : UInt8*,
+        size : MXUInt*,
+        arr : NDArrayHandle**,
+        name_size : MXUInt*,
+        names : UInt8***
+      ) : Int32
     end
   end
 end

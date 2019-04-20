@@ -21,8 +21,12 @@ module MXNet
       alias NNUInt = UInt32
 
       fun MXGetLastError() : UInt8*
-      fun MXGetVersion(version : Int32*) : Int32
-      fun MXGetGPUCount(count : Int32*) : Int32
+      fun MXGetVersion(
+        version : Int32*
+      ) : Int32
+      fun MXGetGPUCount(
+        count : Int32*
+      ) : Int32
       fun MXGetGPUMemoryInformation(
         dev_id : Int32,
         free_mem : Int32*,
@@ -33,6 +37,8 @@ module MXNet
         free_mem : UInt64*,
         total_mem : UInt64*
       ) : Int32
+
+      # NDArray
       fun MXNDArrayCreateEx(
         shape : UInt32*,
         ndim : UInt32,
@@ -40,6 +46,9 @@ module MXNet
         delay_alloc : Int32,
         dtype : Int32,
         handle : NDArrayHandle*
+      ) : Int32
+      fun MXNDArrayFree(
+        handle : NDArrayHandle
       ) : Int32
       fun MXNDArraySyncCopyFromCPU(
         handle : NDArrayHandle,
@@ -69,58 +78,27 @@ module MXNet
         handle : NDArrayHandle,
         dtype : UInt32*
       ) : Int32
-      fun MXNDArrayFree(
-        handle : NDArrayHandle
+      fun MXNDArraySave(
+        fname : UInt8*,
+        num_args : MXUInt,
+        args : NDArrayHandle*,
+        keys : UInt8**
       ) : Int32
-      fun MXAutogradMarkVariables(
-        num_var : MXUInt,
-        var_handles : NDArrayHandle*,
-        reqs_array : MXUInt*,
-        grad_handles : NDArrayHandle*
+      fun MXNDArrayLoad(
+        fname : UInt8*,
+        size : MXUInt*,
+        arr : NDArrayHandle**,
+        name_size : MXUInt*,
+        names : UInt8***
       ) : Int32
-      fun MXAutogradBackwardEx(
-        num_outputs : MXUInt,
-        output_handles : NDArrayHandle*,
-        ograd_handles : NDArrayHandle*,
-        num_variables : MXUInt,
-        var_handles : NDArrayHandle*,
-        retain_graph : Int32,
-        create_graph : Int32,
-        is_train : Int32,
-        grad_handles : NDArrayHandle **,
-        grad_stypes : Int32**
-      ) : Int32
-      fun MXAutogradSetIsRecording(
-        is_recording : Int32,
-        previous : Int32*
-      ) : Int32
-      fun MXAutogradSetIsTraining(
-        is_training : Int32,
-        previous : Int32*
-      ) : Int32
-      fun MXAutogradIsRecording(
-        current : Bool*
-      ) : Int32
-      fun MXAutogradIsTraining(
-        current : Bool*
-      ) : Int32
-      fun NNGetOpHandle(
-        name : UInt8*,
-        op : OpHandle*
-      ) : Int32
-      fun MXImperativeInvoke(
-        creator : OpHandle,
-        num_inputs : Int32,
-        inputs : NDArrayHandle*,
-        num_outputs : Int32*,
-        outputs : NDArrayHandle**,
-        num_params : Int32,
-        param_keys : UInt8**,
-        param_vals : UInt8**
-      ) : Int32
+
+      # Symbol
       fun MXSymbolCreateVariable(
         name : UInt8*,
         handle : SymbolHandle*
+      ) : Int32
+      fun MXSymbolFree(
+        handle : SymbolHandle
       ) : Int32
       fun MXSymbolGetName(
         handle : SymbolHandle,
@@ -158,9 +136,49 @@ module MXNet
         size : MXUInt*,
         str_array : UInt8***
       ) : Int32
-      fun MXSymbolFree(
-        handle : SymbolHandle
+      fun NNSymbolCompose(
+        handle : SymbolHandle,
+        name : UInt8*,
+        num_args : NNUInt,
+        keys : UInt8**,
+        args : SymbolHandle*
       ) : Int32
+
+      # Autograd
+      fun MXAutogradMarkVariables(
+        num_var : MXUInt,
+        var_handles : NDArrayHandle*,
+        reqs_array : MXUInt*,
+        grad_handles : NDArrayHandle*
+      ) : Int32
+      fun MXAutogradBackwardEx(
+        num_outputs : MXUInt,
+        output_handles : NDArrayHandle*,
+        ograd_handles : NDArrayHandle*,
+        num_variables : MXUInt,
+        var_handles : NDArrayHandle*,
+        retain_graph : Int32,
+        create_graph : Int32,
+        is_train : Int32,
+        grad_handles : NDArrayHandle **,
+        grad_stypes : Int32**
+      ) : Int32
+      fun MXAutogradSetIsRecording(
+        is_recording : Int32,
+        previous : Int32*
+      ) : Int32
+      fun MXAutogradSetIsTraining(
+        is_training : Int32,
+        previous : Int32*
+      ) : Int32
+      fun MXAutogradIsRecording(
+        current : Bool*
+      ) : Int32
+      fun MXAutogradIsTraining(
+        current : Bool*
+      ) : Int32
+
+      # Executor
       fun MXExecutorBindEX(
         handle : SymbolHandle,
         dev_type : Int32, dev_id : Int32,
@@ -195,20 +213,8 @@ module MXNet
       fun MXExecutorFree(
         handle : ExecutorHandle
       ) : Int32
-      fun MXSymbolCreateAtomicSymbol(
-        creator : OpHandle,
-        num_param : MXUInt,
-        keys : UInt8**,
-        vals : UInt8**,
-        sym_handle : SymbolHandle*
-      ) : Int32
-      fun NNSymbolCompose(
-        handle : SymbolHandle,
-        name : UInt8*,
-        num_args : NNUInt,
-        keys : UInt8**,
-        args : SymbolHandle*
-      ) : Int32
+
+      # Random
       fun MXRandomSeed(
         seed : Int32
       ) : Int32
@@ -216,18 +222,27 @@ module MXNet
         seed : Int32,
         dev_type : Int32, dev_id : Int32
       ) : Int32
-      fun MXNDArraySave(
-        fname : UInt8*,
-        num_args : MXUInt,
-        args : NDArrayHandle*,
-        keys : UInt8**
+
+      fun NNGetOpHandle(
+        name : UInt8*,
+        op : OpHandle*
       ) : Int32
-      fun MXNDArrayLoad(
-        fname : UInt8*,
-        size : MXUInt*,
-        arr : NDArrayHandle**,
-        name_size : MXUInt*,
-        names : UInt8***
+      fun MXImperativeInvoke(
+        creator : OpHandle,
+        num_inputs : Int32,
+        inputs : NDArrayHandle*,
+        num_outputs : Int32*,
+        outputs : NDArrayHandle**,
+        num_params : Int32,
+        param_keys : UInt8**,
+        param_vals : UInt8**
+      ) : Int32
+      fun MXSymbolCreateAtomicSymbol(
+        creator : OpHandle,
+        num_param : MXUInt,
+        keys : UInt8**,
+        vals : UInt8**,
+        sym_handle : SymbolHandle*
       ) : Int32
     end
   end

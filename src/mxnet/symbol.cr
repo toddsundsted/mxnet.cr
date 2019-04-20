@@ -843,35 +843,39 @@ module MXNet
     end
 
     # TODO: cache op handles
-    def self.create_symbol(op, *args, **kwargs)
-      op = op.to_s
-      args = args.to_a
-      kwargs = kwargs.to_h
+    def self.create_symbol(op, *args, name : String? = nil, **kwargs)
+      args = args.size > 0 ?
+        # flatten; reject nil values; obtain handles
+        args.to_a.flatten.compact.map { |v| v.handle } :
+        [] of SymbolHandle
+      kwargs = kwargs.size > 0 ?
+        # stringify; reject entries with empty values and the "out" special key
+        kwargs.map { |k, v| [output(k), output(v)] }.reject { |(k, v)| v.empty? || k == "out" }.to_h :
+        {} of String => String
 
-      name = kwargs.delete(:name)
-      name = name.is_a?(String) ? name : nil
+      name = MXNet::Name::Manager.current.get(name, op.downcase)
 
       MXNet::Internal.libcall(
         NNGetOpHandle,
-        op,
+        op.to_s,
         out op_handle
       )
       MXNet::Internal.libcall(
         MXSymbolCreateAtomicSymbol,
         op_handle,
         kwargs.size,
-        kwargs.keys.map { |a| output(a).as(String).to_unsafe },
-        kwargs.values.map { |a| output(a).as(String).to_unsafe },
+        kwargs.keys.map(&.to_unsafe),
+        kwargs.values.map(&.to_unsafe),
         out sym_handle
       )
       sym = new(sym_handle)
       MXNet::Internal.libcall(
         NNSymbolCompose,
         sym_handle,
-        MXNet::Name::Manager.current.get(name, op.downcase),
+        name,
         args.size,
         nil,
-        args.map(&.handle.as(SymbolHandle))
+        args
       )
       sym
     end

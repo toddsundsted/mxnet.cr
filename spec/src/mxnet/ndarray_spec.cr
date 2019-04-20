@@ -30,6 +30,23 @@ private macro random_spec_helper(random, *args)
 end
 
 describe MXNet::NDArray do
+  describe ".imperative_invoke" do
+    it "removes nil arguments" do
+      a = MXNet::NDArray.array([1.0, 2.0, 3.0])
+      MXNet::NDArray.imperative_invoke("Dropout", a, p: nil)
+    end
+
+    it "removes nil arguments" do
+      a = MXNet::NDArray.array([1, 2, 3])
+      MXNet::NDArray.imperative_invoke("elemwise_add", a, a, nil)
+    end
+
+    it "flattens arguments" do
+      a = MXNet::NDArray.array([1, 2, 3])
+      MXNet::NDArray.imperative_invoke("add_n", [a, a], num_args: 2)
+    end
+  end
+
   describe ".array" do
     it "creates an NDArray from a Crystal array" do
       MXNet::NDArray.array([[[[1]]]]).should be_a(MXNet::NDArray)

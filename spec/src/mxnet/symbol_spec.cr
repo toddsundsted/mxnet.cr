@@ -16,6 +16,23 @@ private macro random_spec_helper(random, *args)
 end
 
 describe MXNet::Symbol do
+  describe ".create_symbol" do
+    it "removes nil arguments" do
+      s = MXNet::Symbol.var("s")
+      MXNet::Symbol.create_symbol("reshape", s, shape: nil)
+    end
+
+    it "removes nil arguments" do
+      s = MXNet::Symbol.var("s")
+      MXNet::Symbol.create_symbol("elemwise_add", s, s, nil)
+    end
+
+    it "flattens arguments" do
+      s = MXNet::Symbol.var("s")
+      MXNet::Symbol.create_symbol("add_n", [s, s], num_args: 2)
+    end
+  end
+
   describe ".var" do
     it "creates a symbolic variable" do
       MXNet::Symbol.var("s").should be_a(MXNet::Symbol)

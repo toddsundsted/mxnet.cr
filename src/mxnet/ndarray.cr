@@ -1071,42 +1071,41 @@ module MXNet
     end
 
     # TODO: cache op handles
-    def self.imperative_invoke(op, *ndargs, **kwargs)
-      op = op.to_s
-      ndargs = ndargs.to_a
-      kwargs = kwargs.to_h
+    def self.imperative_invoke(op, *ndargs, out _out : self? = nil, **kwargs)
+      ndargs = ndargs.size > 0 ?
+        # flatten; reject nil values; obtain handles
+        ndargs.to_a.flatten.compact.map { |v| v.handle } :
+        [] of NDArrayHandle
+      kwargs = kwargs.size > 0 ?
+        # stringify; reject entries with empty values and the "name" special key
+        kwargs.map { |k, v| [output(k), output(v)] }.reject { |(k, v)| v.empty? || k == "name" }.to_h :
+        {} of String => String
+
       num_outputs = 0
       outputs = Pointer(NDArrayHandle).null
-
-      out = nil
-      if kwargs.has_key?(:out)
-        out = kwargs.delete(:out)
-        if out.is_a?(NDArray)
-          num_outputs = 1
-          outputs = Pointer(NDArrayHandle).malloc(1)
-          outputs[0] = out.handle
-        else
-          raise MXNet::NDArrayException.new("out is invalid (must be NDArray): #{out}")
-        end
+      if _out
+        num_outputs = 1
+        outputs = Pointer(NDArrayHandle).malloc(1)
+        outputs[0] = _out.handle
       end
 
       MXNet::Internal.libcall(
         NNGetOpHandle,
-        op,
+        op.to_s,
         out op_handle
       )
       MXNet::Internal.libcall(
         MXImperativeInvoke,
         op_handle,
         ndargs.size,
-        ndargs.map(&.handle.as(NDArrayHandle)),
+        ndargs,
         pointerof(num_outputs),
         pointerof(outputs),
         kwargs.size,
-        kwargs.keys.map { |a| output(a).as(String).to_unsafe },
-        kwargs.values.map { |a| output(a).as(String).to_unsafe }
+        kwargs.keys.map(&.to_unsafe),
+        kwargs.values.map(&.to_unsafe)
       )
-      out || new(outputs[0])
+      _out || new(outputs[0])
     end
   end
 end

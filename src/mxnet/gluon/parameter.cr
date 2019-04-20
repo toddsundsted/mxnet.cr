@@ -19,13 +19,14 @@ module MXNet
       @dtype : ::Symbol = :float32
       @data : Array(NDArray)?
       @grad : Array(NDArray)?
-      @init : Initializer?
       @ctx : Array(Context)?
       @trainer : Trainer?
       @var : Symbol?
 
       # :nodoc:
       alias InitType = String | ::Symbol | Initializer.class | Initializer
+      @init : InitType?
+
       # :nodoc:
       record DeferredInit, ctx : Array(Context), init : InitType, data : NDArray?
       @deferred_init : DeferredInit?

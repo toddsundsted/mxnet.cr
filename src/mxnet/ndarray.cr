@@ -1168,6 +1168,9 @@ module MXNet
         outputs[0] = _out.handle
       end
 
+      # ignore
+      kwargs.delete(:name)
+
       MXNet::Internal.libcall(
         NNGetOpHandle,
         op.to_s,

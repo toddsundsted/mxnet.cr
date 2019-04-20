@@ -855,6 +855,9 @@ module MXNet
 
       name = MXNet::Name::Manager.current.get(name, op.downcase)
 
+      # ignore
+      kwargs.delete(:out)
+
       MXNet::Internal.libcall(
         NNGetOpHandle,
         op.to_s,

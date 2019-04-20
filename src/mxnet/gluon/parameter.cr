@@ -290,13 +290,57 @@ module MXNet
         )
       end
 
-      private def load_and_init(ctx, data)
-        ctx = ctx.is_a?(MXNet::Context) ? [ctx] : ctx
+      # :nodoc:
+      #
+      # (Re)initialize by loading from data.
+      #
+      def _load_init(ctx, data)
+        unless @shape.empty?
+          @shape.zip(data.shape).each do |i, j|
+            unless i == j || i == 0
+              raise Exception.new(
+                "Failed to load Parameter '#{@name}' from saved params: " \
+                "incompatible shape (expected #{@shape}, saved #{data.shape})."
+              )
+            end
+          end
+          @shape = @shape.zip(data.shape).map do |i, j|
+            i != 0 ? i : j
+          end
+        end
+        if @dtype != data.dtype
+          raise Exception.new(
+            "Failed to load Parameter '#{@name}' from saved params: " \
+            "incompatible dtype (expected #{@dtype}, saved #{data.dtype})."
+          )
+        end
+
+        ctx = ctx.is_a?(Context) ? [ctx] : ctx
+
         if @data
+          unless ctx.nil? || ctx == list_ctx
+            raise Exception.new(
+              "Failed to load Parameter '#{@name}' on #{ctx} because it was " \
+              "previously initialized on #{list_ctx}."
+            )
+          end
           set_data(data)
         else
+          if deferred_init = @deferred_init
+            unless ctx.nil? || ctx == deferred_init.ctx
+              raise Exception.new(
+                "Failed to load Parameter '#{@name}' on #{ctx} because it was " \
+                "previously initialized on #{list_ctx}."
+              )
+            end
+            ctx = deferred_init.ctx
+          elsif ctx.nil?
+            ctx = [MXNet.cpu]
+          end
           init_impl(ctx, data)
         end
+
+        @deferred_init = nil
       end
 
       # :nodoc:

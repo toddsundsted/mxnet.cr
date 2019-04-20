@@ -274,6 +274,34 @@ describe MXNet::Gluon::Parameter do
       (parameter == MXNet::Gluon::Parameter.new("foo", shape: [2])).should be_false
     end
   end
+
+  describe "#_load_init" do
+    it "loads the parameter with data" do
+      parameter = MXNet::Gluon::Parameter.new("foo", shape: [0], dtype: :int32)
+      parameter._load_init(MXNet.cpu, MXNet::NDArray.array([1, 2]))
+      parameter.data.should eq(MXNet::NDArray.array([1, 2]))
+    end
+
+    it "reloads the parameter with data" do
+      parameter = MXNet::Gluon::Parameter.new("foo", shape: [3], dtype: :int32).init(:ones)
+      parameter._load_init(MXNet.cpu, MXNet::NDArray.array([1, 2, 3], dtype: :int32))
+      parameter.data.should eq(MXNet::NDArray.array([1, 2, 3], dtype: :int32))
+    end
+
+    it "raises an error if shapes are incompatible" do
+      expect_raises(Exception) do
+        parameter = MXNet::Gluon::Parameter.new("foo", shape: [1])
+        parameter._load_init(MXNet.cpu, MXNet::NDArray.array([1, 2]))
+      end
+    end
+
+    it "raises an error if dtypes are incompatible" do
+      expect_raises(Exception) do
+        parameter = MXNet::Gluon::Parameter.new("foo", dtype: :float32)
+        parameter._load_init(MXNet.cpu, MXNet::NDArray.array([1, 2]))
+      end
+    end
+  end
 end
 
 describe MXNet::Gluon::Constant do

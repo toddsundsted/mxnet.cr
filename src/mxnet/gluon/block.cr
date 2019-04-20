@@ -252,6 +252,85 @@ module MXNet
         raise Exception.new("undefined attribute #{name}")
       end
 
+      # Saves parameters to a file.
+      #
+      # Note that this method only saves parameters, not model
+      # structure. If you want to save model structures, use
+      # `HybridBlock#export`.
+      #
+      # For reference see: "Saving and Loading Gluon Models"
+      # (https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html).
+      #
+      # ### Parameters
+      # * *fname* (`String`)
+      #   Path to file.
+      #
+      def save_parameters(fname)
+        params = collect_params_for_storage.transform_values(&._reduce)
+        MXNet::NDArray.save(fname, params)
+      end
+
+      # Loads parameters from a file.
+      #
+      # For reference see: "Saving and Loading Gluon Models"
+      # (https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html).
+      #
+      # ### Parameters
+      # * *fname* (`String`)
+      #   Path to file.
+      # * *ctx* (`Context` or `Array(Context)`, default = cpu)
+      #   Context(s) to initialize loaded parameters on.
+      # * *allow_missing* (`Bool`, default = `false`)
+      #   Whether to silently skip parameters not present
+      #   in the file.
+      # * *ignore_extra* (`Bool`, default = `false`)
+      #   Whether to silently ignore parameters not present
+      #   in this block.
+      #
+      def load_parameters(fname, ctx = MXNet.cpu, allow_missing = false, ignore_extra = false)
+        loaded = MXNet::NDArray.load(fname)
+        unless loaded.is_a?(Hash(String, NDArray))
+          raise Exception.new(
+            "Can't load from format #{loaded.class}."
+          )
+        end
+        params = collect_params_for_storage
+        unless allow_missing
+          params.each do |key, value|
+            unless loaded.has_key?(key)
+              raise Exception.new(
+                "Parameter '#{key}' is missing from file. " \
+                "Set `allow_missing` to `true` to ignore."
+              )
+            end
+          end
+        end
+        loaded.each do |key, value|
+          unless params.has_key?(key)
+            unless ignore_extra
+              raise Exception.new(
+                "Value '#{key}' from file is not present in block. " \
+                "Set `ignore_extra` to `true` to ignore."
+              )
+            end
+            next
+          end
+          params[key]._load_init(ctx, value)
+        end
+      end
+
+      protected def collect_params_for_storage(prefix = "")
+        prefix += "." unless prefix.empty?
+        Hash(String, Parameter).new.tap do |hash|
+          @reg_parameters.each do |key, param|
+            hash[prefix + key] = param
+          end
+          @reg_children.each do |key, child|
+            hash.merge!(child.collect_params_for_storage(prefix + key))
+          end
+        end
+      end
+
       private def hint
         self.class.name.split("::").last.downcase
       end

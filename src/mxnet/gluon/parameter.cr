@@ -542,6 +542,89 @@ module MXNet
         end
       end
 
+      # Saves parameters to a file.
+      #
+      # ### Parameters
+      # * *fname* (`String`)
+      #   Path to parameter file.
+      # * *strip_prefix* (`String`, default = "")
+      #   Prefix to strip from parameter names before saving.
+      #
+      def save(fname, strip_prefix = "")
+        arg_dict = {} of String => NDArray
+        values.each do |v|
+          weight = v._reduce
+          unless v.name.starts_with?(strip_prefix)
+            raise ArgumentError.new(
+              "Name #{v.name} does not start with #{strip_prefix}."
+            )
+          end
+          arg_dict[v.name[strip_prefix.size..-1]] = weight
+        end
+        NDArray.save(fname, arg_dict)
+      end
+
+      # Loads parameters from a file.
+      #
+      # ### Parameters
+      # * *fname* (`String`)
+      #   Path to parameter file.
+      # * *ctx* (`Context` | `Array(Context)`, default = `nil`)
+      #   Context(s) to initialize loaded parameters on.
+      # * *allow_missing* (`Bool`, default = `false`)
+      #   Whether to silently skip loading parameters not present
+      #   in the file.
+      # * *ignore_extra* (`Bool`, default = `false`)
+      #   Whether to silently ignore parameters from the file that are
+      #   not present in this dict.
+      # * *restore_prefix* (`String`, default = "")
+      #   Prefix to prepend to names of stored parameters before
+      #   loading.
+      #
+      def load(fname, ctx = nil, allow_missing = false, ignore_extra = false, restore_prefix = "")
+        unless restore_prefix.empty?
+          values.each do |v|
+            unless v.name.starts_with?(restore_prefix)
+              raise ArgumentError.new(
+                "Name #{v.name} does not start with #{restore_prefix}."
+              )
+            end
+          end
+        end
+        lprefix = restore_prefix.size
+        loaded = MXNet::NDArray.load(fname)
+        unless loaded.is_a?(Hash(String, NDArray))
+          raise Exception.new(
+            "Can't load from format #{loaded.class}."
+          )
+        end
+        arg_dict = loaded.transform_keys do |k|
+          restore_prefix + k
+        end
+        unless allow_missing
+          keys.each do |k|
+            unless arg_dict.has_key?(k)
+              raise Exception.new(
+                "Parameter '#{k[lprefix..-1]}' is missing from file. " \
+                "Set `allow_missing` to `true` to ignore."
+              )
+            end
+          end
+        end
+        arg_dict.each do |k, v|
+          unless @params.has_key?(k)
+            unless ignore_extra
+              raise Exception.new(
+                "Value '#{k[lprefix..-1]}' from file is not present in dict. " \
+                "Set `ignore_extra` to `true` to ignore."
+              )
+            end
+            next
+          end
+          @params[k]._load_init(ctx, v)
+        end
+      end
+
       # Writes this object to an `IO`.
       #
       def to_s(io)

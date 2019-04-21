@@ -32,6 +32,8 @@ module MXNet
   alias NDArrayHandle = Internal::LibMXNet::NDArrayHandle
   # :nodoc:
   alias SymbolHandle = Internal::LibMXNet::SymbolHandle
+  # :nodoc:
+  alias CachedOpHandle = Internal::LibMXNet::CachedOpHandle
 
   # Returns a CPU context.
   #
@@ -70,5 +72,6 @@ require "./mxnet/initializer"
 require "./mxnet/optimizer"
 require "./mxnet/util"
 require "./mxnet/base"
+require "./mxnet/cached_op"
 require "./mxnet/ndarray"
 require "./mxnet/symbol"

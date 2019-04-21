@@ -15,6 +15,7 @@ module MXNet
       type NDArrayHandle = Void*
       type SymbolHandle = Void*
       type ExecutorHandle = Void*
+      type CachedOpHandle = Void*
       type OpHandle = Void*
 
       alias MXUInt = UInt32
@@ -221,6 +222,26 @@ module MXNet
       fun MXRandomSeedContext(
         seed : Int32,
         dev_type : Int32, dev_id : Int32
+      ) : Int32
+
+      # Cached Op
+      fun MXCreateCachedOpEx(
+        handle : SymbolHandle,
+        num_flags : Int32,
+        keys : UInt8**,
+        vals : UInt8**,
+        out : CachedOpHandle*
+      ) : Int32
+      fun MXFreeCachedOp(
+        handle : CachedOpHandle
+      ) : Int32
+      fun MXInvokeCachedOpEx(
+        handle : CachedOpHandle,
+        num_inputs : Int32,
+        inputs : NDArrayHandle*,
+        num_outputs : Int32*,
+        outputs : NDArrayHandle**,
+        stypes : Int32**
       ) : Int32
 
       fun NNGetOpHandle(

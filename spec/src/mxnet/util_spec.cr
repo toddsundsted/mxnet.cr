@@ -1,18 +1,16 @@
 require "../../spec_helper"
 
-class BaseTest < MXNet::Base
-  def self.output(arg)
-    super
-  end
+class UtilTest
+  extend MXNet::Util
 end
 
-describe MXNet::Base do
+describe MXNet::Util do
   describe ".output" do
     it "recursively pretty-prints it's argument" do
-      BaseTest.output([1_u8, 2_i64, -3_f32]).should eq("[1,2,-3.0]")
-      BaseTest.output([nil, :symbol, "string"]).should eq("[None,symbol,string]")
-      BaseTest.output([[1]]).should eq("[[1]]")
-      BaseTest.output({0}).should eq("[0]")
+      UtilTest.output([1_u8, 2_i64, -3_f32]).should eq("[1,2,-3.0]")
+      UtilTest.output([nil, :symbol, "string"]).should eq("[None,symbol,string]")
+      UtilTest.output([[1]]).should eq("[[1]]")
+      UtilTest.output({0}).should eq("[0]")
     end
   end
 end

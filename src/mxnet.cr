@@ -28,6 +28,11 @@ module MXNet
   class MXNetException < Exception
   end
 
+  # :nodoc:
+  alias NDArrayHandle = Internal::LibMXNet::NDArrayHandle
+  # :nodoc:
+  alias SymbolHandle = Internal::LibMXNet::SymbolHandle
+
   # Returns a CPU context.
   #
   # This function is equivalent to `MXNet::Context.cpu`.

@@ -36,9 +36,6 @@ module MXNet
   #   operator, such as `broadcast_plus`, explicitly.
   #
   class Symbol < Base
-    # :nodoc:
-    alias SymbolHandle = MXNet::Internal::LibMXNet::SymbolHandle
-
     @handle : SymbolHandle
 
     # :nodoc:

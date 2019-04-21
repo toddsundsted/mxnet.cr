@@ -32,9 +32,6 @@ module MXNet
   #   broadcasting enabled by default.
   #
   class NDArray < Base
-    # :nodoc:
-    alias NDArrayHandle = MXNet::Internal::LibMXNet::NDArrayHandle
-
     @handle : NDArrayHandle
 
     # :nodoc:

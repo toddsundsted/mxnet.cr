@@ -118,6 +118,12 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#list_auxiliary_states" do
+    it "returns the auxiliary states of the symbol" do
+      MXNet::Symbol.var("foo").list_auxiliary_states.should be_empty
+    end
+  end
+
   describe "#bind" do
     it "binds an array of arguments" do
       MXNet::Symbol.var("a").bind(args: [MXNet::NDArray.array([1])]).should be_a(MXNet::Executor)

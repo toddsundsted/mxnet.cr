@@ -158,6 +158,26 @@ module MXNet
       str_array.to_slice(size).map { |u| String.new(u) }.to_a
     end
 
+    # Lists all the auxiliary states of the symbol.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # c = a + b
+    # c.list_auxiliary_states # => []
+    # ```
+    #
+    # Auxiliary states are special states of symbols that do not
+    # correspond to an argument, and are not updated by gradient
+    # descent. Common examples of auxiliary states include the
+    # *moving_mean* and *moving_variance* in `BatchNorm`. Most
+    # operators do not have auxiliary states.
+    #
+    def list_auxiliary_states
+      MXNet::Internal.libcall(MXSymbolListAuxiliaryStates, @handle, out size, out str_array)
+      str_array.to_slice(size).map { |u| String.new(u) }.to_a
+    end
+
     # Binds the current symbol to an executor and returns the executor.
     #
     # First, declare the computation and then bind to the data to

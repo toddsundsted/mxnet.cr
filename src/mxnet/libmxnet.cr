@@ -137,6 +137,11 @@ module MXNet
         size : MXUInt*,
         str_array : UInt8***
       ) : Int32
+      fun MXSymbolListAuxiliaryStates(
+        handle : SymbolHandle,
+        size : MXUInt*,
+        str_array : UInt8***
+      ) : Int32
       fun NNSymbolCompose(
         handle : SymbolHandle,
         name : UInt8*,

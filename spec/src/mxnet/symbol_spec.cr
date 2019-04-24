@@ -50,7 +50,7 @@ describe MXNet::Symbol do
 
     it "sets the dtype as an attribute" do
       data = MXNet::Symbol.var("data", dtype: :float32)
-      data.attr("__dtype__").should eq("float32")
+      data.attr("__dtype__").should eq("0")
     end
   end
 

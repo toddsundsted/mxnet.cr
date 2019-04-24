@@ -702,7 +702,7 @@ module MXNet
       new(handle).tap do |ret|
         attr ||= {} of ::Symbol => String
         attr[:__shape__] = shape.to_s if shape
-        attr[:__dtype__] = dtype.to_s if dtype
+        attr[:__dtype__] = T2DT[dtype].to_s if dtype
         ret.set_attr(attr)
       end
     end

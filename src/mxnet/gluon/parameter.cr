@@ -15,8 +15,8 @@ module MXNet
     #
     class Parameter
       @name : String
-      @shape : Array(Int32) = [] of Int32
-      @dtype : ::Symbol = :float32
+      @shape : Array(Int32)? = nil
+      @dtype : ::Symbol? = nil
       @data : Array(NDArray)?
       @grad : Array(NDArray)?
       @ctx : Array(Context)?
@@ -60,18 +60,16 @@ module MXNet
       getter :name, :shape, :dtype
 
       def shape=(shape)
-        if @shape.empty?
-          @shape = shape
-        else
-          unless @shape.size == shape.size &&
-                 @shape.zip(shape).all? { |i, j| i == j || i == 0 }
+        if (this = @shape)
+          unless this.size == shape.size &&
+                 this.zip(shape).all? { |i, j| i == j || i == 0 }
             raise Exception.new(
               "Expected shape #{shape} is incompatible " \
-              "with given shape #{@shape}."
+              "with given shape #{this}."
             )
           end
-          @shape = shape
         end
+        @shape = shape
       end
 
       def dtype=(dtype)
@@ -113,11 +111,11 @@ module MXNet
         ctx = [ctx] if ctx.is_a?(MXNet::Context)
         @ctx = ctx
         @data = @grad = nil
-        if @shape.empty? || @shape.flatten.product <= 0
+        unless (shape = @shape) && shape.flatten.product > 0
           unless @allow_deferred_init
             raise Exception.new(
               "Cannot initialize Parameter '#{@name}' because it has " \
-              "invalid shape: #{@shape}."
+              "invalid shape: #{shape}."
             )
           end
           @deferred_init = DeferredInit.new(ctx, init, nil)
@@ -168,7 +166,7 @@ module MXNet
       # Sets this parameter's value on all contexts.
       #
       def set_data(data)
-        @shape = data.shape
+        self.shape = data.shape
         if @data
           check_and_get(@data, :all).each do |arr|
             arr[0..-1] = data
@@ -296,24 +294,26 @@ module MXNet
       # (Re)initialize by loading from data.
       #
       def _load_init(ctx, data)
-        unless @shape.empty?
-          @shape.zip(data.shape).each do |i, j|
+        if (shape = @shape)
+          shape.zip(data.shape).each do |i, j|
             unless i == j || i == 0
               raise Exception.new(
                 "Failed to load Parameter '#{@name}' from saved params: " \
-                "incompatible shape (expected #{@shape}, saved #{data.shape})."
+                "incompatible shape (expected #{shape}, saved #{data.shape})."
               )
             end
           end
-          @shape = @shape.zip(data.shape).map do |i, j|
+          @shape = shape.zip(data.shape).map do |i, j|
             i != 0 ? i : j
           end
         end
-        if @dtype != data.dtype
-          raise Exception.new(
-            "Failed to load Parameter '#{@name}' from saved params: " \
-            "incompatible dtype (expected #{@dtype}, saved #{data.dtype})."
-          )
+        if (dtype = @dtype)
+          if dtype != data.dtype
+            raise Exception.new(
+              "Failed to load Parameter '#{@name}' from saved params: " \
+              "incompatible dtype (expected #{dtype}, saved #{data.dtype})."
+            )
+          end
         end
 
         ctx = ctx.is_a?(Context) ? [ctx] : ctx
@@ -351,15 +351,15 @@ module MXNet
         default_init = deferred_init.init
         data = deferred_init.data
         @deferred_init = nil
-        if @shape.empty? || @shape.flatten.product <= 0
+        unless (shape = @shape) && shape.flatten.product > 0
           raise Exception.new(
             "Cannot initialize Parameter '#{@name}' because it has " \
-            "invalid shape: #{@shape}."
+            "invalid shape: #{shape}."
           )
         end
         MXNet::Autograd.pause do
           unless data
-            data = MXNet::NDArray.zeros(@shape, dtype: @dtype, ctx: MXNet.cpu)
+            data = MXNet::NDArray.zeros(shape.not_nil!, dtype: @dtype, ctx: MXNet.cpu)
             MXNet::Initializer.create(default_init).init_array(data)
           end
           init_impl(ctx, data)
@@ -368,7 +368,7 @@ module MXNet
 
       private def init_impl(ctx, data)
         @data = ctx.map { |c| data.copy_to(c) }
-        grad = MXNet::NDArray.zeros(@shape, dtype: @dtype, ctx: MXNet.cpu)
+        grad = MXNet::NDArray.zeros(@shape.not_nil!, dtype: @dtype, ctx: MXNet.cpu)
         init_grad(ctx, grad)
       end
 

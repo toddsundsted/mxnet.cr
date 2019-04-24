@@ -13,6 +13,12 @@ module Spec
         return false unless expected_value.shape == actual_value.shape
         return false unless expected_value.raw == actual_value.raw
         return true
+      elsif actual_value.is_a?(Array(MXNet::NDArray)) && expected_value.is_a?(Array(MXNet::NDArray))
+        return false unless expected_value.size == actual_value.size
+        return false unless expected_value.zip(actual_value).all? do |e, a|
+          e.dtype == a.dtype && e.shape == a.shape && e.raw == a.raw
+        end
+        return true
       end
       previous_def
     end

@@ -15,13 +15,10 @@ module MXNet
     #   `IO` instance.
     #
     private def output(arg, io)
-      case arg
-      when .responds_to?(:join)
+      if arg.responds_to?(:join)
         io << '['
         arg.join(",", io) { |a| output(a, io) }
         io << ']'
-      when Nil
-        io << "None"
       else
         io << arg
       end

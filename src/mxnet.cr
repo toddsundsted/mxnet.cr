@@ -62,6 +62,10 @@ module MXNet
   end
 end
 
+# :nodoc:
+class None
+end
+
 require "./mxnet/libmxnet"
 require "./mxnet/name/manager"
 require "./mxnet/autograd"

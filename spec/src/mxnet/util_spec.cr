@@ -8,7 +8,7 @@ describe MXNet::Util do
   describe ".output" do
     it "recursively pretty-prints it's argument" do
       UtilTest.output([1_u8, 2_i64, -3_f32]).should eq("[1,2,-3.0]")
-      UtilTest.output([nil, :symbol, "string"]).should eq("[None,symbol,string]")
+      UtilTest.output([None, :symbol, "string"]).should eq("[None,symbol,string]")
       UtilTest.output([[1]]).should eq("[[1]]")
       UtilTest.output({0}).should eq("[0]")
     end

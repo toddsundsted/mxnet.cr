@@ -178,6 +178,242 @@ module MXNet
       str_array.to_slice(size).map { |u| String.new(u) }.to_a
     end
 
+    # Generates "infer_shape..." methods.
+    #
+    private macro infer_shape_impl(op, name)
+      def {{name.id}}(args)
+        keys = [] of String
+        data = [] of UInt32
+        iptr = [0_u32]
+
+        case args
+        when Array(Array(Int32) | Nil), Array(Array(Int32))
+          args.each do |s|
+            if s
+              data += s.map(&.to_u32)
+            end
+            iptr << data.size.to_u32
+          end
+        when Hash(String, Array(Int32) | Nil), Hash(String, Array(Int32))
+          args.each do |k, v|
+            keys << k
+            if (v)
+              data += v.map(&.to_u32)
+            end
+            iptr << data.size.to_u32
+          end
+        else
+          raise ArgumentError.new(
+            "specify arguments either positionally or by name"
+          )
+        end
+
+        MXNet::Internal.libcall(
+          {{op.id}},
+          @handle,
+          iptr.size - 1,
+          keys.map(&.to_unsafe),
+          iptr,
+          data,
+          out arg_shape_size,
+          out arg_shape_ndim,
+          out arg_shape_data,
+          out out_shape_size,
+          out out_shape_ndim,
+          out out_shape_data,
+          out aux_shape_size,
+          out aux_shape_ndim,
+          out aux_shape_data,
+          out complete
+        )
+
+        if complete != 0
+          arg_shapes = arg_shape_size.times.map do |i|
+            l = arg_shape_ndim[i]
+            s = arg_shape_data[i].to_slice(l)
+            s[0, l].map(&.to_i).to_a
+          end
+          out_shapes = out_shape_size.times.map do |i|
+            l = out_shape_ndim[i]
+            s = out_shape_data[i].to_slice(l)
+            s[0, l].map(&.to_i).to_a
+          end
+          aux_shapes = aux_shape_size.times.map do |i|
+            l = aux_shape_ndim[i]
+            s = aux_shape_data[i].to_slice(l)
+            s[0, l].map(&.to_i).to_a
+          end
+          {arg_shapes.to_a, out_shapes.to_a, aux_shapes.to_a}
+        else
+          {nil, nil, nil}
+        end
+      end
+    end
+
+    # Infers the shapes of all arguments and all outputs, given the
+    # known shapes of some arguments.
+    #
+    # This function takes the known shapes of arguments either
+    # positionally or by name. It returns a tuple of `nil` values if
+    # there is not enough information to deduce the missing shapes.
+    #
+    # Inconsistencies in the known shapes will cause an error to be
+    # raised.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # c = a + b
+    # arg_shapes, out_shapes, aux_shapes = c.infer_shape([nil, [3, 3]])
+    # arg_shapes # => [[3, 3], [3, 3]]
+    # out_shapes # => [[3, 3]]
+    # aux_shapes # => []
+    # ```
+    #
+    # ### Parameters
+    # * *args* (`Array(Array(Int32) | Nil)` or `Hash(String, Array(Int32) | Nil)`)
+    #   Shapes of known arguments. Unknown shapes can be marked as `nil`.
+    #
+    infer_shape_impl(MXSymbolInferShape, infer_shape)
+
+    # Infers the shapes partially.
+    #
+    # This functions works the same way as `#infer_shape`, except that
+    # this function can return partial results.
+    #
+    # In the following example, information about "b" is not
+    # available. So, `#infer_shape` will return a tuple of `nil`
+    # values but this method will return partial values.
+    #
+    # ```
+    # a = MXNet::Symbol.fully_connected(MXNet::Symbol.var("a"), nil, nil, num_hidden: 128)
+    # b = MXNet::Symbol.fully_connected(MXNet::Symbol.var("b"), nil, nil, num_hidden: 128)
+    # c = a + b
+    # arg_shapes, out_shapes, aux_shapes = c.infer_shape_partial([[10, 64]])
+    # arg_shapes # => [[10, 64], [128, 64], [128], [], [], []]
+    # out_shapes # => [[10, 128]]
+    # aux_shapes # => []
+    # ```
+    #
+    infer_shape_impl(MXSymbolInferShapePartial, infer_shape_partial)
+
+    # Generates "infer_dtype..." methods.
+    #
+    private macro infer_dtype_impl(op, name)
+      def {{name.id}}(args)
+        {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.5.0") < 0 %}
+          {% if op.stringify == "MXSymbolInferTypePartial" %}
+            raise MXNetException.new("not supported on MXNet version #{MXNet::Internal::MXNET_VERSION}: {{name}}")
+          {% end %}
+        {% end %}
+
+        keys = [] of String
+        data = [] of Int32
+
+        case args
+        when Array(::Symbol | Nil), Array(::Symbol)
+          args.each do |s|
+            if s
+              data << T2DT[s]
+            else
+              data << -1
+            end
+          end
+        when Hash(String, ::Symbol | Nil), Hash(String, ::Symbol)
+          args.each do |k, v|
+            keys << k
+            if v
+              data << T2DT[v]
+            else
+              data << -1
+            end
+          end
+        else
+          raise ArgumentError.new(
+            "specify arguments either positionally or by name"
+          )
+        end
+
+        MXNet::Internal.libcall(
+          {{op.id}},
+          @handle,
+          data.size,
+          keys.map(&.to_unsafe),
+          data,
+          out arg_type_size,
+          out arg_type_data,
+          out out_type_size,
+          out out_type_data,
+          out aux_type_size,
+          out aux_type_data,
+          out complete
+        )
+
+        if complete != 0
+          arg_types = arg_type_size.times.map do |i|
+            DT2T[arg_type_data[i]]?
+          end
+          out_types = out_type_size.times.map do |i|
+            DT2T[out_type_data[i]]?
+          end
+          aux_types = aux_type_size.times.map do |i|
+            DT2T[aux_type_data[i]]?
+          end
+          {arg_types.to_a, out_types.to_a, aux_types.to_a}
+        else
+          {nil, nil, nil}
+        end
+      end
+    end
+
+    # Infers the dtypes of all arguments and all outputs, given the
+    # known dtypes of some arguments.
+    #
+    # This function takes the known dtypes of arguments either
+    # positionally or by name. It returns a tuple of `nil` values if
+    # there is not enough information to deduce the missing dtypes.
+    #
+    # Inconsistencies in the known dtypes will cause an error to be
+    # raised.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # c = a + b
+    # arg_types, out_types, aux_types = c.infer_dtype({"a" => :float32})
+    # arg_types # => [:float32, :float32]
+    # out_types # => [:float32]
+    # aux_types # => []
+    # ```
+    #
+    # ### Parameters
+    # * *args* (`Array(::Symbol | Nil)` or `Hash(String, ::Symbol | Nil)`)
+    #   Dtypes of known arguments. Unknown dtypes can be marked as `nil`.
+    #
+    infer_dtype_impl(MXSymbolInferType, infer_dtype)
+
+    # Infers the dtypes partially.
+    #
+    # This functions works the same way as `#infer_dtype`, except that
+    # this function can return partial results.
+    #
+    # In the following example, information about "b" is not
+    # available. So, `#infer_shape` will return a tuple of `nil`
+    # values but this method will return partial values.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol::Ops._cast(MXNet::Symbol.var("b"), dtype: :int32)
+    # c = a + b
+    # arg_types, out_types, aux_types = c.infer_dtype_partial([:int32])
+    # arg_types # => [:int32, nil]
+    # out_types # => [:int32]
+    # aux_types # => []
+    #
+    # ```
+    #
+    infer_dtype_impl(MXSymbolInferTypePartial, infer_dtype_partial)
+
     # Binds the current symbol to an executor and returns the executor.
     #
     # First, declare the computation and then bind to the data to

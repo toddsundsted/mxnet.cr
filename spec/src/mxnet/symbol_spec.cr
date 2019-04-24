@@ -124,6 +124,70 @@ describe MXNet::Symbol do
     end
   end
 
+  _i32 = [] of Array(Int32)
+
+  describe "#infer_shape" do
+    a = MXNet::Symbol.var("a")
+    b = MXNet::Symbol.var("b")
+    c = a + MXNet::Symbol.concat(b, b)
+
+    it "infers shape positionally" do
+      c.infer_shape([nil, [3, 3]]).should eq({[[3, 6], [3, 3]], [[3, 6]], _i32})
+    end
+
+    it "infers shape by name" do
+      c.infer_shape({"b" => [3, 3]}).should eq({[[3, 6], [3, 3]], [[3, 6]], _i32})
+    end
+  end
+
+  describe "#infer_shape_partial" do
+    a = MXNet::Symbol::Ops._FullyConnected(MXNet::Symbol.var("a"), nil, nil, num_hidden: 128)
+    b = MXNet::Symbol::Ops._FullyConnected(MXNet::Symbol.var("b"), nil, nil, num_hidden: 128)
+    c = a + b
+
+    it "infers shape positionally" do
+      c.infer_shape_partial([[10, 64]]).should eq({[[10, 64], [128, 64], [128], _i32, _i32, _i32], [[10, 128]], _i32})
+    end
+
+    it "infers shape by name" do
+      c.infer_shape_partial({"a" => [10, 64]}).should eq({[[10, 64], [128, 64], [128], _i32, _i32, _i32], [[10, 128]], _i32})
+    end
+  end
+
+  _sym = [] of ::Symbol
+
+  describe "#infer_dtype" do
+    a = MXNet::Symbol.var("a")
+    b = MXNet::Symbol.var("b")
+    c = a + b
+
+    it "infers dtype positionally" do
+      c.infer_dtype([nil, :int32]).should eq({[:int32, :int32], [:int32], _sym})
+    end
+
+    it "infers dtype by name" do
+      c.infer_dtype({"b" => :int32}).should eq({[:int32, :int32], [:int32], _sym})
+    end
+  end
+
+  describe "#infer_dtype_partial" do
+    a = MXNet::Symbol.var("a")
+    b = MXNet::Symbol::Ops._cast(MXNet::Symbol.var("b"), dtype: :int32)
+    c = a + b
+
+    it "infers dtype positionally" do
+      {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.5.0") >= 0 %}
+        c.infer_dtype_partial([:int32]).should eq({[:int32, nil], [:int32], _sym})
+      {% end %}
+    end
+
+    it "infers dtype by name" do
+      {% if compare_versions(MXNet::Internal::MXNET_VERSION, "1.5.0") >= 0 %}
+        c.infer_dtype_partial({"a" => :int32}).should eq({[:int32, nil], [:int32], _sym})
+      {% end %}
+    end
+  end
+
   describe "#bind" do
     it "binds an array of arguments" do
       MXNet::Symbol.var("a").bind(args: [MXNet::NDArray.array([1])]).should be_a(MXNet::Executor)

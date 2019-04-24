@@ -149,6 +149,66 @@ module MXNet
         keys : UInt8**,
         args : SymbolHandle*
       ) : Int32
+      fun MXSymbolInferShape(
+        handle : SymbolHandle,
+        num_args : MXUInt,
+        keys : UInt8**,
+        arg_ind_ptr : MXUInt*,
+        arg_shape_data : MXUInt*,
+        in_shape_size : MXUInt*,
+        in_shape_ndim : MXUInt**,
+        in_shape_data : MXUInt***,
+        out_shape_size : MXUInt*,
+        out_shape_ndim : MXUInt**,
+        out_shape_data : MXUInt***,
+        aux_shape_size : MXUInt*,
+        aux_shape_ndim : MXUInt**,
+        aux_shape_data : MXUInt***,
+        complete : Int32*
+      ) : Int32
+      fun MXSymbolInferShapePartial(
+        handle : SymbolHandle,
+        num_args : MXUInt,
+        keys : UInt8**,
+        arg_ind_ptr : MXUInt*,
+        arg_shape_data : MXUInt*,
+        in_shape_size : MXUInt*,
+        in_shape_ndim : MXUInt**,
+        in_shape_data : MXUInt***,
+        out_shape_size : MXUInt*,
+        out_shape_ndim : MXUInt**,
+        out_shape_data : MXUInt***,
+        aux_shape_size : MXUInt*,
+        aux_shape_ndim : MXUInt**,
+        aux_shape_data : MXUInt***,
+        complete : Int32*
+      ) : Int32
+      fun MXSymbolInferType(
+        handle : SymbolHandle,
+        num_args : MXUInt,
+        keys : UInt8**,
+        arg_type_data : Int32*,
+        in_type_size : MXUInt*,
+        in_type_data : Int32**,
+        out_type_size : MXUInt*,
+        out_type_data : Int32**,
+        aux_type_size : MXUInt*,
+        aux_type_data : Int32**,
+        complete : Int32*
+      ) : Int32
+      fun MXSymbolInferTypePartial(
+        handle : SymbolHandle,
+        num_args : MXUInt,
+        keys : UInt8**,
+        arg_type_data : Int32*,
+        in_type_size : MXUInt*,
+        in_type_data : Int32**,
+        out_type_size : MXUInt*,
+        out_type_data : Int32**,
+        aux_type_size : MXUInt*,
+        aux_type_data : Int32**,
+        complete : Int32*
+      ) : Int32
 
       # Autograd
       fun MXAutogradMarkVariables(

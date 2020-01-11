@@ -94,6 +94,11 @@ module MXNet
       ) : Int32
 
       # Symbol
+      fun MXSymbolCreateGroup(
+        num_symbols : MXUInt,
+        symbols : SymbolHandle*,
+        out : SymbolHandle*
+      ) : Int32
       fun MXSymbolCreateVariable(
         name : UInt8*,
         handle : SymbolHandle*

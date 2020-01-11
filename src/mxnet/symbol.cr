@@ -1095,6 +1095,25 @@ module MXNet
       Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta}))
     end
 
+    # Creates a symbol that contains a collection of other symbols,
+    # grouped together.
+    #
+    # ```
+    # a = MXNet::Symbol.var("a")
+    # b = MXNet::Symbol.var("b")
+    # MXNet::Symbol.group([a, b]) # => grouped symbol
+    # ```
+    #
+    def self.group(symbols : Array(MXNet::Symbol)) : MXNet::Symbol
+      MXNet::Internal.libcall(
+        MXSymbolCreateGroup,
+        symbols.size,
+        symbols.map(&.handle),
+        out sym_handle
+      )
+      new(sym_handle)
+    end
+
     # TODO: cache op handles
     def self.create_symbol(op, *args, name : String? = nil, **kwargs)
       args = args.size > 0 ?

@@ -214,6 +214,14 @@ module MXNet
         aux_type_data : Int32**,
         complete : Int32*
       ) : Int32
+      fun MXSymbolCreateFromFile(
+        fname : UInt8*,
+        out : SymbolHandle*
+      ) : Int32
+      fun MXSymbolSaveToFile(
+        handle : SymbolHandle,
+        fname : UInt8*
+      ) : Int32
 
       # Autograd
       fun MXAutogradMarkVariables(

@@ -1,3 +1,4 @@
+require "json"
 require "../../spec_helper"
 
 private macro random_spec_helper(random, *args)
@@ -12,6 +13,45 @@ private macro random_spec_helper(random, *args)
       a = MXNet::Symbol.{{random}}({{*args}}, name: "a")
       a.name.should eq("a")
     end
+  end
+end
+
+struct Expression
+  struct Node
+    JSON.mapping(
+      op: String,
+      name: String,
+      inputs: Array(Array(Int32))
+    )
+
+    def initialize(@op, @name, @inputs)
+    end
+  end
+
+  struct Attrs
+    JSON.mapping(
+      mxnet_version: Tuple(String, Int32)
+    )
+
+    def initialize
+      MXNet::Internal.libcall(
+        MXGetVersion,
+        out version
+      )
+      @mxnet_version = {"int", version}
+    end
+  end
+
+  JSON.mapping(
+    nodes: Array(Node),
+    arg_nodes: Array(Int32),
+    node_row_ptr: Array(Int32),
+    heads: Array(Array(Int32)),
+    attrs: Attrs
+  )
+
+  def initialize(@nodes, @arg_nodes, @node_row_ptr, @heads)
+    @attrs = Attrs.new
   end
 end
 
@@ -75,6 +115,44 @@ describe MXNet::Symbol do
     it "names the new symbol" do
       a = MXNet::Symbol.ones(1, name: "a")
       a.name.should eq("a")
+    end
+  end
+
+  describe ".save" do
+    temp = File.tempname("save")
+    x = MXNet::Symbol.var("x")
+    y = MXNet::Symbol.var("y")
+    z = x + y
+    it "saves a symbol" do
+      MXNet::Symbol.save(temp, z)
+      exp = Expression.from_json(File.read(temp))
+      exp.nodes.should contain(Expression::Node.new("null", "x", [] of Array(Int32)))
+      exp.nodes.should contain(Expression::Node.new("null", "y", [] of Array(Int32)))
+      exp.nodes.should contain(Expression::Node.new("elemwise_add", z.name.not_nil!, [[0, 0, 0], [1, 0, 0]]))
+      exp.arg_nodes.should eq([0, 1])
+      exp.node_row_ptr.should eq([0, 1, 2, 3])
+      exp.heads.should eq([[2, 0, 0]])
+    end
+  end
+
+  describe ".load" do
+    temp = File.tempname("load")
+    it "loads a symbol" do
+      x = Expression::Node.new("null", "x", [] of Array(Int32))
+      y = Expression::Node.new("null", "y", [] of Array(Int32))
+      plus = Expression::Node.new("elemwise_add", "_plus0", [[0, 0, 0], [1, 0, 0]])
+      exp = Expression.new(
+        [x, y, plus],
+        [0, 1],
+        [0, 1, 2, 3],
+        [[2, 0, 0]]
+      )
+      File.open(temp, "w") do |file|
+        file.puts(exp.to_json)
+      end
+      s = MXNet::Symbol.load(temp)
+      s.list_arguments.should eq(["x", "y"])
+      s.name.should eq("_plus0")
     end
   end
 

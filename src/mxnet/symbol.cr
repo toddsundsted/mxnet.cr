@@ -510,6 +510,37 @@ module MXNet
       bind(ctx: ctx).forward
     end
 
+    # Saves symbol to a JSON file.
+    #
+    # ### Parameters
+    # * *fname* (`String`)
+    #   The name of the file.
+    # * *symbol* (`MXNet::Symbol`)
+    #   Symbol to save.
+    #
+    def self.save(fname, symbol)
+      MXNet::Internal.libcall(
+        MXSymbolSaveToFile,
+        symbol.handle,
+        fname
+      )
+    end
+
+    # Loads symbol from a JSON file.
+    #
+    # ### Parameters
+    # * *fname* (`String`)
+    #   The name of the file.
+
+    def self.load(fname)
+      MXNet::Internal.libcall(
+        MXSymbolCreateFromFile,
+        fname,
+        out sym_handle
+      )
+      new(sym_handle)
+    end
+
     # Returns element-wise sum of the input arrays.
     #
     # Both inputs can be a `Symbol` or a scalar number. Broadcasting

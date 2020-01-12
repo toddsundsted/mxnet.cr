@@ -336,3 +336,50 @@ describe MXNet::Gluon::HybridBlock do
     end
   end
 end
+
+class CachedBlock < MXNet::Gluon::Block
+  include MXNet::Gluon::CachedGraph
+
+  attribute c : MXNet::Gluon::Parameter
+
+  def initialize
+    super
+    with_name_scope do
+      self.c = params.get("c", init: :ones, allow_deferred_init: true)
+    end
+  end
+
+  def hybrid_forward(inputs, params)
+    [inputs.reduce(&.+) + params["c"]]
+  end
+
+  def call_cached(args)
+    super
+  end
+end
+
+describe MXNet::Gluon::CachedGraph do
+  describe "#infer_shape" do
+    it "should infer the shape from the input" do
+      block = CachedBlock.new
+      block.infer_shape([MXNet::NDArray.array([1, 2, 3])])
+      block.c.shape.should eq([3])
+    end
+  end
+
+  describe "#infer_dtype" do
+    it "should infer the dtype from the input" do
+      block = CachedBlock.new
+      block.infer_dtype([MXNet::NDArray.array([1, 2, 3])])
+      block.c.dtype.should eq(:int32)
+    end
+  end
+
+  describe "#call_cached" do
+    it "calls the cached operator" do
+      block = CachedBlock.new.init
+      res = block.call_cached([MXNet::NDArray.array([1.0, 1.5, 2.0])])
+      res.should eq([MXNet::NDArray.array([2.0, 2.5, 3.0])])
+    end
+  end
+end

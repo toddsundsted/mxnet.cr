@@ -336,6 +336,92 @@ module MXNet
       end
     end
 
+    # Encapsulates caching symbolized operations.
+    #
+    module CachedGraph
+      @flags = {} of String => String
+
+      @graph : Tuple(Array(MXNet::Symbol), Array(MXNet::Symbol))?
+      @cached_op : Tuple(Array(MXNet::Gluon::Parameter), Array(MXNet::Symbol), MXNet::CachedOp)?
+
+      def initialize(**kwargs)
+        super(**kwargs)
+        clear_cache
+      end
+
+      def clear_cache
+        @graph = nil
+        @cached_op = nil
+      end
+
+      def infer_shape(args)
+        inputs, outputs = get_graph(args)
+        output = MXNet::Symbol.group(outputs)
+        arg_attrs, _, aux_attrs =
+          output.infer_shape(inputs.zip(args).reduce({} of String => Array(Int32)) { |a, (i, j)| a[i.name.not_nil!] = j.shape ; a })
+        shapes =
+          output.list_arguments.zip(arg_attrs.not_nil!).to_h.merge(output.list_auxiliary_states.zip(aux_attrs.not_nil!).to_h)
+        collect_params.values.each do |value|
+          value.shape = shapes[value.name]
+        end
+      end
+
+      def infer_dtype(args)
+        inputs, outputs = get_graph(args)
+        output = MXNet::Symbol.group(outputs)
+        arg_attrs, _, aux_attrs =
+          output.infer_dtype(inputs.zip(args).reduce({} of String => ::Symbol) { |a, (i, j)| a[i.name.not_nil!] = j.dtype ; a })
+        dtypes =
+          output.list_arguments.zip(arg_attrs.not_nil!).to_h.merge(output.list_auxiliary_states.zip(aux_attrs.not_nil!).to_h)
+        collect_params.values.each do |value|
+          value.dtype = dtypes[value.name]
+        end
+      end
+
+      private def get_graph(args)
+        @graph ||=
+          begin
+            inputs =
+              if args.size > 1
+                (0...args.size).map do |i|
+                  MXNet::Symbol.var("data#{i}")
+                end
+              else
+                [MXNet::Symbol.var("data")]
+              end
+            params = @reg_parameters.reduce({} of String => MXNet::Symbol) do |acc, (i, j)|
+              acc[i] = j.var
+              acc
+            end
+            {inputs, hybrid_forward(inputs, params)}
+          end
+      end
+
+      private def get_cached_op(args)
+        @cached_op ||=
+          begin
+            params = collect_params.values
+            _, outputs = get_graph(args)
+            symbol = outputs.size > 1 ? MXNet::Symbol.group(outputs) : outputs.first
+            {params, outputs, MXNet::CachedOp.new(symbol, @flags)}
+          end
+      end
+
+      protected def call_cached(inputs)
+        params, _, cached_op = get_cached_op(inputs)
+        loop do
+          pdata = params.map(&.data)
+          return cached_op.call(inputs + pdata)
+        rescue MXNet::Gluon::DeferredInitializationError
+          infer_shape(inputs)
+          infer_dtype(inputs)
+          params.each do |param|
+            param._finish_deferred_init
+          end
+        end
+      end
+    end
+
     # `HybridBlock` supports forwarding with both `Symbol` and
     # `NDArray`.
     #

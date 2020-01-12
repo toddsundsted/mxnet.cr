@@ -306,6 +306,23 @@ describe MXNet::Gluon::Block do
   end
 end
 
+class Quux < MXNet::Gluon::HybridBlock
+  attribute c : MXNet::Gluon::Parameter
+
+  def initialize(**kwargs)
+    super
+    with_name_scope do
+      self.c = params.get("c", init: :ones, allow_deferred_init: true)
+    end
+  end
+
+  def hybrid_forward(inputs, params)
+    [inputs.reduce(&.+) + params["c"]]
+  end
+end
+
+create_double(Quux)
+
 describe MXNet::Gluon::HybridBlock do
   describe "#register_child" do
     block = MXNet::Gluon::HybridBlock.new
@@ -332,6 +349,32 @@ describe MXNet::Gluon::HybridBlock do
         expect_raises(NotImplementedError) do
           MXNet::Gluon::HybridBlock.new.hybrid_forward([] of MXNet::NDArray)
         end
+      end
+    end
+  end
+
+  context "given a subclass" do
+    describe "#forward" do
+      it "should infer the shape from the input" do
+        block = Quux.new.init
+        block.forward([MXNet::NDArray.array([1, 2, 3])])
+        block.c.shape.should eq([3])
+      end
+
+      it "should infer the dtype from the input" do
+        block = Quux.new.init
+        block.forward([MXNet::NDArray.array([1, 2, 3])])
+        block.c.dtype.should eq(:int32)
+      end
+
+      it "should cache the operation" do
+        block = instance_double(Quux).init.tap do |block|
+          block.hybridize
+        end
+        block.forward([MXNet::NDArray.array([1, 2, 3])]).map(&.to_a).should eq([[2, 3, 4]])
+        block.forward([MXNet::NDArray.array([2, 3, 1])]).map(&.to_a).should eq([[3, 4, 2]])
+        block.forward([MXNet::NDArray.array([3, 1, 2])]).map(&.to_a).should eq([[4, 2, 3]])
+        verify(block, hybrid_forward: once)
       end
     end
   end

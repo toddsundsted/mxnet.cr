@@ -426,6 +426,10 @@ module MXNet
     # `NDArray`.
     #
     class HybridBlock < Block
+      include CachedGraph
+
+      @active : Bool = false
+
       def register_child(block, name = nil)
         unless block.is_a?(MXNet::Gluon::HybridBlock)
           raise Exception.new(
@@ -437,6 +441,20 @@ module MXNet
         super
       end
 
+      # Activates or deactivates `HybridBlock` children
+      # recursively.
+      #
+      # ### Parameters
+      # * *active* (`Bool`, default = `true`)
+      #   Whether to turn hybridization on or off.
+      #
+      def hybridize(active = true, flags = {} of String => String)
+        @active = active
+        @flags = flags
+        clear_cache
+        super(active)
+      end
+
       # Defines the forward computation.
       #
       # ### Parameters
@@ -444,7 +462,38 @@ module MXNet
       #   Input tensors.
       #
       def forward(inputs : Array(T)) : Array(T) forall T
-        hybrid_forward(inputs)
+        case inputs
+        when Array(MXNet::Symbol)
+          params = @reg_parameters.reduce({} of String => MXNet::Symbol) do |acc, (i, j)|
+            acc[i] = j.var
+            acc
+          end
+          return hybrid_forward(inputs, params)
+        when Array(MXNet::NDArray)
+          if @active
+            return call_cached(inputs)
+          end
+          MXNet::Context.with(ctx = inputs.first.context) do
+            loop do
+              params = @reg_parameters.reduce({} of String => MXNet::NDArray) do |acc, (i, j)|
+                acc[i] = j.data(ctx: ctx)
+                acc
+              end
+              return hybrid_forward(inputs, params)
+            rescue MXNet::Gluon::DeferredInitializationError
+              infer_shape(inputs)
+              infer_dtype(inputs)
+              @params.each do |_, param|
+                param._finish_deferred_init
+              end
+            end
+          end
+        else
+          raise ArgumentError.new(
+            "only Symbol or NDArray are supported, " \
+            "not #{T}"
+          )
+        end
       end
 
       # Override to construct symbolic graph for this `HybridBlock`.

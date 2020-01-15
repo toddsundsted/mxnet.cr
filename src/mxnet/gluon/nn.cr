@@ -9,3 +9,4 @@ module MXNet
 end
 
 require "./nn/activations"
+require "./nn/layers"

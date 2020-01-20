@@ -507,6 +507,195 @@ module MXNet
           "#hybrid_forward must be implemented in a subclass"
         )
       end
+
+      # Exports model and parameters in a format that can be loaded by
+      # `SymbolBlock.import`.
+      #
+      # ### Parameters
+      # * *filename* (`String`)
+      #   Path and base filename to which to save model and
+      #   parameters. Two files, "[filename]-symbol.json" and
+      #   "[filename]-NNNN.params" will be created, where `NNNN` is
+      #   the 4 digit epoch number.
+      # * *epoch* (`Integer`, default = `0`)
+      #   Epoch number of saved model.
+      #
+      def export(filename, epoch = 0)
+        unless (graph = @graph)
+          raise Exception.new(
+            "Please call #hybridize and then run #forward " \
+            "at least once before calling #export."
+          )
+        end
+        _, outputs = graph
+        output = MXNet::Symbol.group(outputs)
+        args = {} of String => NDArray
+        arg_names = output.list_arguments
+        aux_names = output.list_auxiliary_states
+        collect_params.each do |name, param|
+          if arg_names.includes?(name)
+            args["arg:#{name}"] = param._reduce
+          elsif aux_names.includes?(name)
+            args["aux:#{name}"] = param._reduce
+          end
+        end
+        MXNet::Symbol.save("%s-symbol.json" % filename, output)
+        MXNet::NDArray.save("%s-%04d.params" % [filename, epoch], args)
+      end
+    end
+
+    # A block constructed from a `Symbol`. This is useful for using
+    # pre-trained models as feature extractors.
+    #
+    class SymbolBlock < MXNet::Gluon::Block
+      include CachedGraph
+
+      # Creates a new instance.
+      #
+      # ### Parameters
+      # * *outputs* (`Array(Symbol)`)
+      #   The desired outputs.
+      # * *inputs* (`Array(Symbol)`)
+      #   The output's arguments that should be used as inputs.
+      # * *params* (`ParameterDict`, default = `nil`)
+      #   Dictionary of arguments and auxiliary states that are not
+      #   inputs.
+      #
+      def initialize(outputs, inputs, params = nil)
+        super(
+          prefix: "",
+          params: MXNet::Gluon::ParameterDict.new(prefix: "", shared: params)
+        )
+        output = outputs.size > 1 ?
+          MXNet::Symbol.group(outputs) :
+          outputs.first
+        names = inputs.map(&.name)
+        output.list_arguments.each do |i|
+          unless names.includes?(i)
+            self.params.get(i, allow_deferred_init: true)
+          end
+        end
+        output.list_auxiliary_states.each do |i|
+          unless names.includes?(i)
+            self.params.get(i, allow_deferred_init: true, grad_req: :null)
+          end
+        end
+        @graph = {inputs, outputs}
+        len = lcp(@params.keys).size
+        @reg_parameters =
+          @params.reduce({} of String => MXNet::Gluon::Parameter) do |acc, (name, param)|
+            acc[name[len..-1]] = param
+            acc
+          end
+      end
+
+      def forward(inputs : Array(MXNet::Symbol))
+        unless graph = @graph
+          raise Exception.new(
+            "Ensure that parent classes are initialized by calling " \
+            "`super(...)` in #{self.class}#initialize()."
+          )
+        end
+        graph[1].clone.tap do |outputs|
+          params =
+            graph[0].zip(inputs).reduce({} of String => SymbolHandle) do |acc, (k, v)|
+              acc[k.name.not_nil!] = v.handle
+              acc
+            end
+          outputs.each do |outout|
+            MXNet::Internal.libcall(
+              NNSymbolCompose,
+              outout.handle,
+              nil,
+              params.size,
+              params.keys.map(&.to_unsafe),
+              params.values
+            )
+          end
+          outputs
+        end
+      end
+
+      def forward(inputs : Array(MXNet::NDArray))
+        MXNet::Context.with(inputs.first.context) do
+          call_cached(inputs)
+        end
+      end
+
+      def hybrid_forward(inputs : Array(T), params : Hash(String, T) = {} of String => T) : Array(T) forall T
+        raise NotImplementedError.new(
+          "#hybrid_forward is not supported"
+        )
+      end
+
+      # Imports model and parameters previously saved by
+      # `HybridBlock#export` as a `SymbolBlock` for use in Gluon.
+      #
+      # ### Parameters
+      # * *filename* (`String`)
+      #   Path and base filename from which to load model and
+      #   parameters. Two files, "[filename]-symbol.json" and
+      #   "[filename]-NNNN.params" will be loaded, where `NNNN` is
+      #   the 4 digit epoch number.
+      # * *inputs* (`String` or `Array(String)`)
+      #   Input names.
+      # * *epoch* (`Integer`, default = `0`)
+      #   Epoch number of saved model.
+      # * *ctx* (`Context` or `Array(Context)`, default = cpu)
+      #   Context(s) to initialize loaded parameters on.
+      #
+      def self.import(filename, inputs, epoch = 0, ctx = MXNet.cpu,
+                      allow_missing = false, ignore_extra = false)
+        inputs = [inputs] unless inputs.is_a?(Array)
+        inputs = inputs.map { |i| MXNet::Symbol.var(i) }
+        outputs = [MXNet::Symbol.load("%s-symbol.json" % filename)]
+        SymbolBlock.new(outputs, inputs).tap do |block|
+          if epoch
+            filename = "%s-%04d.params" % [filename, epoch]
+            arg_dict = MXNet::NDArray.load(filename).as(Hash(String, MXNet::NDArray))
+            arg_dict = arg_dict.transform_keys { |k| k.gsub(/^(arg:|aux:)/, "") }
+            unless allow_missing
+              block.params.keys.each do |key|
+                unless arg_dict.has_key?(key)
+                  raise Exception.new(
+                    "Parameter '#{key}' is missing in file '#{filename}'. " \
+                    "Set allow_missing: true to ignore missing parameters."
+                  )
+                end
+              end
+            end
+            unless ignore_extra
+              arg_dict.keys.each do |key|
+                unless block.params.has_key?(key)
+                  raise Exception.new(
+                    "Parameter '#{key}' loaded from file '#{filename}' is " \
+                    "not present in this block. Set ignore_extra: true to " \
+                    "ignore extra parameters."
+                  )
+                end
+              end
+            end
+            arg_dict.each do |key, value|
+              param = block.params.get(key)
+              param.shape = value.shape
+              param._load_init(ctx, value)
+            end
+          end
+        end
+      end
+
+      # Gets the longest common prefix of names.
+      #
+      private def lcp(names)
+        case names.size
+        when 0, 1
+          names.first? || ""
+        else
+          min, max = names.minmax
+          i = min.size.times { |i| break i if min[i] != max[i] }
+          min[0...i]
+        end
+      end
     end
   end
 end

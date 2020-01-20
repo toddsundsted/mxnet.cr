@@ -378,6 +378,102 @@ describe MXNet::Gluon::HybridBlock do
       end
     end
   end
+
+  describe "#export" do
+    temp = File.tempname("export")
+    quux =
+      Quux.new(prefix: "quux_").init.tap do |quux|
+        quux.call([MXNet::NDArray.array([1, 2])])
+      end
+
+    it "writes model to a file" do
+      quux.export(temp)
+      s = MXNet::Symbol.load("%s-symbol.json" % temp)
+      s.list_arguments.should eq(["data", "quux0_c"])
+      s.list_outputs.size.should eq(1)
+      s.list_outputs.first.should match(/_plus[0-9]+_output/)
+      s.name.should match(/_plus[0-9]+/)
+    end
+    it "writes parameter data to a file" do
+      quux.export(temp)
+      p = MXNet::NDArray.load("%s-0000.params" % temp).as(Hash(String, MXNet::NDArray))
+      p.keys.should eq(["arg:quux0_c"])
+      p.values.should eq([MXNet::NDArray.array([1, 1])])
+    end
+  end
+end
+
+describe MXNet::Gluon::SymbolBlock do
+  w = MXNet::Symbol.var("foo0_w")
+  b = MXNet::Symbol.var("foo0_b")
+  i = MXNet::Symbol.var("data")
+  o = i * w + b
+
+  describe ".new" do
+    layer = MXNet::Gluon::SymbolBlock.new([o], [i])
+
+    it "does not make the free input into a param" do
+      expect_raises(Exception) do
+        layer.get_attr("i")
+      end
+    end
+    it "makes the weight and bias into params" do
+      layer.get_attr("w").should be_a(MXNet::Gluon::Parameter)
+      layer.get_attr("b").should be_a(MXNet::Gluon::Parameter)
+    end
+  end
+
+  describe ".import" do
+    temp = File.tempname("import")
+
+    context "with exported model and parameters" do
+      MXNet::Symbol.save("%s-symbol.json" % temp, o)
+      MXNet::NDArray.save("%s-0000.params" % temp, {
+                            "foo0_w" => MXNet::NDArray.array([0, 1]),
+                            "foo0_b" => MXNet::NDArray.array([1, 0])
+                          })
+
+      layer = MXNet::Gluon::SymbolBlock.import(temp, "data")
+
+      it "loads the parameter data" do
+        layer.params.get("foo0_w").data.should eq(MXNet::NDArray.array([0, 1]))
+        layer.params.get("foo0_b").data.should eq(MXNet::NDArray.array([1, 0]))
+      end
+      it "evaluates the symbolized block" do
+        layer.forward([MXNet::NDArray.array([1, 1])]).should eq([MXNet::NDArray.array([1, 1])])
+      end
+    end
+
+    context "with mismatched parameters" do
+      MXNet::Symbol.save("%s-symbol.json" % temp, o)
+      MXNet::NDArray.save("%s-0000.params" % temp, {
+                            "bar0_w" => MXNet::NDArray.array([0, 1]),
+                            "bar0_b" => MXNet::NDArray.array([1, 0])
+                          })
+
+      it "raises error about missing parameter" do
+        expect_raises(Exception, /allow_missing: true/) do
+          MXNet::Gluon::SymbolBlock.import(temp, "data", ignore_extra: true)
+        end
+      end
+      it "raises error about extra parameter" do
+        expect_raises(Exception, /ignore_extra: true/) do
+          MXNet::Gluon::SymbolBlock.import(temp, "data", allow_missing: true)
+        end
+      end
+    end
+  end
+
+  describe "#forward" do
+    layer = MXNet::Gluon::SymbolBlock.new([o], [i]).init(init: :zeros)
+
+    it "evaluates the symbolized block" do
+      layer.forward([MXNet::NDArray.array([1, 1])]).should eq([MXNet::NDArray.array([0, 0])])
+    end
+    it "evaluates the symbolized block" do
+      layer.forward([MXNet::Symbol.var("z")]).map(&.list_arguments).should eq([["z", "foo0_w", "foo0_b"]])
+    end
+  end
 end
 
 class CachedBlock < MXNet::Gluon::Block

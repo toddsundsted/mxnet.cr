@@ -510,6 +510,32 @@ module MXNet
       bind(ctx: ctx).forward
     end
 
+    # Returns a shallow copy of this symbol.
+    #
+    # This method is functionally identical to `#clone`.
+    #
+    def dup
+      MXNet::Internal.libcall(
+        MXSymbolCopy,
+        self.handle,
+        out handle
+      )
+      self.class.new(handle)
+    end
+
+    # Returns a deep copy of this symbol.
+    #
+    # This method is functionally identical to `#dup`.
+    #
+    def clone
+      MXNet::Internal.libcall(
+        MXSymbolCopy,
+        self.handle,
+        out handle
+      )
+      self.class.new(handle)
+    end
+
     # Saves symbol to a JSON file.
     #
     # ### Parameters

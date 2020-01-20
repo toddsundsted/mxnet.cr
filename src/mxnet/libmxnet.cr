@@ -94,6 +94,10 @@ module MXNet
       ) : Int32
 
       # Symbol
+      fun MXSymbolCopy(
+        handle : SymbolHandle,
+        out : SymbolHandle*
+      ) : Int32
       fun MXSymbolCreateGroup(
         num_symbols : MXUInt,
         symbols : SymbolHandle*,

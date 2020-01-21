@@ -85,9 +85,41 @@ non-standard locations without guidance.
 
 # Status
 
-MXNet.cr currently focuses on supporting most of the basic arithmetic
-operations on arrays and symbols, with support for symbolic evaluation
-and some support for automatic differentiation thrown in. Almost all
-operations in the library are exposed, however, via the automatically
-generated `Ops`, `Sparse`, `Linalg`, etc. modules but documentation
-and guidance are nonexistent at this time.
+MXNet.cr currently implements a subset of
+[Gluon](https://gluon.mxnet.io/), and supports most of the basic
+arithmetic operations on arrays and symbols, with support for symbolic
+evaluation and some support for automatic differentiation thrown
+in. Almost all operations in the library are exposed, however, via the
+automatically generated `Ops`, `Sparse`, `Linalg`, etc. modules but
+documentation and guidance are nonexistent at this time.
+
+Implemented functionality:
+* MXNet
+  * Autograd
+  * Context
+  * Executor
+  * Optimizer
+  * NDArray
+  * Symbol
+  * Gluon
+    * Block
+    * HybridBlock
+    * Sequential
+    * HybridSequential
+    * SymbolBlock
+    * Dense
+    * Pooling
+    * Conv1D
+    * Conv2D
+    * Conv3D
+    * MaxPool1D
+    * MaxPool2D
+    * MaxPool3D
+    * Flatten
+    * L1Loss
+    * L2Loss
+    * SoftmaxCrossEntropyLoss
+    * Activation
+    * Trainer
+    * Parameter
+    * Constant

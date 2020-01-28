@@ -1,4 +1,4 @@
-require "../../../../spec_helper"
+require "../../../spec_helper"
 
 describe MXNet::Gluon::NN::Activation do
   describe ".new" do

@@ -1,5 +1,4 @@
-require "../../../spec_helper"
-require "../../../../src/mxnet/gluon"
+require "../../spec_helper"
 
 describe MXNet::Gluon::Parameter do
   describe ".new" do

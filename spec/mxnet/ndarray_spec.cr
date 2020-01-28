@@ -1,4 +1,4 @@
-require "../../spec_helper"
+require "../spec_helper"
 
 private macro random_spec_helper(random, *args)
   describe ".{{random}}" do

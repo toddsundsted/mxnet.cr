@@ -1,4 +1,4 @@
-require "../../spec_helper"
+require "../spec_helper"
 
 describe MXNet::Autograd do
   describe ".is_recording" do

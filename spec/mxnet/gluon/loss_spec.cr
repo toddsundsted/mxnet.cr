@@ -1,4 +1,4 @@
-require "../../../spec_helper"
+require "../../spec_helper"
 
 describe MXNet::Gluon::Loss::L1Loss do
   describe "#call" do

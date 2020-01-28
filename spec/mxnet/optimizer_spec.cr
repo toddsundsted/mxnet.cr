@@ -1,4 +1,4 @@
-require "../../spec_helper"
+require "../spec_helper"
 
 class MXNet::Optimizer
   def get_lr(index)

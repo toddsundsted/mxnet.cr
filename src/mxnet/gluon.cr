@@ -30,6 +30,7 @@ module MXNet
   end
 end
 
+require "./gluon/data"
 require "./gluon/parameter"
 require "./gluon/block"
 require "./gluon/trainer"

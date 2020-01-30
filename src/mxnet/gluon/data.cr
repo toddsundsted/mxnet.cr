@@ -7,3 +7,5 @@ module MXNet
     end
   end
 end
+
+require "./data/sampler"

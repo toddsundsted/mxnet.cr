@@ -9,3 +9,4 @@ module MXNet
 end
 
 require "./data/sampler"
+require "./data/dataset"

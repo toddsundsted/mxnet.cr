@@ -249,10 +249,7 @@ module MXNet
       #
       def _reduce
         data = list_data.map { |d| d.copy_to(MXNet.cpu) }
-        # FIXME: directly call `imperative_invoke` to work around
-        # the requirement that splat arguments must be enumerable at
-        # compile time and limitations in the generated code.
-        MXNet::NDArray.imperative_invoke("add_n", data, num_args: data.size) / data.size
+        MXNet::NDArray.add_n(data) / data.size
       end
 
       private def check_and_get(arr_list, ctx)

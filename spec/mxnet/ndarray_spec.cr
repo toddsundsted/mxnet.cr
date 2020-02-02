@@ -534,7 +534,7 @@ describe MXNet::NDArray do
     it "adds arrays" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
-      MXNet::NDArray.add_n(a, b).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+      MXNet::NDArray.add_n([a, b]).should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
     end
   end
 
@@ -669,7 +669,7 @@ describe MXNet::NDArray do
     it "concatenates arrays" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
-      MXNet::NDArray.concat(a, b).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+      MXNet::NDArray.concat([a, b]).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
     end
   end
 

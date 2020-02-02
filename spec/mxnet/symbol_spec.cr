@@ -207,7 +207,7 @@ describe MXNet::Symbol do
   describe "#infer_shape" do
     a = MXNet::Symbol.var("a")
     b = MXNet::Symbol.var("b")
-    c = a + MXNet::Symbol.concat(b, b)
+    c = a + MXNet::Symbol.concat([b, b])
 
     it "infers shape positionally" do
       c.infer_shape([nil, [3, 3]]).should eq({[[3, 6], [3, 3]], [[3, 6]], _i32})
@@ -466,7 +466,7 @@ describe MXNet::Symbol do
     it "adds arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
-      MXNet::Symbol.add_n(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
+      MXNet::Symbol.add_n([a, b]).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 6.0], [4.0, 5.0]]))
     end
   end
 
@@ -601,7 +601,7 @@ describe MXNet::Symbol do
     it "concatenates arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
-      MXNet::Symbol.concat(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+      MXNet::Symbol.concat([a, b]).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
     end
   end
 

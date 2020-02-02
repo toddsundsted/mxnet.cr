@@ -659,8 +659,8 @@ module MXNet
       #   List of arrays to add.
       {{suffix}}
       #
-      def self.add_n(*data : self, **kwargs)
-        Ops._add_n(*data, **kwargs.merge({num_args: data.size}))
+      def self.add_n(data : Array(self), **kwargs)
+        Ops._add_n(data, **kwargs.merge({num_args: data.size}))
       end
 
       # Returns element-wise sum of the input arrays with broadcasting.
@@ -1000,8 +1000,8 @@ module MXNet
       #   The dimension to be concated.
       {{suffix}}
       #
-      def self.concat(*data : self, **kwargs)
-        Ops._concat(*data, **kwargs.merge({num_args: data.size}))
+      def self.concat(data : Array(self), **kwargs)
+        Ops._concat(data, **kwargs.merge({num_args: data.size}))
       end
 
       # Compute *N*-D convolution on *(N+2)*-D input.

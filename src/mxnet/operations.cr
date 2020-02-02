@@ -548,35 +548,6 @@ module MXNet
       {% end %}
     end
 
-    private macro bifunc_helper(op, arg1, arg2, fn_array, fn_scalar, fn_lscalar, fn_rscalar)
-      def self.{{op}}({{arg1}} : self | Number, {{arg2}} : self | Number)
-        if {{arg1}}.is_a?(self)
-          if {{arg2}}.is_a?(self)
-            {{fn_array}}({{arg1}}, {{arg2}})
-          else
-            {{fn_rscalar}}({{arg1}}, scalar: {{arg2}})
-          end
-        else
-          if {{arg2}}.is_a?(self)
-            {{fn_lscalar}}({{arg2}}, scalar: {{arg1}})
-          else
-            # this case is handled in a separate specialized method
-            raise "should never happen"
-          end
-        end
-      end
-      # :nodoc:
-      def self.{{op}}({{arg1}} : Number, {{arg2}} : Number)
-        {% if fn_scalar.is_a?(If) %}
-          {{fn_scalar}}
-        {% elsif fn_scalar.is_a?(SymbolLiteral) %}
-          {{arg1}}.{{fn_scalar.id}}({{arg2}})
-        {% else %}
-          {% raise "not supported: #{fn_scalar}"%}
-        {% end %}
-      end
-    end
-
     private macro def_class_and_fluent_method(op, name)
       {% args1 = MXNet::Operations::OP_INFO[name.stringify][1] %}
       {% args2 = MXNet::Operations::OP_INFO[name.stringify][2] %}

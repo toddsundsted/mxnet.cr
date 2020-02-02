@@ -504,36 +504,50 @@ module MXNet
         {% op = op.stringify %}
         {% keywords = {"begin", "end"} %}
         {% name = op.gsub(/^(_contrib_|_linalg_|_sparse_|_)/, "") %}
-        {% prefix = {"_contrib_", "_linalg_", "_sparse_", "_"}.find { |pre| op.starts_with?(pre) } || "" %}
-        {% mod = {"_contrib_": "Contrib", "_linalg_": "Linalg", "_sparse_": "Sparse", "_": "Internal"}[prefix] || "Ops" %}
-        {% args = ps[1] ? ps[1].map { |a| keywords.includes?(a) ? "_#{a.downcase.id} : #{@type}?".id : "#{a.downcase.id} : #{@type}?".id } : nil %}
-        {% kwargs = ps[2] ? ps[2].map { |a| keywords.includes?(a) ? "#{a.downcase.id} _#{a.downcase.id}".id : "#{a.downcase.id}".id } : nil %}
+        {% pre = {"_contrib_", "_linalg_", "_sparse_", "_"}.find { |pre| op.starts_with?(pre) } || "" %}
+        {% mod = {"_contrib_": "Contrib", "_linalg_": "Linalg", "_sparse_": "Sparse", "_": "Internal"}[pre] || "Ops" %}
+        {%
+          args = ps[1] && ps[1].map do |a|
+            if (a.starts_with?("*"))
+              a = a[1..-1].downcase
+              t = "Array(#{@type})"
+            else
+              a = a.downcase
+              t = "#{@type}?"
+            end
+            keywords.includes?(a) ?
+              {"#{a.id} _#{a.id} : #{t.id}".id, "_#{a.id}".id} :
+              {"#{a.id} : #{t.id}".id, a.id}
+          end
+          kwargs = ps[2] && ps[2].map do |a|
+            a = a.downcase
+            keywords.includes?(a) ?
+              {"#{a.id} _#{a.id}".id, "#{a.id}: _#{a.id}".id} :
+              {a.id, "#{a.id}: #{a.id}".id}
+          end
+        %}
         {% if args && kwargs %}
-          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*args}}, {{*kwargs}}, **kwargs)
-            {% args = ps[1].map { |a| keywords.includes?(a) ? "_#{a.downcase.id}".id : a.downcase.id } %}
-            {% kwargs = ps[2].map { |a| keywords.includes?(a) ? "#{a.downcase.id}: _#{a.downcase.id}".id : "#{a.downcase.id}: #{a.downcase.id}".id } %}
+          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*args.map(&.first)}}, {{*kwargs.map(&.first)}}, **kwargs)
             {% if @type == MXNet::NDArray %}
-              {{@type}}.imperative_invoke({{op}}, {{*args}}, **kwargs.merge({{*kwargs}}))
+              {{@type}}.imperative_invoke({{op}}, {{*args.map(&.last)}}, **kwargs.merge({{*kwargs.map(&.last)}}))
             {% elsif @type == MXNet::Symbol %}
-              {{@type}}.create_symbol({{op}}, {{*args}}, **kwargs.merge({{*kwargs}}))
+              {{@type}}.create_symbol({{op}}, {{*args.map(&.last)}}, **kwargs.merge({{*kwargs.map(&.last)}}))
             {% end %}
           end
         {% elsif args %}
-          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*args}}, **kwargs)
-            {% args = ps[1].map { |a| keywords.includes?(a) ? "_#{a.downcase.id}".id : a.downcase.id } %}
+          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*args.map(&.first)}}, **kwargs)
             {% if @type == MXNet::NDArray %}
-              {{@type}}.imperative_invoke({{op}}, {{*args}}, **kwargs)
+              {{@type}}.imperative_invoke({{op}}, {{*args.map(&.last)}}, **kwargs)
             {% elsif @type == MXNet::Symbol %}
-              {{@type}}.create_symbol({{op}}, {{*args}}, **kwargs)
+              {{@type}}.create_symbol({{op}}, {{*args.map(&.last)}}, **kwargs)
             {% end %}
           end
         {% elsif kwargs %}
-          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*kwargs}}, **kwargs)
-            {% kwargs = ps[2].map { |a| keywords.includes?(a) ? "#{a.downcase.id}: _#{a.downcase.id}".id : "#{a.downcase.id}: #{a.downcase.id}".id } %}
+          def {{@type}}::{{mod.id}}.{{"_#{name.id}".id}}({{*kwargs.map(&.first)}}, **kwargs)
             {% if @type == MXNet::NDArray %}
-              {{@type}}.imperative_invoke({{op}}, **kwargs.merge({{*kwargs}}))
+              {{@type}}.imperative_invoke({{op}}, **kwargs.merge({{*kwargs.map(&.last)}}))
             {% elsif @type == MXNet::Symbol %}
-              {{@type}}.create_symbol({{op}}, **kwargs.merge({{*kwargs}}))
+              {{@type}}.create_symbol({{op}}, **kwargs.merge({{*kwargs.map(&.last)}}))
             {% end %}
           end
         {% else %}

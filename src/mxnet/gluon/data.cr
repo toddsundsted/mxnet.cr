@@ -10,3 +10,4 @@ end
 
 require "./data/sampler"
 require "./data/dataset"
+require "./data/data_loader"

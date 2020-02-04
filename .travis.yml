@@ -8,7 +8,8 @@ script:
   - crystal docs
 
 before_script: |
-  sudo apt install gfortran
+  sudo apt update
+  sudo apt install libgfortran3
   sudo pip install mxnet==1.4.0
 
 deploy:

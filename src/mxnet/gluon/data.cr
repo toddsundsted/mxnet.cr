@@ -10,4 +10,5 @@ end
 
 require "./data/sampler"
 require "./data/dataset"
+require "./data/vision/mnist"
 require "./data/data_loader"

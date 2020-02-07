@@ -64,6 +64,24 @@ describe MXNet::Gluon::Data::LazyTransformDataset do
   end
 end
 
+describe MXNet::Gluon::Data::ArrayDataset do
+  dataset = MXNet::Gluon::Data::ArrayDataset.new([1, 2, 3, 4], [5, 6, 7, 8])
+
+  describe "#size" do
+    it "returns the size" do
+      dataset.size.should eq(4)
+    end
+  end
+
+  describe "#[]" do
+    it "returns the value at the specified index" do
+      dataset[0].should eq({1, 5})
+      dataset[1].should eq({2, 6})
+      dataset[-1].should eq({4, 8})
+    end
+  end
+end
+
 class TestDataset1 < MXNet::Gluon::Data::DownloadedDataset(Int32, String, Tuple(Int32, String))
   def initialize(*, root = File.join(Dir.tempdir, "test"), transform = nil)
     super(root: root, transform: transform)

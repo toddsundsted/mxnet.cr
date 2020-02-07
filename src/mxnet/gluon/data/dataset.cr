@@ -43,6 +43,7 @@ module MXNet
         #
         # ### Parameters
         # * *dataset* (`Indexable`)
+        #   Any indexable object.
         #
         def initialize(@dataset : Indexable(T))
         end
@@ -64,6 +65,7 @@ module MXNet
         #
         # ### Parameters
         # * *dataset* (`Indexable`)
+        #   Any indexable object.
         #
         def initialize(@dataset : Indexable(T), &@proc : T -> U)
         end
@@ -74,6 +76,69 @@ module MXNet
 
         def unsafe_fetch(idx)
           @proc.call(@dataset[idx])
+        end
+      end
+
+      # A dataset that combines multiple dataset-like objects.
+      #
+      class ArrayDataset
+        private class Implementation(D, E)
+          include Indexable(E)
+
+          @size : Int32
+
+          def initialize(@datasets : D)
+            @size = @datasets[0].size
+            {% begin %}
+              {% for i in (1...D.size) %}
+                raise ArgumentError.new("all datasets must have the same size") unless @datasets[{{i}}].size == @size
+              {% end %}
+            {% end %}
+          end
+
+          def size
+            @datasets[0].size
+          end
+
+          def unsafe_fetch(idx)
+            {% begin %}
+              {
+                {% for i in (0...D.size) %}
+                  @datasets[{{i}}][idx],
+                {% end %}
+              }
+            {% end %}
+          end
+        end
+
+        private def self.new
+          raise ArgumentError.new("must be created with at least one dataset")
+        end
+
+        # Creates a new instance.
+        #
+        def self.new(t : Indexable(T), u : Indexable(U), v : Indexable(V), w : Indexable(W), x : Indexable(X)) forall T, U, V, W, X
+          Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V), Indexable(W), Indexable(X)), Tuple(T, U, V, W, X)).new({t, u, v, w, x})
+        end
+
+        # ditto
+        def self.new(t : Indexable(T), u : Indexable(U), v : Indexable(V), w : Indexable(W)) forall T, U, V, W
+          Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V), Indexable(W)), Tuple(T, U, V, W)).new({t, u, v, w})
+        end
+
+        # ditto
+        def self.new(t : Indexable(T), u : Indexable(U), v : Indexable(V)) forall T, U, V
+          Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V)), Tuple(T, U, V)).new({t, u, v})
+        end
+
+        # ditto
+        def self.new(t : Indexable(T), u : Indexable(U)) forall T, U
+          Implementation(Tuple(Indexable(T), Indexable(U)), Tuple(T, U)).new({t, u})
+        end
+
+        # ditto
+        def self.new(t : Indexable(T)) forall T
+          Implementation(Tuple(Indexable(T)), Tuple(T)).new({t})
         end
       end
 

@@ -898,6 +898,11 @@ describe MXNet::NDArray do
       b[1..-1].should eq(MXNet::NDArray.array([[[5, 6], [7, 8]], [[9, 0], [1, 2]]]))
     end
 
+    it "returns the specified value" do
+      a = MXNet::NDArray.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15], [16, 17, 18, 19]])
+      a[2, 3].should eq(MXNet::NDArray.array([11]))
+    end
+
     it "supports mixed ranges and indexes" do
       b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
       b[1...3, 1].should eq(MXNet::NDArray.array([[7, 8], [1, 2]]))
@@ -929,12 +934,15 @@ describe MXNet::NDArray do
     end
 
     it "reduces dimensionality correctly" do
-      x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape(shape: [7, 5, 3, 1])
-      x[1].shape.should eq([5, 3, 1])
-      x[0..-1, 1].shape.should eq([7, 3, 1])
-      x[0..-1, 0..-1, 1].shape.should eq([7, 5, 1])
-      x[0..-1, 1, 0..-1].shape.should eq([7, 3, 1])
-      x[0..-1, 1, 1].shape.should eq([7, 1])
+      x = MXNet::NDArray.array((0...7 * 5 * 3 * 2).to_a).reshape(shape: [7, 5, 3, 2])
+      x[1].shape.should eq([5, 3, 2])
+      x[1, 1].shape.should eq([3, 2])
+      x[1, 1, 1].shape.should eq([2])
+      x[1, 1, 1, 1].shape.should eq([1])
+      x[0..-1, 1].shape.should eq([7, 3, 2])
+      x[0..-1, 0..-1, 1].shape.should eq([7, 5, 2])
+      x[0..-1, 1, 0..-1].shape.should eq([7, 3, 2])
+      x[0..-1, 1, 1].shape.should eq([7, 2])
     end
   end
 
@@ -965,6 +973,12 @@ describe MXNet::NDArray do
         b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
         b[1..-1] = MXNet::NDArray.array([[[99, 99], [99, 99]], [[99, 99], [99, 99]]])
         b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[99, 99], [99, 99]]]))
+      end
+
+      it "replaces the specified value" do
+        a = MXNet::NDArray.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15], [16, 17, 18, 19]])
+        a[2, 3] = MXNet::NDArray.array([99])
+        a.should eq(MXNet::NDArray.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 99], [12, 13, 14, 15], [16, 17, 18, 19]]))
       end
 
       it "supports mixed ranges and indexes" do

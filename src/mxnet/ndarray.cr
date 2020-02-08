@@ -597,7 +597,7 @@ module MXNet
     def [](keys : Array(Int | Range(Int?, Int?) ))
       ranges, dims = ranges_and_dims(keys, compact: true)
       out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last))
-      dims.size > 0 ? out.reshape(shape: dims) : out
+      dims.size > 0 ? out.reshape(shape: dims) : out.reshape(shape: [1])
     end
 
     # Sets sliced view of this array to the specified value.

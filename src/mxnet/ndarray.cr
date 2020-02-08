@@ -543,9 +543,17 @@ module MXNet
           e = k + 1
           {b, e}
         else
-          b = k.begin
-          e = k.end < 0 ? shape[i] + k.end : k.end
-          e = k.excludes_end? ? e : e + 1
+          if bk = k.begin
+            b = bk
+          else
+            b = 0
+          end
+          if tk = k.end
+            e = tk < 0 ? shape[i] + tk : tk
+            e = k.excludes_end? ? e : e + 1
+          else
+            e = shape[i]
+          end
           {b, e}
         end
       end
@@ -586,7 +594,7 @@ module MXNet
     # b[1, 1...2] # => MXNet::NDArray.array([[7, 8]])
     # ```
     #
-    def [](keys : Array(Int | Range(Int, Int)))
+    def [](keys : Array(Int | Range(Int?, Int?) ))
       ranges, dims = ranges_and_dims(keys, compact: true)
       out = Ops._slice(self, begin: ranges.map(&.first), end: ranges.map(&.last))
       dims.size > 0 ? out.reshape(shape: dims) : out
@@ -623,7 +631,7 @@ module MXNet
     # b # => MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [97, 97]], [[9, 0], [98, 98]]])
     # ```
     #
-    def []=(keys : Array(Int | Range(Int, Int)), value : Number | self)
+    def []=(keys : Array(Int | Range(Int?, Int?)), value : Number | self)
       ranges, dims = ranges_and_dims(keys, compact: false)
       if value.is_a?(self)
         Internal._slice_assign(

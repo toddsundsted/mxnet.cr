@@ -918,6 +918,16 @@ describe MXNet::NDArray do
       b[1, 1].should eq(MXNet::NDArray.array([7, 8]))
     end
 
+    it "supports open ranges" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[1, ..].should eq(MXNet::NDArray.array([[5, 6], [7, 8]]))
+    end
+
+    it "supports open ranges" do
+      b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+      b[.., 1].should eq(MXNet::NDArray.array([[3, 4], [7, 8], [1, 2]]))
+    end
+
     it "reduces dimensionality correctly" do
       x = MXNet::NDArray.array((0...7 * 5 * 3 * 1).to_a).reshape(shape: [7, 5, 3, 1])
       x[1].shape.should eq([5, 3, 1])
@@ -979,6 +989,18 @@ describe MXNet::NDArray do
         b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
         b[1, 1] = MXNet::NDArray.array([99, 99])
         b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "supports open ranges" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[1, ..] = MXNet::NDArray.array([[99, 99], [99, 99]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [3, 4]], [[99, 99], [99, 99]], [[9, 0], [1, 2]]]))
+      end
+
+      it "supports open ranges" do
+        b = MXNet::NDArray.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 0], [1, 2]]])
+        b[.., 1] = MXNet::NDArray.array([[99, 99], [99, 99], [99, 99]])
+        b.should eq(MXNet::NDArray.array([[[1, 2], [99, 99]], [[5, 6], [99, 99]], [[9, 0], [99, 99]]]))
       end
     end
 

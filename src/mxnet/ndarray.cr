@@ -47,7 +47,7 @@ module MXNet
 
     def shape
       MXNet::Internal.libcall(MXNDArrayGetShape, @handle, out dim, out pdata)
-      pdata.to_slice(dim).to_a.map(&.to_i32)
+      pdata.to_slice(dim).map(&.to_i32).to_a
     end
 
     def context
@@ -536,7 +536,7 @@ module MXNet
     end
 
     private def ranges_and_dims(keys, compact = nil)
-      shape = self.shape.map(&.to_i32)
+      shape = self.shape
       ranges = keys.map_with_index do |k, i|
         if k.is_a?(Int)
           b = k

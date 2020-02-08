@@ -679,6 +679,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#norm" do
+    it "returns the norm" do
+      a = MXNet::Symbol.var("a")
+      a.norm.eval(**args).first.should be_close(MXNet::NDArray.array([5.47]), 0.05)
+    end
+  end
+
   describe "#one_hot" do
     it "returns a one-hot array" do
       b = MXNet::Symbol.var("b")

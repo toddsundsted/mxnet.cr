@@ -1359,6 +1359,41 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, min)
 
+      # Computes the norm.
+      #
+      # This operator computes the norm on an array with the specified
+      # axis, depending on the value of the `ord` parameter. By default,
+      # it computes the L2 norm on the entire array. Currently only
+      # `ord: 2` supports sparse arrays.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[[1.0, 2.0], [3.0, 4.0]], [[2.0, 2.0], [5.0, 6.0]]]
+      #
+      # Then:
+      #     norm(x, ord: 2, axis: 1) # => [[3.1622, 4.4721], [5.3851, 6.3245]]
+      #     norm(x, ord: 1, axis: 1) # => [[40., 6.0], [7.0, 8.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *ord* (`Int`, optional, default = `2`)
+      #   Order of the norm. Currently `ord: 1` and `ord: 2` are
+      #   supported.
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the reduction.
+      #   By default it computes over all elements into a scalar array
+      #   with shape `[1]`. If axis is `Int`, a reduction is performed
+      #   on a particular axis. If axis is `Array(Int)`, it specifies
+      #   the axes that hold 2-D matrices, and the matrix norms of
+      #   these matrices are computed.
+      # * *out_dtype* (`::Symbol`, `:float16`, `:float32`, `:float64`, `:int32`, `:int64` or `:int8`, optional)
+      #   The data type of the output.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If `true`, the reduced axes are left in the result as
+      #   a dimension with size one.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, norm)
+
       # Returns a one-hot array.
       #
       # The locations represented by *indices* take value *on_value*,

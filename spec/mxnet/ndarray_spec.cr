@@ -747,6 +747,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#norm" do
+    it "returns the norm" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.norm.should be_close(MXNet::NDArray.array([5.47]), 0.05)
+    end
+  end
+
   describe "#one_hot" do
     it "returns a one-hot array" do
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])

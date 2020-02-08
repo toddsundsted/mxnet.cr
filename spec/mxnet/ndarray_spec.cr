@@ -755,6 +755,14 @@ describe MXNet::NDArray do
     end
   end
 
+  describe ".ones_like" do
+    it "creates an array of the same shape filled with ones" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      z = MXNet::NDArray.ones_like(a)
+      z.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
   describe "#pick" do
     it "picks elements from an input array" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
@@ -873,6 +881,14 @@ describe MXNet::NDArray do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
       c.transpose.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
       c.transpose(axes: [1, 0, 2]).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
+    end
+  end
+
+  describe ".zeros_like" do
+    it "creates an array of the same shape filled with zeros" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      z = MXNet::NDArray.zeros_like(a)
+      z.should eq(MXNet::NDArray.array([[0.0, 0.0], [0.0, 0.0]]))
     end
   end
 

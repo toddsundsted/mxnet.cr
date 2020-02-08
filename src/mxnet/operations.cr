@@ -1554,6 +1554,128 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, relu)
 
+      # Draws random samples from a uniform distribution.
+      #
+      # Samples are uniformly distributed over the half-open interval
+      # `[low, high)` (includes low, but excludes high).
+      #
+      #     random_uniform(0.0, 1.0, shape: [2, 2]) # => [[0.60276335, 0.85794562], [0.54488319, 0.84725171]]
+      #
+      # ### Parameters
+      # * *low* (`Float`, default = 0.0)
+      #   Lower bound of the distribution.
+      # * *high* (`Float`, default = 1.0)
+      #   Upper bound of the distribution.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the output.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.random_uniform(low : Number = 0.0, high : Number = 1.0, ctx : Context = Context.current, **kwargs)
+        Internal._random_uniform(**kwargs.merge({low: low, high: high, ctx: ctx}))
+      end
+
+      # Draws random samples from a normal (Gaussian) distribution.
+      #
+      # Samples are distributed according to a normal distribution
+      # parametrized by `loc` (mean) and `scale` (standard deviation).
+      #
+      #     random_normal(0.0, 1.0, shape: [2, 2]) # => [[1.89171135, -1.16881478], [-1.23474145, 1.55807114]]
+      #
+      # ### Parameters
+      # * *loc* (`Float`, default = 0.0)
+      #   Mean of the distribution.
+      # * *scale* (`Float`, default = 1.0)
+      #   Standard deviation of the distribution.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the output.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.random_normal(loc : Number = 0.0, scale : Number = 1.0, ctx : Context = Context.current, **kwargs)
+        Internal._random_normal(**kwargs.merge({loc: loc, scale: scale, ctx: ctx}))
+      end
+
+      # Draws random samples from a Poisson distribution.
+      #
+      # Samples are distributed according to a Poisson distribution
+      # parametrized by `lam` (rate). Samples will always be returned
+      # as a floating point data type.
+      #
+      #     random_poisson(4.0, shape: [2, 2]) # => [[5.0, 2.0], [4.0, 6.0]]
+      #
+      # ### Parameters
+      # * *lam* (`Float`, default = 1.0)
+      #   Lambda parameter (rate) of the Poisson distribution.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the output.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.random_poisson(lam : Number = 1.0, ctx : Context = Context.current, **kwargs)
+        Internal._random_poisson(**kwargs.merge({lam: lam, ctx: ctx}))
+      end
+
+      # Draws random samples from an exponential distribution.
+      #
+      # Samples are distributed according to an exponential distribution
+      # parametrized by `lam` (rate).
+      #
+      #     random_exponential(4.0, shape: [2, 2]) # => [[0.0097189 , 0.08999364], [0.04146638, 0.31715935]]
+      #
+      # ### Parameters
+      # * *lam* (`Float`, default = 1.0)
+      #   Lambda parameter (rate) of the exponential distribution.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the output.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.random_exponential(lam : Number = 1.0, ctx : Context = Context.current, **kwargs)
+        Internal._random_exponential(**kwargs.merge({lam: lam, ctx: ctx}))
+      end
+
+      # Draws random samples from a gamma distribution.
+      #
+      # Samples are distributed according to a gamma distribution
+      # parametrized by `alpha` (shape) and `beta` (scale).
+      #
+      #     random_gamma(9.0, 0.5, shape: [2, 2]) # => [[6.2806954, 6.1658335], [4.5625057, 6.479337]]
+      #
+      # ### Parameters
+      # * *alpha* (`Float`, default = 1.0)
+      #   Alpha parameter (shape) of the gamma distribution.
+      # * *beta* (`Float`, default = 1.0)
+      #   Beta parameter (scale) of the gamma distribution.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the output.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, ctx : Context = Context.current, **kwargs)
+        Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, ctx: ctx}))
+      end
+
       # Reshapes the input array.
       #
       # Returns a copy of the array with a new shape without altering

@@ -32,6 +32,8 @@ module MXNet
   #   broadcasting enabled by default.
   #
   class NDArray < Base
+    include Indexable(self)
+
     @handle : NDArrayHandle
 
     # :nodoc:
@@ -508,6 +510,19 @@ module MXNet
     # Leaves the values unchanged.
     def +
       self
+    end
+
+    # Methods required to implement `Indexable`.
+
+    def size
+      shape[0]
+    end
+
+    def unsafe_fetch(idx)
+      shape = self.shape
+      shape.shift
+      out = Ops._slice(self, begin: [idx], end: [idx + 1])
+      shape.size > 0 ? out.reshape(shape: shape) : out
     end
 
     private macro method_missing(call)

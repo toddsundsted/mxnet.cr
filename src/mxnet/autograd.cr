@@ -142,8 +142,8 @@ module MXNet
     #   * `:null`: do not compute gradient
     #
     def self.mark_variables(variables, gradients, grad_reqs = :write)
-      variables = [variables] unless variables.responds_to?(:each)
-      gradients = [gradients] unless gradients.responds_to?(:each)
+      variables = [variables] if variables.is_a?(NDArray)
+      gradients = [gradients] if gradients.is_a?(NDArray)
 
       if grad_reqs.is_a?(::Symbol)
         grad_reqs = [GRAD_REQ_MAP[grad_reqs]] * variables.size
@@ -180,11 +180,11 @@ module MXNet
     def self.backward(outputs, gradients = nil, retain_graph = false, train_mode = true)
       unless outputs.nil?
         outputs =
-          outputs.responds_to?(:each) ? outputs.map(&.handle).to_a : [outputs.handle]
+          !outputs.is_a?(NDArray) ? outputs.map(&.handle).to_a : [outputs.handle]
       end
       unless gradients.nil?
         gradients =
-          gradients.responds_to?(:each) ? gradients.map(&.handle).to_a : [gradients.handle]
+          !gradients.is_a?(NDArray) ? gradients.map(&.handle).to_a : [gradients.handle]
       end
 
       MXNet::Internal.libcall(

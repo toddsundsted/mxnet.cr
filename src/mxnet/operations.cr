@@ -1676,6 +1676,216 @@ module MXNet
         Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, ctx: ctx}))
       end
 
+      # Draws concurrent samples from uniform distributions.
+      #
+      # Samples are drawn from multiple uniform distributions on the
+      # intervals given by `[low, high)`.
+      #
+      # The parameters of the distributions are provided as input
+      # arrays. Let `[s]` be the shape of the input arrays, `n` be the
+      # dimension of `[s]`, `[t]` be the shape specified as the
+      # parameter of the operator, and `m` be the dimension of `[t]`.
+      # Then the output will be a (`n+m`)-dimensional array with shape
+      # `[s]x[t]`.
+      #
+      # For any valid `n`-dimensional index `i` with respect to the
+      # input arrays, `output[i]` will be an `m`-dimensional array
+      # that holds randomly drawn samples from the distribution which
+      # is parameterized by the input values at index `i`. If the
+      # shape parameter of the operator is not set, then one sample
+      # will be drawn per distribution and the output array has the
+      # same shape as the input arrays.
+      #
+      # Assume *low* and *high* are arrays with the following elements:
+      #     [0.0, 2.5] # low
+      #     [1.0, 3.7] # high
+      #
+      # Then:
+      #     sample_uniform(low, high)             # => [0.40451524, 3.18687344]
+      #     sample_uniform(low, high, shape: [2]) # => [[0.40451524, 0.18017688], [3.18687344, 3.68352246]]
+      #
+      # ### Parameters
+      # * *low* (`{{type}}`)
+      #   Lower bounds of the distributions.
+      # * *high* (`{{type}}`)
+      #   Upper bounds of the distributions.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_uniform(low : self, high : self, **kwargs)
+        Internal._sample_uniform(**kwargs.merge({low: low, high: high}))
+      end
+
+      # Draws concurrent samples from normal (Gaussian) distributions.
+      #
+      # Samples are drawn from multiple normal distributions with
+      # parameters `mu` (mean) and `sigma` (standard deviation).
+      #
+      # The parameters of the distributions are provided as input
+      # arrays. Let `[s]` be the shape of the input arrays, `n` be the
+      # dimension of `[s]`, `[t]` be the shape specified as the
+      # parameter of the operator, and `m` be the dimension of `[t]`.
+      # Then the output will be a (`n+m`)-dimensional array with shape
+      # `[s]x[t]`.
+      #
+      # For any valid `n`-dimensional index `i` with respect to the
+      # input arrays, `output[i]` will be an `m`-dimensional array
+      # that holds randomly drawn samples from the distribution which
+      # is parameterized by the input values at index `i`. If the
+      # shape parameter of the operator is not set, then one sample
+      # will be drawn per distribution and the output array has the
+      # same shape as the input arrays.
+      #
+      # Assume *mu* and *sigma* are arrays with the following elements:
+      #     [0.0, 2.5] # mu
+      #     [1.0, 3.7] # sigma
+      #
+      # Then:
+      #     sample_normal(mu, sigma)             # => [-0.56410581, 0.95934606]
+      #     sample_normal(mu, sigma, shape: [2]) # => [[-0.56410581, 0.2928229 ], [0.95934606, 4.48287058]]
+      #
+      # ### Parameters
+      # * *mu* (`{{type}}`)
+      #   Means of the distributions.
+      # * *sigma* (`{{type}}`)
+      #   Standard deviations of the distributions.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_normal(mu : self, sigma : self, **kwargs)
+        Internal._sample_normal(**kwargs.merge({mu: mu, sigma: sigma}))
+      end
+
+      # Draws concurrent samples from Poisson distributions.
+      #
+      # Samples are drawn from multiple Poisson distributions with
+      # parameters `lam` (rate). Samples will always be returned as
+      # a floating point data type.
+      #
+      # The parameters of the distributions are provided as an input
+      # array. Let `[s]` be the shape of the input array, `n` be the
+      # dimension of `[s]`, `[t]` be the shape specified as the
+      # parameter of the operator, and `m` be the dimension of `[t]`.
+      # Then the output will be a (`n+m`)-dimensional array with shape
+      # `[s]x[t]`.
+      #
+      # For any valid `n`-dimensional index `i` with respect to the
+      # input array, output[i] will be an `m`-dimensional array that
+      # holds randomly drawn samples from the distribution which is
+      # parameterized by the input value at index `i`. If the shape
+      # parameter of the operator is not set, then one sample will be
+      # drawn per distribution and the output array has the same shape
+      # as the input array.
+      #
+      # Assume *lam* is an array with the following elements:
+      #     [1.0, 8.5]
+      #
+      # Then:
+      #     sample_poisson(lam)             # => [0.0, 13.0]
+      #     sample_poisson(lam, shape: [2]) # => [[0.0, 4.0], [13.0, 8.0]]
+      #
+      # ### Parameters
+      # * *lam* (`{{type}}`)
+      #   Lambda parameters (rates) of the Poisson distributions.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_poisson(lam : self, **kwargs)
+        Internal._sample_poisson(**kwargs.merge({lam: lam}))
+      end
+
+      # Draws concurrent samples from exponential distributions.
+      #
+      # Samples are drawn from multiple exponential distributions with
+      # parameters `lam` (rate).
+      #
+      # The parameters of the distributions are provided as an input
+      # array. Let `[s]` be the shape of the input array, `n` be the
+      # dimension of `[s]`, `[t]` be the shape specified as the
+      # parameter of the operator, and `m` be the dimension of `[t]`.
+      # Then the output will be a (`n+m`)-dimensional array with shape
+      # `[s]x[t]`.
+      #
+      # For any valid `n`-dimensional index `i` with respect to the
+      # input array, output[i] will be an `m`-dimensional array that
+      # holds randomly drawn samples from the distribution which is
+      # parameterized by the input value at index `i`. If the shape
+      # parameter of the operator is not set, then one sample will be
+      # drawn per distribution and the output array has the same shape
+      # as the input array.
+      #
+      # Assume *lam* is an array with the following elements:
+      #     [1.0, 8.5]
+      #
+      # Then:
+      #     sample_exponential(lam)             # => [0.51837951, 0.09994757]
+      #     sample_exponential(lam, shape: [2]) # => [[0.51837951, 0.19866663], [0.09994757, 0.50447971]]
+      #
+      # ### Parameters
+      # * *lam* (`{{type}}`)
+      #   Lambda parameters (rates) of the exponential distributions.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_exponential(lam : self, **kwargs)
+        Internal._sample_exponential(**kwargs.merge({lam: lam}))
+      end
+
+      # Draws random samples from gamma distributions.
+      #
+      # Samples are drawn from multiple gamma distributions with
+      # parameters `alpha` (shape) and `beta` (scale).
+      #
+      # The parameters of the distributions are provided as input
+      # arrays. Let `[s]` be the shape of the input arrays, `n` be the
+      # dimension of `[s]`, `[t]` be the shape specified as the
+      # parameter of the operator, and `m` be the dimension of `[t]`.
+      # Then the output will be a (`n+m`)-dimensional array with shape
+      # `[s]x[t]`.
+      #
+      # For any valid `n`-dimensional index `i` with respect to the
+      # input arrays, `output[i]` will be an `m`-dimensional array
+      # that holds randomly drawn samples from the distribution which
+      # is parameterized by the input values at index `i`. If the
+      # shape parameter of the operator is not set, then one sample
+      # will be drawn per distribution and the output array has the
+      # same shape as the input arrays.
+      #
+      # Assume *alpha* and *beta* are arrays with the following elements:
+      #     [0.0, 2.5] # alpha
+      #     [1.0, 0.7] # beta
+      #
+      # Then:
+      #     sample_gamma(alpha, beta)             # => [0.0, 2.25797319]
+      #     sample_gamma(alpha, beta, shape: [2]) # => [[0.0, 0.0], [2.25797319, 1.70734084]]
+      #
+      # ### Parameters
+      # * *alpha* (`{{type}}`)
+      #   Alpha parameters (shapes) of the distributions.
+      # * *beta* (`{{type}}`)
+      #   Beta parameters (scales) of the distributions.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_gamma(alpha : self, beta : self, **kwargs)
+        Internal._sample_gamma(**kwargs.merge({alpha: alpha, beta: beta}))
+      end
+
       # Reshapes the input array.
       #
       # Returns a copy of the array with a new shape without altering

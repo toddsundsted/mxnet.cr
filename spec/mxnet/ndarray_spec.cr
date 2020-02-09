@@ -29,6 +29,35 @@ private macro random_spec_helper(random, *args)
   end
 end
 
+private macro sample_spec_helper(sample, *args, return_types = {Float64, :float64})
+  describe ".{{sample}}" do
+    args = {
+      {% for arg in (args) %}
+        MXNet::NDArray.array({{arg}}),
+      {% end %}
+    }
+
+    it "returns an array of sampled numbers" do
+      MXNet::NDArray.{{sample}}(*args, shape: 2).shape.should eq([2, 2])
+      MXNet::NDArray.{{sample}}(*args, shape: [1, 2, 3]).shape.should eq([2, 1, 2, 3])
+      MXNet::NDArray.{{sample}}(*args, shape: 1, dtype: :float32).dtype.should eq(:float32)
+    end
+
+    if gpu_enabled?
+      it "infers context from arguments" do
+        MXNet::NDArray.{{sample}}(*args.map(&.as_in_context(MXNet.gpu(0))), shape: 1).context.should eq(MXNet.gpu(0))
+      end
+    end
+
+    it "writes the results to the output array" do
+      a = MXNet::NDArray.empty(2, dtype: {{return_types[1]}})
+      b = MXNet::NDArray.{{sample}}(*args, out: a)
+      a.first.as_scalar.should be_a({{return_types[0]}})
+      a.should be(b)
+    end
+  end
+end
+
 describe MXNet::NDArray do
   describe ".imperative_invoke" do
     it "removes nil arguments" do
@@ -259,6 +288,12 @@ describe MXNet::NDArray do
   random_spec_helper(random_poisson, 1.0)
   random_spec_helper(random_exponential, 1.0)
   random_spec_helper(random_gamma, 1.0, 1.0)
+
+  sample_spec_helper(sample_uniform, [0.0, 2.5], [1.0, 3.7])
+  sample_spec_helper(sample_normal, [0.0, 2.5], [1.0, 3.7])
+  sample_spec_helper(sample_poisson, [1.0, 8.5])
+  sample_spec_helper(sample_exponential, [1.0, 8.5])
+  sample_spec_helper(sample_gamma, [0.0, 2.5], [1.0, 0.7])
 
   describe "#shape" do
     it "returns the shape of the array" do

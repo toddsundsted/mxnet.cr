@@ -16,6 +16,32 @@ private macro random_spec_helper(random, *args)
   end
 end
 
+private macro sample_spec_helper(sample, *args)
+  describe ".{{sample}}" do
+    syms = {
+      {% for i in (0...args.size) %}
+        MXNet::Symbol.var({{i.stringify}}),
+      {% end %}
+    }
+    args = {
+      {% for arg in (args) %}
+        MXNet::NDArray.array({{arg}}),
+      {% end %}
+    }
+
+    it "returns an array of sampled numbers" do
+      MXNet::Symbol.{{sample}}(*syms, shape: 2).eval(*args).first.shape.should eq([2, 2])
+      MXNet::Symbol.{{sample}}(*syms, shape: [1, 2, 3]).eval(*args).first.shape.should eq([2, 1, 2, 3])
+      MXNet::Symbol.{{sample}}(*syms, shape: 1, dtype: :float32).eval(*args).first.dtype.should eq(:float32)
+    end
+
+    it "names the new symbol" do
+      a = MXNet::Symbol.{{sample}}(*syms, name: "a")
+      a.name.should eq("a")
+    end
+  end
+end
+
 struct Expression
   struct Node
     JSON.mapping(
@@ -161,6 +187,12 @@ describe MXNet::Symbol do
   random_spec_helper(random_poisson, 1.0)
   random_spec_helper(random_exponential, 1.0)
   random_spec_helper(random_gamma, 1.0, 1.0)
+
+  sample_spec_helper(sample_uniform, [0.0, 2.5], [1.0, 3.7])
+  sample_spec_helper(sample_normal, [0.0, 2.5], [1.0, 3.7])
+  sample_spec_helper(sample_poisson, [1.0, 8.5])
+  sample_spec_helper(sample_exponential, [1.0, 8.5])
+  sample_spec_helper(sample_gamma, [0.0, 2.5], [1.0, 0.7])
 
   describe "#name" do
     it "returns the name of the symbol" do

@@ -193,6 +193,10 @@ describe MXNet::Symbol do
   sample_spec_helper(sample_poisson, [1.0, 8.5])
   sample_spec_helper(sample_exponential, [1.0, 8.5])
   sample_spec_helper(sample_gamma, [0.0, 2.5], [1.0, 0.7])
+  sample_spec_helper(
+    sample_multinomial,
+    [[0.0, 0.1, 0.2, 0.3, 0.4], [0.4, 0.3, 0.2, 0.1, 0.0]]
+  )
 
   describe "#name" do
     it "returns the name of the symbol" do

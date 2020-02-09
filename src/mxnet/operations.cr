@@ -1886,6 +1886,48 @@ module MXNet
         Internal._sample_gamma(**kwargs.merge({alpha: alpha, beta: beta}))
       end
 
+      # Draws random samples from multinomial distributions.
+      #
+      # Samples are drawn from multiple multinomial distributions.
+      # Note that the input distribution must be normalized (data must
+      # sum to 1 along its last axis).
+      #
+      # `data` is an `n` dimensional array whose last dimension has
+      # length `k`, where `k` is the number of possible outcomes of
+      # each multinomial distribution. This operator will draw shape
+      # samples from each distribution. If `shape` is empty one sample
+      # will be drawn from each distribution.
+      #
+      # If `get_prob` is `true`, a second array containing log
+      # likelihood of the drawn samples will also be returned. This is
+      # usually used for reinforcement learning where you can provide
+      # reward as head gradient for this array to estimate gradient.
+      #
+      # Given:
+      #     probs = [[0.0, 0.1, 0.2, 0.3, 0.4], [0.4, 0.3, 0.2, 0.1, 0.0]]
+      #
+      # Then:
+      #     sample_multinomial(probs)                 # => [3, 0]
+      #     sample_multinomial(probs, shape: [2])     # => [[4, 2], [0, 0]]
+      #     sample_multinomial(probs, get_prob: true) # => [2, 1], [0.2, 0.3]
+      #
+      # ### Parameters
+      # * *data* (`{{type}}`)
+      #   Distribution probabilities. Must sum to one on the last axis.
+      # * *get_prob* (`Bool`, default = false)
+      #   Whether to also return the log probabilities of sampled
+      #   results. This is usually used for differentiating through
+      #   stochastic variables, e.g. in reinforcement learning.
+      # * *shape* (`Int` or `Array(Int)`)
+      #   Shape to be sampled from each random distribution.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output in case this can’t be inferred.
+      {{suffix}}
+      #
+      def self.sample_multinomial(data : self, get_prob : Bool = false, **kwargs)
+        Internal._sample_multinomial(**kwargs.merge({data: data, get_prob: get_prob}))
+      end
+
       # Reshapes the input array.
       #
       # Returns a copy of the array with a new shape without altering

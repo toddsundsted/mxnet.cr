@@ -332,6 +332,7 @@ describe MXNet::Symbol do
     c: MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]]),
     d: MXNet::NDArray.array([[1.0], [4.0], [9.0]]),
     e: MXNet::NDArray.array([[-1.0], [1.0]]),
+    f: MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1]),
     i: MXNet::NDArray.array([0.0, 1.0]),
     z: MXNet::NDArray.array([0.0])
   }
@@ -670,6 +671,13 @@ describe MXNet::Symbol do
       c = MXNet::Symbol.var("c")
       c.flip(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[7.0, 8.0], [5.0, 6.0], [3.0, 4.0], [1.0, 2.0]]]))
       c.flip(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[[2.0, 1.0], [4.0, 3.0], [6.0, 5.0], [8.0, 7.0]]]))
+    end
+  end
+
+  describe "#floor" do
+    it "returns floor of the input" do
+      f = MXNet::Symbol.var("f")
+      f.floor.eval(**args).first.should eq(MXNet::NDArray.array([-3.0, -2.0, 1.0, 1.0, 2.0]))
     end
   end
 

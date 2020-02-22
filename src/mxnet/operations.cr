@@ -1215,6 +1215,22 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, flip)
 
+      # Returns the element-wise floor of the input.
+      #
+      # The floor of `x` is the largest integer `i`, such that `i <= x`.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #    floor(x) = [-3.0, -2.0, 1.0, 1.0, 2.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, floor)
+
       # Applies a linear transformation: _Y = XWᵀ + b_.
       #
       # If *flatten* is true, then the shapes are:

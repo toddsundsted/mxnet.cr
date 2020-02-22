@@ -745,6 +745,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#floor" do
+    it "returns floor of the input" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.floor.should eq(MXNet::NDArray.array([-3.0, -2.0, 1.0, 1.0, 2.0]))
+    end
+  end
+
   describe "#log" do
     it "computes the natural logarithm" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

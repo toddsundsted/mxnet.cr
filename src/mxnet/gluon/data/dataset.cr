@@ -161,7 +161,7 @@ module MXNet
         #   Optional transformation to apply to each returned sample.
         #
         def initialize(root, transform : Proc(T, U, V)? = nil)
-          @root = File.expand_path(root)
+          @root = File.expand_path(root, home: true)
           Dir.mkdir_p(@root) unless Dir.exists?(@root)
           @transform = transform
           @data, @label = get_data

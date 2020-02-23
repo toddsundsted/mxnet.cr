@@ -740,11 +740,31 @@ module MXNet
     # MXNet::NDArray.zeros([4], dtype: :float64).to_a # => [0.0, 0.0, 0.0, 0.0]
     # ```
     #
+    # The return type of this method is the union of all possible
+    # array types (e.g. `Array(Float32) | Array(Float64) | ...`). To
+    # return an array and check and restrict the return type in a
+    # single operation, see `#to_a(as)`.
+    #
     def to_a
       unless shape.size == 1
         raise NDArrayException.new("the array must have only 1 dimension")
       end
       raw
+    end
+
+    # Returns an `Array` with values copied from this array.
+    #
+    # Only works for 1-dimensional arrays (`shape.size == 1`).
+    #
+    # ```
+    # MXNet::NDArray.zeros([4], dtype: :float64).to_a(Float64) # => [0.0, 0.0, 0.0, 0.0]
+    # ```
+    #
+    # To return an array without checking and restricting the return
+    # type, see `#to_a`.
+    #
+    def to_a(as : T.class) : Array(T) forall T
+      to_a.as(Array(T))
     end
 
     def to_s(io)

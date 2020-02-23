@@ -819,40 +819,6 @@ module MXNet
       MXNet::Internal.libcall(MXNDArrayFree, @handle)
     end
 
-    # Returns an MXNet array filled with all zeros, with the given
-    # shape and type.
-    #
-    # ### Parameters
-    # * *shape* (`Int` or `Array(Int)`)
-    #   The shape of the array.
-    # * *dtype* (`::Symbol`, default = `:float32`)
-    #   The data type of the output array.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
-    # * *out* (`NDArray`, optional)
-    #   The output array.
-    #
-    def self.zeros(shape : Int | Array(Int), ctx = Context.current, **kwargs)
-      Internal._zeros(**kwargs.merge({shape: shape, ctx: ctx}))
-    end
-
-    # Returns an MXNet array filled with all ones, with the given
-    # shape and type.
-    #
-    # ### Parameters
-    # * *shape* (`Int` or `Array(Int)`)
-    #   The shape of the array.
-    # * *dtype* (`::Symbol`, default = `:float32`)
-    #   The data type of the output array.
-    # * *ctx* (`Context`, optional)
-    #   Device context (default is the current context).
-    # * *out* (`NDArray`, optional)
-    #   The output array.
-    #
-    def self.ones(shape : Int | Array(Int), ctx = Context.current, **kwargs)
-      Internal._ones(**kwargs.merge({shape: shape, ctx: ctx}))
-    end
-
     # Returns an MXNet array of given shape and type, without
     # initializing entries.
     #

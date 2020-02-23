@@ -1000,36 +1000,6 @@ module MXNet
       end
     end
 
-    # Create a symbol representing zeros, with the given
-    # shape and type.
-    #
-    # ### Parameters
-    # * *shape* (`Int` or `Array(Int)`)
-    #   The shape of the symbol.
-    # * *dtype* (`::Symbol`, default = `:float32`)
-    #   The data type of the symbol.
-    # * *name* (`String`, optional)
-    #   Name of the resulting symbol.
-    #
-    def self.zeros(shape : Int | Array(Int), **kwargs)
-      Internal._zeros(**kwargs.merge({shape: shape}))
-    end
-
-    # Create a symbol representing ones, with the given
-    # shape and type.
-    #
-    # ### Parameters
-    # * *shape* (`Int` or `Array(Int)`)
-    #   The shape of the symbol.
-    # * *dtype* (`::Symbol`, default = `:float32`)
-    #   The data type of the symbol.
-    # * *name* (`String`, optional)
-    #   Name of the resulting symbol.
-    #
-    def self.ones(shape : Int | Array(Int), **kwargs)
-      Internal._ones(**kwargs.merge({shape: shape}))
-    end
-
     # Creates a symbol that contains a collection of other symbols,
     # grouped together.
     #

@@ -1443,6 +1443,23 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, one_hot)
 
+      # Returns an array filled with all ones, with the given shape.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the array.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output array.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.ones(shape : Int | Array(Int), ctx = Context.current, **kwargs)
+        Internal._ones(**kwargs.merge({shape: shape, ctx: ctx}))
+      end
+
       # Picks elements from an input array according to the indices
       # along the given axis.
       #
@@ -2328,6 +2345,23 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, transpose)
+
+      # Returns an array filled with all zeros, with the given shape.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *shape* (`Int` or `Array(Int)`)
+      #   The shape of the array.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output array.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.zeros(shape : Int | Array(Int), ctx = Context.current, **kwargs)
+        Internal._zeros(**kwargs.merge({shape: shape, ctx: ctx}))
+      end
     end
   end
 end

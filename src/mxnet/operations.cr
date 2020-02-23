@@ -5,6 +5,8 @@ module MXNet
   module Operations
     # :nodoc:
     OP_INFO = {
+      # the "manual" tag indicates definitions that differ from those
+      # exported from the MXNet library (via `MXSymbolGetAtomicSymbolInfo`)
       "Activation": {"Activation",["data"],["act_type"],nil},
       "BatchNorm": {"BatchNorm",["data","gamma","beta","moving_mean","moving_var"],nil,["eps","momentum","fix_gamma","use_global_stats","output_mean_var","axis","cudnn_off"]},
       "BatchNorm_v1": {"BatchNorm_v1",["data","gamma","beta"],nil,["eps","momentum","fix_gamma","use_global_stats","output_mean_var"]},
@@ -434,7 +436,7 @@ module MXNet
       "reciprocal": {"reciprocal",["data"],nil,nil},
       "relu": {"relu",["data"],nil,nil},
       "repeat": {"repeat",["data"],["repeats"],["axis"]},
-      "reshape": {"Reshape",["data"],nil,["shape","reverse","target_shape","keep_highest"]},
+      "reshape": {"Reshape",["data"],["shape"],["reverse","target_shape","keep_highest"]}, # manual
       "reshape_like": {"reshape_like",["lhs","rhs"],nil,nil},
       "reverse": {"reverse",["data"],["axis"],nil},
       "rint": {"rint",["data"],nil,nil},

@@ -730,6 +730,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#exp" do
+    it "computes the exponential" do
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.exp.should be_close(MXNet::NDArray.array([1.0000, 2.7182]), 0.001)
+    end
+  end
+
   describe "#expand_dims" do
     it "inserts a new axis into the input array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])

@@ -1196,6 +1196,22 @@ module MXNet
         Ops._dot(lhs, rhs, **kwargs)
       end
 
+      # Returns element-wise exponential value of the input.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [0.0, 1.0, 2.0]
+      #
+      # Then:
+      #     exp(x) = [1.0, 2.71828175, 7.38905621]
+      #
+      # The storage type of `.exp` output is always dense.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, exp)
+
       # Inserts a new axis of size 1 into the array shape.
       #
       # For example, given *x* with shape *[2, 3, 4]*, then

@@ -659,6 +659,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#exp" do
+    it "computes the exponential" do
+      i = MXNet::Symbol.var("i")
+      i.exp.eval(**args).first.should be_close(MXNet::NDArray.array([1.0000, 2.7182]), 0.001)
+    end
+  end
+
   describe "#expand_dims" do
     it "inserts a new axis into the input array" do
       c = MXNet::Symbol.var("c")

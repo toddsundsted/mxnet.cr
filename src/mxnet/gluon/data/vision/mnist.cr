@@ -25,10 +25,10 @@ module MXNet
         # See: http://yann.lecun.com/exdb/mnist
         #
         class MNIST(T) < MXNet::Gluon::Data::DownloadedDataset(MXNet::NDArray, Int32, T)
-          TRAIN_DATA = {"train-images-idx3-ubyte.gz", "6c95f4b05d2bf285e1bfb0e7960c31bd3b3f8a7d"}
-          TRAIN_LABEL = {"train-labels-idx1-ubyte.gz", "2a80914081dc54586dbdf242f9805a6b8d2a15fc"}
-          TEST_DATA = {"t10k-images-idx3-ubyte.gz", "c3a25af1f52dad7f726cce8cacb138654b760d48"}
-          TEST_LABEL = {"t10k-labels-idx1-ubyte.gz", "763e7fa3757d93b0cdec073cef058b2004252c17"}
+          private TRAIN_DATA = {"train-images-idx3-ubyte.gz", "6c95f4b05d2bf285e1bfb0e7960c31bd3b3f8a7d"}
+          private TRAIN_LABEL = {"train-labels-idx1-ubyte.gz", "2a80914081dc54586dbdf242f9805a6b8d2a15fc"}
+          private TEST_DATA = {"t10k-images-idx3-ubyte.gz", "c3a25af1f52dad7f726cce8cacb138654b760d48"}
+          private TEST_LABEL = {"t10k-labels-idx1-ubyte.gz", "763e7fa3757d93b0cdec073cef058b2004252c17"}
 
           # Creates a new instance.
           #
@@ -60,7 +60,7 @@ module MXNet
             super(root: root, transform: transform)
           end
 
-          def get_data
+          private def get_data
             if @train
               data, label = TRAIN_DATA, TRAIN_LABEL
             else

@@ -665,6 +665,40 @@ module MXNet
         Ops._add_n(data, **kwargs.merge({num_args: data.size}))
       end
 
+      # Returns evenly spaced values within a given interval.
+      #
+      # Values are generated within the half-open interval `[start,
+      # stop)`. In other words, the interval includes start but
+      # excludes stop.
+      #
+      # Examples:
+      #     arange(3)                                       # => [0.0, 1.0, 2.0]
+      #     arange(2, 6)                                    # => [2.0, 3.0, 4.0, 5.0]
+      #     arange(2, 6, step: 2)                           # => [2.0, 4.0]
+      #     arange(2, 6, step: 1.5, repeat: 2)              # => [2.0, 2.0, 3.5, 3.5, 5.0 , 5.0]
+      #     arange(2, 6, step: 2, repeat: 3, dtype: :int32) # => [2, 2, 2, 4, 4, 4]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *start* (`Number`, optional, default = `0.0`)
+      #   Start of interval.
+      # * *stop* (`Number`, required)
+      #   End of interval.
+      # * *step* (`Number`, optional, default = `1.0`)
+      #   Spacing between values.
+      # * *repeat* (`Int`, optional, default = `1`)
+      #   Number of times to repeat each value.
+      # * *dtype* (`::Symbol`, default = `:float32`)
+      #   The data type of the output array.
+      # * *ctx* (`Context`, optional)
+      #   Device context (default is the current context). Only used
+      #   for imperative calls.
+      {{suffix}}
+      #
+      def self.arange(start : Number, stop : Number? = nil, ctx = Context.current, **kwargs)
+        Internal._arange(**kwargs.merge({start: start, stop: stop, ctx: ctx}))
+      end
+
       # Returns element-wise sum of the input arrays with broadcasting.
       #
       # `.broadcast_add` is an alias for `.broadcast_plus`.

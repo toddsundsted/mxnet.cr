@@ -578,6 +578,14 @@ describe MXNet::NDArray do
     end
   end
 
+  describe ".arange" do
+    it "returns evenly spaced values within a given interval" do
+      MXNet::NDArray.arange(3).should eq(MXNet::NDArray.array([0.0, 1.0, 2.0], :float32))
+      MXNet::NDArray.arange(2, 6).should eq(MXNet::NDArray.array([2.0, 3.0, 4.0, 5.0], :float32))
+      MXNet::NDArray.arange(2, 6, step: 2).should eq(MXNet::NDArray.array([2.0, 4.0], :float32))
+    end
+  end
+
   describe ".broadcast_add" do
     it "adds two arrays" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

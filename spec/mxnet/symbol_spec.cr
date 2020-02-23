@@ -507,6 +507,14 @@ describe MXNet::Symbol do
     end
   end
 
+  describe ".arange" do
+    it "returns evenly spaced values within a given interval" do
+      MXNet::Symbol.arange(3).eval(**args).first.should eq(MXNet::NDArray.array([0.0, 1.0, 2.0], :float32))
+      MXNet::Symbol.arange(2, 6).eval(**args).first.should eq(MXNet::NDArray.array([2.0, 3.0, 4.0, 5.0], :float32))
+      MXNet::Symbol.arange(2, 6, step: 2).eval(**args).first.should eq(MXNet::NDArray.array([2.0, 4.0], :float32))
+    end
+  end
+
   describe ".broadcast_add" do
     it "adds two arrays" do
       a = MXNet::Symbol.var("a")

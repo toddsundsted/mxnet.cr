@@ -5,6 +5,25 @@ module MXNet
   module Gluon
     module Data
       module Vision
+        # MNIST handwritten digits dataset.
+        #
+        # Each sample is an image with shape `[28, 28]` (an
+        # `MXNet::NDArray`) paired with its label (an `Int32`).
+        #
+        # Without any transformation (return type is `Tuple(MXNet::NDArray, Int32)`):
+        #
+        #     mnist = MXNet::Gluon::Data::Vision::MNIST.new
+        #
+        # With a transformer (here, return type is `Tuple(MXNet::NDArray, Float32)`):
+        #
+        #     def transform(data, label)
+        #       {data / 255, label.to_f32}
+        #     end
+        #
+        #     mnist = MXNet::Gluon::Data::Vision::MNIST.new(transform: ->transform(MXNet::NDArray, Int32))
+        #
+        # See: http://yann.lecun.com/exdb/mnist
+        #
         class MNIST(T) < MXNet::Gluon::Data::DownloadedDataset(MXNet::NDArray, Int32, T)
           TRAIN_DATA = {"train-images-idx3-ubyte.gz", "6c95f4b05d2bf285e1bfb0e7960c31bd3b3f8a7d"}
           TRAIN_LABEL = {"train-labels-idx1-ubyte.gz", "2a80914081dc54586dbdf242f9805a6b8d2a15fc"}

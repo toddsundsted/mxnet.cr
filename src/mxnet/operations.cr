@@ -1192,9 +1192,7 @@ module MXNet
       #   If true then transpose the second input before dot.
       {{suffix}}
       #
-      def self.dot(lhs : self, rhs : self, **kwargs)
-        Ops._dot(lhs, rhs, **kwargs)
-      end
+      def_class_and_fluent_method(Ops, dot)
 
       # Returns element-wise exponential value of the input.
       #

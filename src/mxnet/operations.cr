@@ -2166,9 +2166,7 @@ module MXNet
       {{prefix}}
       {{suffix}}
       #
-      def self.shuffle(data : self, **kwargs)
-        Ops._shuffle(data, **kwargs)
-      end
+      def_class_and_fluent_method(Ops, shuffle)
 
       # Computes the sigmoid activation.
       #

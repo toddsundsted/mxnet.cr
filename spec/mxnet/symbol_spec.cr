@@ -187,6 +187,12 @@ describe MXNet::Symbol do
   random_spec_helper(random_poisson, 1.0)
   random_spec_helper(random_exponential, 1.0)
   random_spec_helper(random_gamma, 1.0, 1.0)
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.4.0") < 0 %}
+    random_spec_helper(
+      random_randint, 1, 9,
+      dtype: :int32
+    )
+  {% end %}
 
   sample_spec_helper(sample_uniform, [0.0, 2.5], [1.0, 3.7])
   sample_spec_helper(sample_normal, [0.0, 2.5], [1.0, 3.7])

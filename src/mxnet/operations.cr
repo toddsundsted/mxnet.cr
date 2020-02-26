@@ -219,6 +219,7 @@ module MXNet
       "_random_normal": {"_random_normal",nil,nil,["loc","scale","shape","ctx","dtype"]},
       "_random_poisson": {"_random_poisson",nil,nil,["lam","shape","ctx","dtype"]},
       "_random_uniform": {"_random_uniform",nil,nil,["low","high","shape","ctx","dtype"]},
+      "_random_randint": {"_random_randint",nil,["low","high"],["shape","ctx","dtype"]}, # manual
       "_ravel_multi_index": {"_ravel_multi_index",["data"],nil,["shape"]},
       "_rdiv_scalar": {"_rdiv_scalar",["data"],["scalar"],nil},
       "_rminus_scalar": {"_rminus_scalar",["data"],["scalar"],nil},
@@ -431,6 +432,7 @@ module MXNet
       "random_normal": {"_random_normal",nil,nil,["loc","scale","shape","ctx","dtype"]},
       "random_poisson": {"_random_poisson",nil,nil,["lam","shape","ctx","dtype"]},
       "random_uniform": {"_random_uniform",nil,nil,["low","high","shape","ctx","dtype"]},
+      "random_randint": {"_random_randint",nil,["low","high"],["shape","ctx","dtype"]}, # manual
       "ravel_multi_index": {"_ravel_multi_index",["data"],nil,["shape"]},
       "rcbrt": {"rcbrt",["data"],nil,nil},
       "reciprocal": {"reciprocal",["data"],nil,nil},
@@ -1758,6 +1760,33 @@ module MXNet
       def self.random_gamma(alpha : Number = 1.0, beta : Number = 1.0, ctx : Context = Context.current, **kwargs)
         Internal._random_gamma(**kwargs.merge({alpha: alpha, beta: beta, ctx: ctx}))
       end
+
+      {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.4.0") < 0 %}
+        # Draws random samples from a discrete uniform distribution.
+        #
+        # Samples are uniformly distributed over the half-open interval
+        # `[low, high)` (includes low, but excludes high).
+        #
+        #     random_randint(0, 5, shape: [2, 2]) # => [[0, 2], [3, 1]]
+        #
+        # ### Parameters
+        # * *low* (`Int`, required)
+        #   Lower boundary of the output interval.
+        # * *high* (`Int`, required)
+        #   Upper boundary of the output interval.
+        # * *shape* (`Int` or `Array(Int)`)
+        #   The shape of the output.
+        # * *dtype* (`::Symbol`, default = `:int32`)
+        #   The data type of the output.
+        # * *ctx* (`Context`, optional)
+        #   Device context (default is the current context). Only used
+        #   for imperative calls.
+        {{suffix}}
+        #
+        def self.random_randint(low : Int, high : Int, ctx : Context = Context.current, **kwargs)
+          Internal._random_randint(**kwargs.merge({low: low, high: high, ctx: ctx}))
+        end
+      {% end %}
 
       # Draws concurrent samples from uniform distributions.
       #

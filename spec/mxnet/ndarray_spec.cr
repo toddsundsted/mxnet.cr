@@ -1,11 +1,11 @@
 require "../spec_helper"
 
-private macro random_spec_helper(random, *args)
+private macro random_spec_helper(random, *args, dtype = :float32)
   describe ".{{random}}" do
     it "returns an array of random numbers" do
       MXNet::NDArray.{{random}}({{*args}}, shape: 2).shape.should eq([2])
       MXNet::NDArray.{{random}}({{*args}}, shape: [1, 2, 3]).shape.should eq([1, 2, 3])
-      MXNet::NDArray.{{random}}({{*args}}, shape: 1, dtype: :float32).dtype.should eq(:float32)
+      MXNet::NDArray.{{random}}({{*args}}, shape: 1, dtype: {{dtype}}).dtype.should eq({{dtype}})
     end
 
     if gpu_enabled?
@@ -21,9 +21,10 @@ private macro random_spec_helper(random, *args)
     end
 
     it "writes the results to the output array" do
-      a = MXNet::NDArray.empty(1, dtype: :float64)
+      {% dtype = dtype.stringify[1..-1].tr("3264", "6432") %}
+      a = MXNet::NDArray.empty(1, dtype: {{dtype.id.symbolize}})
       b = MXNet::NDArray.{{random}}({{*args}}, out: a)
-      a.as_scalar.should be_a(Float64)
+      a.as_scalar.should be_a({{dtype.capitalize.id}})
       a.should be(b)
     end
   end

@@ -1,12 +1,12 @@
 require "json"
 require "../spec_helper"
 
-private macro random_spec_helper(random, *args)
+private macro random_spec_helper(random, *args, dtype = :float32)
   describe ".{{random}}" do
     it "returns an array of random numbers" do
       MXNet::Symbol.{{random}}({{*args}}, shape: 2).eval.first.shape.should eq([2])
       MXNet::Symbol.{{random}}({{*args}}, shape: [1, 2, 3]).eval.first.shape.should eq([1, 2, 3])
-      MXNet::Symbol.{{random}}({{*args}}, shape: 1, dtype: :float32).eval.first.dtype.should eq(:float32)
+      MXNet::Symbol.{{random}}({{*args}}, shape: 1, dtype: {{dtype}}).eval.first.dtype.should eq({{dtype}})
     end
 
     it "names the new symbol" do

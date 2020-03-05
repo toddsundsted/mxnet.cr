@@ -26,6 +26,12 @@ outputs:
 <NDArray 2x2 int32 cpu(0)>
 ```
 
+If you want to see what MXNet.cr can do, check out
+[toddsundsted/deep-learning](https://github.com/toddsundsted/deep-learning).
+It's a collection of problems and solutions from [Deep Learning - The
+Straight Dope](https://gluon.mxnet.io/), a set of notebooks teaching
+deep learning using MXNet.
+
 # Installation
 
 MXNet.cr requires MXNet.
@@ -44,7 +50,7 @@ dependencies:
     github: toddsundsted/mxnet.cr
 ```
 
-# Troubleshooting
+## Troubleshooting
 
 MXNet.cr relies on the Python library to find the installed MXNet
 shared library ("libmxnet.so"). You can verify MXNet is installed with
@@ -65,9 +71,11 @@ which outputs:
 <NDArray 2x2 @cpu(0)>
 ```
 
-On OSX, you may need to give the compiled Crystal executable a hint
-about the location of the shared library. If you see an error message
-like the following:
+## OSX
+
+On OSX, you may need to give your program a hint about the location of
+the MXNet shared library (*libmxnet.so*). If you build and run your
+program and see an error message like the following:
 
 ```
 dyld: Library not loaded: lib/libmxnet.so
@@ -75,13 +83,19 @@ dyld: Library not loaded: lib/libmxnet.so
   Reason: image not found
 ```
 
-you need to either: 1) manually set the `DYLD_FALLBACK_LIBRARY_PATH`
-environment variable to point to the directory containing the shared
-library, or 2) move or copy the library into a well-known location.
+you need to either: 1) explicitly set the `DYLD_FALLBACK_LIBRARY_PATH`
+environment variable to point to the directory containing *libmxnet.so*,
+or 2) move or copy *libmxnet.so* into a well-known location (such as
+the project's own *lib* directory).
 
-The Crystal build step does not currently set the path to the library
-explicitly and OSX does not currently look for shared libraries in
-non-standard locations without guidance.
+Alternatively, and more permanently, you can modify the *libmxnet.so*
+shared library so that it knows where it's located at runtime (you
+will modify the library's LC\_ID\_DYLIB information):
+
+```
+LIBMXNET=/Users/homedirectory/mxnet-1.5.1/lib/python3.6/site-packages/mxnet/libmxnet.so # the full path
+install_name_tool -id $LIBMXNET $LIBMXNET
+```
 
 # Status
 

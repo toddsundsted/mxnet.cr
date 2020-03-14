@@ -946,7 +946,7 @@ describe MXNet::NDArray do
     it "takes elements from an input array" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       e = MXNet::NDArray.array([[-1.0], [1.0]])
-      a.take(e, axis: 1).should eq(MXNet::NDArray.array([[[1.0], [2.0]], [[3.0], [4.0]]]))
+      a.take(e).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]]]))
     end
   end
 

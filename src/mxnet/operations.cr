@@ -2383,7 +2383,7 @@ module MXNet
       #
       # Then:
       #     # get rows 0 and 1, then 1 and 2, along axis 0
-      #     take(x, indices: i) # => [[[1, 2], [3, 4]], [[3, 4], [5, 6]]]
+      #     take(x, i) # => [[[1, 2], [3, 4]], [[3, 4], [5, 6]]]
       #
       # ### Parameters
       # * *a* (`{{type}}`, required)

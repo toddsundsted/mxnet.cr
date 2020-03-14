@@ -874,7 +874,7 @@ describe MXNet::Symbol do
     it "takes elements from an input array" do
       a = MXNet::Symbol.var("a")
       e = MXNet::Symbol.var("e")
-      a.take(e, axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [2.0]], [[3.0], [4.0]]]))
+      a.take(e).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]]]))
     end
   end
 

@@ -848,45 +848,67 @@ module MXNet
 
     # :nodoc:
     private INFERRED_TYPES = {
-      Array(Float32) => 0,
-      Array(Float64) => 1,
-      Array(UInt8) => 3,
-      Array(Int32) => 4,
-      Array(Int8) => 5,
-      Array(Int64) => 6
+      Float32 => 0,
+      Float64 => 1,
+      UInt8 => 3,
+      Int32 => 4,
+      Int8 => 5,
+      Int64 => 6
     }
 
     # Creates an MXNet array from any enumerable object.
     #
     # ### Parameters
     # * *source* (`Enumerable(T)`)
-    #   Any enumerable object, or nested objects.
+    #   Any enumerable object, or nested enumerable object, whose
+    #   elements can be converted to numbers.
     # * *dtype* (`::Symbol`, optional)
-    #   The data type of the output array. If unspecified, the type is
+    #   The type of the output array. If unspecified, the type is
     #   inferred from the source type.
     # * *ctx* (`Context`, optional)
     #   Device context (default is the current context).
     #
     def self.array(source : Enumerable(T), dtype = nil, ctx = nil) forall T
       source = source.to_a
-      shape_and_type = infer_shape_and_type(source)
-      inferred_shape = shape_and_type.map(&.first)
-      inferred_type = shape_and_type.last.last
-      elements = source.flatten
+      inferred_shape = _infer_shape(source)
+      source = source.flatten
+      inferred_type = _infer_type(source)
+
+      ctx ||= Context.current
 
       if dtype
         dtype = T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
       end
-      if inferred_type
-        inferred_type = INFERRED_TYPES[inferred_type]? || raise MXNet::NDArrayException.new("type is unsupported: #{inferred_type}")
+      unless inferred_type.empty?
+        if inferred_type.size == 1 && (temp = INFERRED_TYPES[inferred_type.first]?)
+          size = source.size
+          source = source.to_unsafe.as(Pointer(Void))
+          inferred_type = temp
+        elsif inferred_type.any?(&.<=(Float64))
+          size = source.size
+          source = source.map(&.to_f64).to_unsafe.as(Pointer(Void))
+          inferred_type = INFERRED_TYPES[Float64]
+        elsif inferred_type.any?(&.<(Float))
+          size = source.size
+          source = source.map(&.to_f32).to_unsafe.as(Pointer(Void))
+          inferred_type = INFERRED_TYPES[Float32]
+        elsif inferred_type.any?(&.<=(Int64))
+          size = source.size
+          source = source.map(&.to_i64).to_unsafe.as(Pointer(Void))
+          inferred_type = INFERRED_TYPES[Int64]
+        elsif inferred_type.any?(&.<(Int))
+          size = source.size
+          source = source.map(&.to_i32).to_unsafe.as(Pointer(Void))
+          inferred_type = INFERRED_TYPES[Int32]
+        else
+          raise MXNet::NDArrayException.new("type is unsupported: #{inferred_type.join(", ")}")
+        end
       else
         raise MXNet::NDArrayException.new("type can't be inferred")
       end
 
-      ctx ||= Context.current
-
       MXNet::Internal.libcall(MXNDArrayCreateEx, inferred_shape, inferred_shape.size, *ctx.device, 0, inferred_type, out handle)
-      MXNet::Internal.libcall(MXNDArraySyncCopyFromCPU, handle, elements, elements.size)
+      MXNet::Internal.libcall(MXNDArraySyncCopyFromCPU, handle, source, size)
 
       if dtype && dtype != inferred_type
         empty(inferred_shape, ctx: ctx, dtype: DT2T[dtype]).tap do |res|
@@ -897,16 +919,22 @@ module MXNet
       end
     end
 
-    private def self.infer_shape_and_type(array : T) forall T
-      # compiler guard to narrow type to array
-      raise "this will never happen" unless array.is_a?(Array)
+    private def self._infer_type(array : Array(T)) forall T
+      {{T.union_types}}
+    end
+
+    private def self._infer_shape(array : T) forall T
       nested = array.map { |item| item.is_a?(Array) && item.size.to_u32 }
       if nested.none?
-        [{array.size.to_u32, T}]
+        [array.size.to_u32]
       elsif nested.all?
-        unless nested.map { |item| item.is_a?(Bool) ? 0_u32 : item }.sort.uniq.size > 1
-          shape = [{array.size.to_u32, nil}] of Tuple(UInt32, T.class | Nil)
-          shape + infer_shape_and_type(array.sample)
+        unless nested.map { |n| n.is_a?(Bool) ? 0 : n }.sort.uniq.size > 1
+          sample = array.sample
+          if sample.is_a?(Array)
+            [array.size.to_u32] + _infer_shape(sample)
+          else
+            raise "invalid state"
+          end
         else
           raise MXNet::NDArrayException.new("inconsistent dimensions: #{array}")
         end

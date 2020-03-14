@@ -213,21 +213,9 @@ describe MXNet::NDArray do
       end
     end
 
-    it "fails if the array isn't an array of a supported type" do
+    it "fails if the array isn't an array of numeric types" do
       expect_raises(MXNet::NDArrayException, /type is unsupported.*String/) do
         MXNet::NDArray.array(["one", "two"])
-      end
-    end
-
-    it "fails if the array type is a union type" do
-      expect_raises(MXNet::NDArrayException, /type is unsupported/) do
-        MXNet::NDArray.array([[1.0], [2]])
-      end
-      expect_raises(MXNet::NDArrayException, /type is unsupported/) do
-        MXNet::NDArray.array([[1], [2.0]])
-      end
-      expect_raises(MXNet::NDArrayException, /type is unsupported/) do
-        MXNet::NDArray.array([1, 2.0])
       end
     end
   end

@@ -534,7 +534,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_add" do
+  describe "#broadcast_add" do
     it "adds two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -542,7 +542,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_div" do
+  describe "#broadcast_div" do
     it "divides two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -550,7 +550,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_equal" do
+  describe "#broadcast_equal" do
     it "performs element-wise equal" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -558,7 +558,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_greater" do
+  describe "#broadcast_greater" do
     it "performs element-wise greater than" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -566,7 +566,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_greater_equal" do
+  describe "#broadcast_greater_equal" do
     it "performs element-wise greater than or equal to" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -574,7 +574,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_lesser" do
+  describe "#broadcast_lesser" do
     it "performs element-wise less than" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -582,7 +582,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_lesser_equal" do
+  describe "#broadcast_lesser_equal" do
     it "performs element-wise less than or equal to" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -590,7 +590,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_maximum" do
+  describe "#broadcast_maximum" do
     it "returns the maximum" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -598,7 +598,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_minimum" do
+  describe "#broadcast_minimum" do
     it "returns the minimum" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -606,7 +606,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_minus" do
+  describe "#broadcast_minus" do
     it "subtracts two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -614,7 +614,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_mul" do
+  describe "#broadcast_mul" do
     it "multiplies two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -622,7 +622,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_not_equal" do
+  describe "#broadcast_not_equal" do
     it "performs element-wise not equal" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -630,7 +630,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_plus" do
+  describe "#broadcast_plus" do
     it "adds two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -638,7 +638,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_power" do
+  describe "#broadcast_power" do
     it "exponentiates two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
@@ -646,7 +646,7 @@ describe MXNet::Symbol do
     end
   end
 
-  describe ".broadcast_sub" do
+  describe "#broadcast_sub" do
     it "subtracts two arrays" do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")

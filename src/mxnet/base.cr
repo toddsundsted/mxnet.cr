@@ -57,6 +57,5 @@ module MXNet
         {% end %}
       end
     end
-
   end
 end

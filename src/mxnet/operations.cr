@@ -1170,7 +1170,7 @@ module MXNet
 
       # Extracts a diagonal or constructs a diagonal array.
       #
-      # `#diag`‘s behavior depends on the input array dimensions:
+      # `.diag`‘s behavior depends on the input array dimensions:
       #   * *1-D* arrays: constructs a 2-D array with the input as its
       #   diagonal, all other elements are zero.
       #   * *N-D* arrays: extracts the diagonals of the sub-arrays
@@ -1275,12 +1275,12 @@ module MXNet
       # Flattens the input array into a 2-D array by collapsing the
       # higher dimensions.
       #
-      # For an input array with shape *(d1, d2, ..., dk)*, `#flatten`
+      # For an input array with shape *(d1, d2, ..., dk)*, `.flatten`
       # reshapes the input array into an output array of shape
       # _(d1, d2 * ... * dk)_.
       #
       # Note that the bahavior of this function is different from
-      # `Array#flatten`, which behaves similar to `#reshape(shape: [-1])`.
+      # `Array#flatten`, which behaves similar to `.reshape(shape: [-1])`.
       #
       # Assume *x* is an array with the following elements:
       #     [[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]]
@@ -1319,7 +1319,7 @@ module MXNet
       #     [-2.1, -1.9, 1.5, 1.9, 2.1]
       #
       # Then:
-      #    floor(x) = [-3.0, -2.0, 1.0, 1.0, 2.0]
+      #     floor(x) = [-3.0, -2.0, 1.0, 1.0, 2.0]
       #
       # ### Parameters
       {{prefix}}

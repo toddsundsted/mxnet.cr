@@ -16,7 +16,7 @@ private macro random_spec_helper(random, *args, dtype = :float32)
   end
 end
 
-private macro sample_spec_helper(sample, *args)
+private macro sample_spec_helper(sample, *args, return_type = :float64)
   describe ".{{sample}}" do
     syms = {
       {% for i in (0...args.size) %}
@@ -32,7 +32,7 @@ private macro sample_spec_helper(sample, *args)
     it "returns an array of sampled numbers" do
       MXNet::Symbol.{{sample}}(*syms, shape: 2).eval(*args).first.shape.should eq([2, 2])
       MXNet::Symbol.{{sample}}(*syms, shape: [1, 2, 3]).eval(*args).first.shape.should eq([2, 1, 2, 3])
-      MXNet::Symbol.{{sample}}(*syms, shape: 1, dtype: :float32).eval(*args).first.dtype.should eq(:float32)
+      MXNet::Symbol.{{sample}}(*syms, shape: 1, dtype: {{return_type}}).eval(*args).first.dtype.should eq({{return_type}})
     end
 
     it "names the new symbol" do
@@ -201,7 +201,8 @@ describe MXNet::Symbol do
   sample_spec_helper(sample_gamma, [0.0, 2.5], [1.0, 0.7])
   sample_spec_helper(
     sample_multinomial,
-    [[0.0, 0.1, 0.2, 0.3, 0.4], [0.4, 0.3, 0.2, 0.1, 0.0]]
+    [[0.0, 0.1, 0.2, 0.3, 0.4], [0.4, 0.3, 0.2, 0.1, 0.0]],
+    return_type: :int32
   )
 
   describe "#name" do

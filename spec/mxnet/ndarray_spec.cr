@@ -41,7 +41,7 @@ private macro sample_spec_helper(sample, *args, return_types = {Float64, :float6
     it "returns an array of sampled numbers" do
       MXNet::NDArray.{{sample}}(*args, shape: 2).shape.should eq([2, 2])
       MXNet::NDArray.{{sample}}(*args, shape: [1, 2, 3]).shape.should eq([2, 1, 2, 3])
-      MXNet::NDArray.{{sample}}(*args, shape: 1, dtype: :float32).dtype.should eq(:float32)
+      MXNet::NDArray.{{sample}}(*args, shape: 1, dtype: {{return_types[1]}}).dtype.should eq({{return_types[1]}})
     end
 
     if gpu_enabled?

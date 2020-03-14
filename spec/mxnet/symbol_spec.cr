@@ -327,6 +327,18 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#as_type" do
+    it "casts to the specified type" do
+      a = MXNet::NDArray.array([1])
+      MXNet::Symbol.var("a").as_type(:float32).eval(a: a).first.should eq(MXNet::NDArray.array([1_f32]))
+      MXNet::Symbol.var("a").as_type(:float64).eval(a: a).first.should eq(MXNet::NDArray.array([1_f64]))
+      MXNet::Symbol.var("a").as_type(:uint8).eval(a: a).first.should eq(MXNet::NDArray.array([1_u8]))
+      MXNet::Symbol.var("a").as_type(:int32).eval(a: a).first.should eq(MXNet::NDArray.array([1_i32]))
+      MXNet::Symbol.var("a").as_type(:int8).eval(a: a).first.should eq(MXNet::NDArray.array([1_i8]))
+      MXNet::Symbol.var("a").as_type(:int64).eval(a: a).first.should eq(MXNet::NDArray.array([1_i64]))
+    end
+  end
+
   describe "#to_s" do
     it "pretty-prints the symbol" do
       MXNet::Symbol.var("foo").to_s.should eq("<Symbol foo>")

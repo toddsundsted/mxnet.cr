@@ -952,6 +952,17 @@ module MXNet
       self
     end
 
+    # Casts all elements of the input to the specified type.
+    #
+    # ### Parameters
+    # * *dtype* (`::Symbol`)
+    #   The new type.
+    #
+    def as_type(dtype : ::Symbol)
+      T2DT[dtype]? || raise MXNet::NDArrayException.new("type is unsupported: #{dtype}")
+      Ops._cast(self, dtype: dtype)
+    end
+
     def to_s(io)
       io << "<Symbol"
       io << " " << name

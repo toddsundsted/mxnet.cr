@@ -680,7 +680,7 @@ module MXNet
       end
     end
 
-    # Returns a copy of the array after casting to a specified type.
+    # Returns a copy of the array after casting to the specified type.
     #
     # ### Parameters
     # * *dtype* (`::Symbol`)

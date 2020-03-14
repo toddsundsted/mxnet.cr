@@ -1168,6 +1168,50 @@ module MXNet
         Ops._Convolution(data, weight, bias, **kwargs.merge({kernel: kernel, num_filter: num_filter}))
       end
 
+      # Extracts a diagonal or constructs a diagonal array.
+      #
+      # `#diag`‘s behavior depends on the input array dimensions:
+      #   * *1-D* arrays: constructs a 2-D array with the input as its
+      #   diagonal, all other elements are zero.
+      #   * *N-D* arrays: extracts the diagonals of the sub-arrays
+      #   with axes specified by *axis1* and *axis2*. The output shape
+      #   is decided by removing the axes numbered *axis1* and *axis2*
+      #   from the input shape and appending to the result a new axis
+      #   with the size of the diagonals in question.
+      #
+      # For example, when the input shape is `[2, 3, 4, 5]`, *axis1*
+      # and *axis2* are 0 and 2 respectively and *k* is 0, the
+      # resulting shape is `[3, 5, 2]`.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 2, 3], [4, 5, 6]]               # x
+      #     [[[1, 2], [3, 4]], [[5, 6], [7, 8]]] # y
+      #
+      # Then:
+      #     diag(x) = [1, 5]
+      #     diag(x, k: 1) = [2, 6]
+      #     diag(x, k: -1) = [4]
+      #
+      #     diag(y) = [[1, 7], [2, 8]]
+      #     diag(y, k: 1) = [[3], [4]]
+      #     diag(y, axis1: -2, axis2: -1) = [[1, 4], [5, 8]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *k* (`Int`, optional, default = 0)
+      #   The diagonal in question. The default is 0. Use `k > 0` for
+      #   diagonals above the main diagonal, and `k < 0` for diagonals
+      #   below the main diagonal.
+      # * *axis1* (`Int`, optional, default = 0)
+      #   The first axis of the sub-arrays of interest. Ignored when
+      #   the input is a 1-D array.
+      # * *axis2* (`Int`, optional, default = 1)
+      #   The second axis of the sub-arrays of interest. Ignored when
+      #   the input is a 1-D array.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, diag)
+
       # Computes the dot product of two arrays.
       #
       # `.dot`‘s behavior depends on the input array dimensions:
@@ -2184,6 +2228,20 @@ module MXNet
         Ops._sgd_mom_update(weight, grad, mom, **kwargs.merge({lr: lr}))
       end
 
+      # Returns a 1-D array containing the shape of the data.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1, 2, 3, 4], [5, 6, 7, 8]]
+      #
+      # Then:
+      #     shape_array(x) = [2, 4]
+      #
+      # ### Parameters:
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, shape_array)
+
       # Randomly shuffles the elements.
       #
       # Shuffles the array along the first axis. The order of the
@@ -2220,6 +2278,20 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, sign)
+
+      # Returns a 1-D array containing the size of the data.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1, 2, 3, 4], [5, 6, 7, 8]]
+      #
+      # Then:
+      #     size_array(x) = [8]
+      #
+      # ### Parameters:
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, size_array)
 
       # Slices a region of the array.
       #

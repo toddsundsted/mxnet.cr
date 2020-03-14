@@ -669,6 +669,24 @@ describe MXNet::Symbol do
     end
   end
 
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
+    describe "#diag" do
+      it "constructs a diagonal array" do
+        f = MXNet::Symbol.var("f")
+        o = MXNet::NDArray.array([[-2.1, 0, 0, 0, 0], [0, -1.9, 0, 0, 0], [0, 0, 1.5, 0, 0], [0, 0, 0, 1.9, 0], [0, 0, 0, 0, 2.1]])
+        f.diag.eval(**args).first.should eq(o)
+      end
+
+      {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.4.0") < 0 %}
+        it "extracts a diagonal" do
+          c = MXNet::Symbol.var("c")
+          o = MXNet::NDArray.array([[1.0, 4.0]])
+          c.diag(axis1: 1, axis2: 2).eval(**args).first.should eq(o)
+        end
+      {% end %}
+    end
+  {% end %}
+
   describe ".dot" do
     it "calculates the dot product of two arrays" do
       a = MXNet::Symbol.var("a")
@@ -817,6 +835,15 @@ describe MXNet::Symbol do
     end
   end
 
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
+    describe "#shape_array" do
+      it "returns an array containing the shape of data" do
+        a = MXNet::Symbol.var("a")
+        a.shape_array.eval(**args).first.should eq(MXNet::NDArray.array([2_i64, 2_i64]))
+      end
+    end
+  {% end %}
+
   describe ".shuffle" do
     it "randomly shuffles the elements" do
       a = MXNet::Symbol.var("a")
@@ -837,6 +864,15 @@ describe MXNet::Symbol do
       e.sign.eval(**args).first.should eq(MXNet::NDArray.array([[-1.0], [1.0]]))
     end
   end
+
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
+    describe "#size_array" do
+      it "returns an array containing the size of data" do
+        a = MXNet::Symbol.var("a")
+        a.size_array.eval(**args).first.should eq(MXNet::NDArray.array([4_i64]))
+      end
+    end
+  {% end %}
 
   describe "#slice" do
     it "slices a region of the array" do

@@ -1827,8 +1827,8 @@ module MXNet
       #   The data type of the output in case this can’t be inferred.
       {{suffix}}
       #
-      def self.sample_uniform(low : self, high : self, **kwargs)
-        Internal._sample_uniform(**kwargs.merge({low: low, high: high}))
+      def self.sample_uniform(low : self, high : self, shape = [] of Int32, **kwargs)
+        Internal._sample_uniform(**kwargs.merge({low: low, high: high, shape: shape}))
       end
 
       # Draws concurrent samples from normal (Gaussian) distributions.
@@ -1870,8 +1870,8 @@ module MXNet
       #   The data type of the output in case this can’t be inferred.
       {{suffix}}
       #
-      def self.sample_normal(mu : self, sigma : self, **kwargs)
-        Internal._sample_normal(**kwargs.merge({mu: mu, sigma: sigma}))
+      def self.sample_normal(mu : self, sigma : self, shape = [] of Int32, **kwargs)
+        Internal._sample_normal(**kwargs.merge({mu: mu, sigma: sigma, shape: shape}))
       end
 
       # Draws concurrent samples from Poisson distributions.
@@ -1911,8 +1911,8 @@ module MXNet
       #   The data type of the output in case this can’t be inferred.
       {{suffix}}
       #
-      def self.sample_poisson(lam : self, **kwargs)
-        Internal._sample_poisson(**kwargs.merge({lam: lam}))
+      def self.sample_poisson(lam : self, shape = [] of Int32, **kwargs)
+        Internal._sample_poisson(**kwargs.merge({lam: lam, shape: shape}))
       end
 
       # Draws concurrent samples from exponential distributions.
@@ -1951,8 +1951,8 @@ module MXNet
       #   The data type of the output in case this can’t be inferred.
       {{suffix}}
       #
-      def self.sample_exponential(lam : self, **kwargs)
-        Internal._sample_exponential(**kwargs.merge({lam: lam}))
+      def self.sample_exponential(lam : self, shape = [] of Int32, **kwargs)
+        Internal._sample_exponential(**kwargs.merge({lam: lam, shape: shape}))
       end
 
       # Draws random samples from gamma distributions.
@@ -1994,8 +1994,8 @@ module MXNet
       #   The data type of the output in case this can’t be inferred.
       {{suffix}}
       #
-      def self.sample_gamma(alpha : self, beta : self, **kwargs)
-        Internal._sample_gamma(**kwargs.merge({alpha: alpha, beta: beta}))
+      def self.sample_gamma(alpha : self, beta : self, shape = [] of Int32, **kwargs)
+        Internal._sample_gamma(**kwargs.merge({alpha: alpha, beta: beta, shape: shape}))
       end
 
       # Draws random samples from multinomial distributions.

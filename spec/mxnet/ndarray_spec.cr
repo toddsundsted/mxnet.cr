@@ -589,6 +589,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#broadcast_axis" do
+    it "broadcasts the input array over particular axis" do
+      e = MXNet::NDArray.array([[-1.0], [1.0]])
+      e.broadcast_axis(axis: 1, size: 2).should eq(MXNet::NDArray.array([[-1.0, -1.0], [1.0, 1.0]]))
+    end
+  end
+
   describe "#broadcast_div" do
     it "divides two arrays" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
@@ -636,6 +643,16 @@ describe MXNet::NDArray do
       a.broadcast_lesser_equal(b).should eq(MXNet::NDArray.array([[1.0, 1.0], [0.0, 0.0]]))
     end
   end
+
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
+    describe ".broadcast_like" do
+      it "broadcasts left hand side to have the same shape as right hand side" do
+        z = MXNet::NDArray.array([0.0])
+        i = MXNet::NDArray.array([0.0, 1.0])
+        MXNet::NDArray.broadcast_like(z, i).should eq(MXNet::NDArray.array([0.0, 0.0]))
+      end
+    end
+  {% end %}
 
   describe "#broadcast_maximum" do
     it "returns the maximum" do
@@ -698,6 +715,13 @@ describe MXNet::NDArray do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
       a.broadcast_sub(b).should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+  end
+
+  describe "#broadcast_to" do
+    it "broadcasts the input array to a new shape" do
+      z = MXNet::NDArray.array([0.0])
+      z.broadcast_to(shape: [3]).should eq(MXNet::NDArray.array([0.0, 0.0, 0.0]))
     end
   end
 

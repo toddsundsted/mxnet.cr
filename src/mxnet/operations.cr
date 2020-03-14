@@ -721,6 +721,29 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, broadcast_add)
 
+      # Broadcasts the input array over particular axis.
+      #
+      # Broadcasting is allowed on axes with size 1, such as from `[2, 1, 3, 1]`
+      # to `[2, 8, 3, 9]`. Elements will be duplicated on the broadcasted
+      # axis.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[[1], [2]]]
+      #
+      # Then:
+      #     broadcast_axis(x, axis: 2, size: 3) = [[[1, 1, 1], [2, 2, 2]]]
+      #     broadcast_axis(x, axis: [0, 2], size: [2, 3]) = [[[1, 1, 1], [2, 2, 2]], [[1, 1, 1], [2, 2, 2]]]
+      #
+      # ### Parameters
+      {{suffix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis on which to perform the broadcasting.
+      # * *size* (`Int` or `Array(Int)`, optional)
+      #   Target sizes of the broadcasting axis.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_axis)
+
       # Returns element-wise division of the input arrays with broadcasting.
       #
       # Assume *x* and *y* are arrays with the following elements:
@@ -833,6 +856,39 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, broadcast_lesser_equal)
+
+      # Broadcasts the left hand side to have the same shape as right
+      # hand side.
+      #
+      # Broadcasting is a mechanism that allows `NDArray` to perform
+      # arithmetic operations with other arrays of different shapes
+      # efficiently without creating multiple copies of arrays. See:
+      # [Broadcasting](https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html)
+      # for explanation.
+      #
+      # Broadcasting is allowed on axes with size 1, such as from `[2, 1, 3, 1]`
+      # to `[2, 8, 3, 9]`. Elements will be duplicated on the broadcasted
+      # axes.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 2, 3]]            # x
+      #     [[5, 6, 7], [7, 8, 9]] # y
+      #
+      # Then:
+      #     broadcast_like(x, y) = [[1, 2, 3], [1, 2, 3]])
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      # * *lhs_axes* (`Array(Int)`, optional)
+      #   Axes to perform broadcast on in the first input array.
+      # * *rhs_axes* (`Array(Int)`, optional)
+      #   Axes to copy from the second input array.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_like)
 
       # Returns element-wise maximum of the input arrays with broadcasting.
       #
@@ -991,6 +1047,36 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, broadcast_sub)
+
+      # Broadcasts the input array to a new shape.
+      #
+      # Broadcasting is a mechanism that allows `NDArray` to perform
+      # arithmetic operations with other arrays of different shapes
+      # efficiently without creating multiple copies of arrays. See:
+      # [Broadcasting](https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html)
+      # for explanation.
+      #
+      # Broadcasting is allowed on axes with size 1, such as from `[2, 1, 3, 1]`
+      # to `[2, 8, 3, 9]`. Elements will be duplicated on the broadcasted
+      # axes.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1, 2, 3]]
+      #
+      # Then:
+      #     broadcast_to(x, shape: [2, 3]) = [[1, 2, 3], [1, 2, 3]])
+      #
+      # The dimension which you do not want to change can also be
+      # specified as `0`. So with `shape: [2, 0]`, we will obtain the
+      # same result as in the above example.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *shape* (`Int` or `Array(Int)`, required)
+      #   The shape of the desired array.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_to)
 
       # Clips (limits) the values in an array.
       #

@@ -542,6 +542,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#broadcast_axis" do
+    it "broadcasts the input array over particular axis" do
+      e = MXNet::Symbol.var("e")
+      e.broadcast_axis(axis: 1, size: 2).eval(**args).first.should eq(MXNet::NDArray.array([[-1.0, -1.0], [1.0, 1.0]]))
+    end
+  end
+
   describe "#broadcast_div" do
     it "divides two arrays" do
       a = MXNet::Symbol.var("a")
@@ -589,6 +596,16 @@ describe MXNet::Symbol do
       a.broadcast_lesser_equal(b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [0.0, 0.0]]))
     end
   end
+
+  {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
+    describe ".broadcast_like" do
+      it "broadcasts left hand side to have the same shape as right hand side" do
+        z = MXNet::Symbol.var("z")
+        i = MXNet::Symbol.var("i")
+        MXNet::Symbol.broadcast_like(z, i).eval(**args).first.should eq(MXNet::NDArray.array([0.0, 0.0]))
+      end
+    end
+  {% end %}
 
   describe "#broadcast_maximum" do
     it "returns the maximum" do
@@ -651,6 +668,13 @@ describe MXNet::Symbol do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
       a.broadcast_sub(b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, -2.0], [2.0, 3.0]]))
+    end
+  end
+
+  describe "#broadcast_to" do
+    it "broadcasts the input array to a new shape" do
+      z = MXNet::Symbol.var("z")
+      z.broadcast_to(shape: [3]).eval(**args).first.should eq(MXNet::NDArray.array([0.0, 0.0, 0.0]))
     end
   end
 

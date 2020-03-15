@@ -951,6 +951,18 @@ describe MXNet::Symbol do
     end
   end
 
+  describe ".tile" do
+    it "repeats the array multiple times" do
+      a = MXNet::Symbol.var("a")
+      o = MXNet::NDArray.array([[1, 2, 1, 2, 1, 2],
+                                [3, 4, 3, 4, 3, 4],
+                                [1, 2, 1, 2, 1, 2],
+                                [3, 4, 3, 4, 3, 4]],
+                               dtype: :float64)
+      MXNet::Symbol.tile(a, reps: [2, 3]).eval(**args).first.should eq(o)
+    end
+  end
+
   describe "#transpose" do
     it "permutes the dimensions of the array" do
       a = MXNet::Symbol.var("a")

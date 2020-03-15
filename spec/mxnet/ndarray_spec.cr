@@ -998,6 +998,18 @@ describe MXNet::NDArray do
     end
   end
 
+  describe ".tile" do
+    it "repeats the array multiple times" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      o = MXNet::NDArray.array([[1, 2, 1, 2, 1, 2],
+                                [3, 4, 3, 4, 3, 4],
+                                [1, 2, 1, 2, 1, 2],
+                                [3, 4, 3, 4, 3, 4]],
+                               dtype: :float64)
+      MXNet::NDArray.tile(a, reps: [2, 3]).should eq(o)
+    end
+  end
+
   describe "#transpose" do
     it "permutes the dimensions of the array" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

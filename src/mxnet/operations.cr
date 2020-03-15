@@ -2560,6 +2560,47 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, take)
 
+      # Repeats the array multiple times.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1, 2], [3, 4]]
+      #
+      # If *reps* has length *d*, and the input array has a
+      # corresponding dimension of *n*. There are three cases:
+      #
+      # - **n=d**. Repeat *i*-th dimension of the input *reps[i]* times:
+      #     tile(x, reps: [2, 3]) = [[1, 2, 1, 2, 1, 2],
+      #                              [3, 4, 3, 4, 3, 4],
+      #                              [1, 2, 1, 2, 1, 2],
+      #                              [3, 4, 3, 4, 3, 4]]
+      #
+      # - **n>d**. *reps* is promoted to length *n* by pre-pending
+      #   1's. For an input shape `[2, 3]`, `reps: [2]` is treated
+      #   as `[1, 2]`:
+      #     tile(x, reps: [2]) = [[1, 2, 1, 2],
+      #                           [3, 4, 3, 4]]
+      #
+      # - **n<d**. The input is promoted to be d-dimensional by
+      #   prepending new axes. A shape `[2, 2]` array is promoted
+      #   to `[1, 2, 2]` for 3-D replication:
+      #     tile(x, reps: [2, 2, 3]) = [[[1, 2, 1, 2, 1, 2],
+      #                                  [3, 4, 3, 4, 3, 4],
+      #                                  [1, 2, 1, 2, 1, 2],
+      #                                  [3, 4, 3, 4, 3, 4]],
+      #                                 [[1, 2, 1, 2, 1, 2],
+      #                                  [3, 4, 3, 4, 3, 4],
+      #                                  [1, 2, 1, 2, 1, 2],
+      #                                  [3, 4, 3, 4, 3, 4]]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *reps* (`Array(Int)`)
+      #   The number of times to repeat the input array. Each
+      #   element of *reps* must be a positive integer.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, tile)
+
       # Permutes the dimensions of an array.
       #
       # Assume *x* and *y* are arrays with the following elements:

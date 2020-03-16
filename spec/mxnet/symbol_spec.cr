@@ -353,6 +353,7 @@ describe MXNet::Symbol do
     e: MXNet::NDArray.array([[-1.0], [1.0]]),
     f: MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1]),
     i: MXNet::NDArray.array([0.0, 1.0]),
+    n: MXNet::NDArray.array([[[3.14, Float64::NAN], [Float64::NAN, 2.71]]]),
     z: MXNet::NDArray.array([0.0])
   }
 
@@ -799,6 +800,20 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#nanprod" do
+    it "computes the product" do
+      n = MXNet::Symbol.var("n")
+      n.nanprod(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[3.14, 2.71]]))
+    end
+  end
+
+  describe "#nansum" do
+    it "computes the sum" do
+      n = MXNet::Symbol.var("n")
+      n.nansum(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[3.14, 2.71]]))
+    end
+  end
+
   describe "#norm" do
     it "returns the norm" do
       a = MXNet::Symbol.var("a")
@@ -827,6 +842,15 @@ describe MXNet::Symbol do
       a = MXNet::Symbol.var("a")
       i = MXNet::Symbol.var("i")
       a.pick(i, axis: 0).eval(**args).first.should eq(MXNet::NDArray.array([1.0, 4.0]))
+    end
+  end
+
+  describe "#prod" do
+    it "computes the product" do
+      c = MXNet::Symbol.var("c")
+      c.prod(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[105.0, 384.0]]))
+      c.prod(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 12.0, 30.0, 56.0]]))
+      c.prod.eval(**args).first.should eq(MXNet::NDArray.array([40320.0]))
     end
   end
 

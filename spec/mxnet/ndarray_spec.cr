@@ -846,6 +846,20 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#nanprod" do
+    it "computes the product" do
+      n = MXNet::NDArray.array([[[3.14, Float64::NAN], [Float64::NAN, 2.71]]])
+      n.nanprod(axis: 2).should eq(MXNet::NDArray.array([[3.14, 2.71]]))
+    end
+  end
+
+  describe "#nansum" do
+    it "computes the sum" do
+      n = MXNet::NDArray.array([[[3.14, Float64::NAN], [Float64::NAN, 2.71]]])
+      n.nansum(axis: 2).should eq(MXNet::NDArray.array([[3.14, 2.71]]))
+    end
+  end
+
   describe "#norm" do
     it "returns the norm" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
@@ -874,6 +888,15 @@ describe MXNet::NDArray do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       i = MXNet::NDArray.array([0.0, 1.0])
       a.pick(i, axis: 0).should eq(MXNet::NDArray.array([1.0, 4.0]))
+    end
+  end
+
+  describe "#prod" do
+    it "computes the product" do
+      c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
+      c.prod(axis: 1).should eq(MXNet::NDArray.array([[105.0, 384.0]]))
+      c.prod(axis: 2).should eq(MXNet::NDArray.array([[2.0, 12.0, 30.0, 56.0]]))
+      c.prod.should eq(MXNet::NDArray.array([40320.0]))
     end
   end
 

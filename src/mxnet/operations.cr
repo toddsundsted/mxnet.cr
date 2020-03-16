@@ -1557,6 +1557,60 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, min)
 
+      # Computes the product of array elements over given axes
+      # treating not-a-number values (*NaN*) as one.
+      #
+      # See `.prod`.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the
+      #   reduction. `axis: []` or `axis: nil` will compute over all
+      #   elements into a scalar array with shape `[1]`. If *axis* is
+      #   an `Int`, a reduction is performed on a particular axis. If
+      #   *axis* is an array of `Int`, a reduction is performed on all
+      #   the axes specified in the array. If *exclude* is true,
+      #   reduction will be performed on the axes that are **not** in
+      #   *axis* instead. Negative values means indexing from right to
+      #   left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If this is set to true, the reduced axes are left in the
+      #   result as dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axis that are **not** in
+      #   axis instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, nanprod)
+
+      # Computes the sum of array elements over given axes treating
+      # not-a-number values (*NaN*) as zero.
+      #
+      # See `.sum`.
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the
+      #   reduction. `axis: []` or `axis: nil` will compute over all
+      #   elements into a scalar array with shape `[1]`. If *axis* is
+      #   an `Int`, a reduction is performed on a particular axis. If
+      #   *axis* is an array of `Int`, a reduction is performed on all
+      #   the axes specified in the array. If *exclude* is true,
+      #   reduction will be performed on the axes that are **not** in
+      #   *axis* instead. Negative values means indexing from right to
+      #   left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If this is set to true, the reduced axes are left in the
+      #   result as dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axis that are **not** in
+      #   axis instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, nansum)
+
       # Computes the norm.
       #
       # This operator computes the norm on an array with the specified
@@ -1686,6 +1740,39 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, pick)
+
+      # Computes the product of array elements over given axes.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[[1, 2], [2, 3], [1, 3]],
+      #      [[1, 4], [4, 3], [5, 2]],
+      #      [[7, 1], [7, 2], [7, 3]]]
+      #
+      # Then:
+      #     prod(x, axis: 1) # => [[2, 18], [20, 24], [343, 6]]
+      #     prod(x, axis: [1, 2]) # => [36, 480, 2058]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `Array(Int)`, optional)
+      #   The axis or axes along which to perform the
+      #   reduction. `axis: []` or `axis: nil` will compute over all
+      #   elements into a scalar array with shape `[1]`. If *axis* is
+      #   an `Int`, a reduction is performed on a particular axis. If
+      #   *axis* is an array of `Int`, a reduction is performed on all
+      #   the axes specified in the array. If *exclude* is true,
+      #   reduction will be performed on the axes that are **not** in
+      #   *axis* instead. Negative values means indexing from right to
+      #   left.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If this is set to true, the reduced axes are left in the
+      #   result as dimension with size one.
+      # * *exclude* (`Bool`, optional, default = false)
+      #   Whether to perform reduction on axis that are **not** in
+      #   axis instead.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, prod)
 
       # Performs pooling on the input.
       #

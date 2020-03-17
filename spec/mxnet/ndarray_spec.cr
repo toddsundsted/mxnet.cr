@@ -725,6 +725,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#ceil" do
+    it "returns ceiling of the input" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.ceil.should eq(MXNet::NDArray.array([-2.0, -1.0, 2.0, 2.0, 3.0]))
+    end
+  end
+
   describe ".clip" do
     it "clips the values in an array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
@@ -779,6 +786,13 @@ describe MXNet::NDArray do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
       c.expand_dims(axis: 1).shape.should eq([1, 1, 4, 2])
       c.expand_dims(1).shape.should eq([1, 1, 4, 2])
+    end
+  end
+
+  describe "#fix" do
+    it "rounds the elements of the array" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.fix.should eq(MXNet::NDArray.array([-2.0, -1.0, 1.0, 1.0, 2.0]))
     end
   end
 
@@ -921,6 +935,20 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#rint" do
+    it "rounds the elements of the array" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.rint.should eq(MXNet::NDArray.array([-2.0, -2.0, 1.0, 2.0, 2.0]))
+    end
+  end
+
+  describe "#round" do
+    it "rounds the elements of the array" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.round.should eq(MXNet::NDArray.array([-2.0, -2.0, 2.0, 2.0, 2.0]))
+    end
+  end
+
   describe "#reshape_like" do
     it "reshapes the input array" do
       a = MXNet::NDArray.zeros(shape: [9])
@@ -1040,6 +1068,13 @@ describe MXNet::NDArray do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
       c.transpose.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
       c.transpose(axes: [1, 0, 2]).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
+    end
+  end
+
+  describe "#trunc" do
+    it "truncates the input" do
+      f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
+      f.trunc.should eq(MXNet::NDArray.array([-2.0, -1.0, 1.0, 1.0, 2.0]))
     end
   end
 

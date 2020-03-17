@@ -679,6 +679,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#ceil" do
+    it "returns ceiling of the input" do
+      f = MXNet::Symbol.var("f")
+      f.ceil.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -1.0, 2.0, 2.0, 3.0]))
+    end
+  end
+
   describe ".clip" do
     it "clips the values in an array" do
       c = MXNet::Symbol.var("c")
@@ -733,6 +740,13 @@ describe MXNet::Symbol do
       c = MXNet::Symbol.var("c")
       c.expand_dims(axis: 1).eval(**args).first.shape.should eq([1, 1, 4, 2])
       c.expand_dims(1).eval(**args).first.shape.should eq([1, 1, 4, 2])
+    end
+  end
+
+  describe "#fix" do
+    it "rounds the elements of the array" do
+      f = MXNet::Symbol.var("f")
+      f.fix.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -1.0, 1.0, 1.0, 2.0]))
     end
   end
 
@@ -875,6 +889,20 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#rint" do
+    it "rounds the elements of the array" do
+      f = MXNet::Symbol.var("f")
+      f.rint.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -2.0, 1.0, 2.0, 2.0]))
+    end
+  end
+
+  describe "#round" do
+    it "rounds the elements of the array" do
+      f = MXNet::Symbol.var("f")
+      f.round.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -2.0, 2.0, 2.0, 2.0]))
+    end
+  end
+
   describe "#reshape_like" do
     it "reshapes the input array" do
       a = MXNet::Symbol.zeros(shape: [9])
@@ -994,6 +1022,13 @@ describe MXNet::Symbol do
       c = MXNet::Symbol.var("c")
       c.transpose.eval(**args).first.should eq(MXNet::NDArray.array([[[1.0], [3.0], [5.0], [7.0]], [[2.0], [4.0], [6.0], [8.0]]]))
       c.transpose(axes: [1, 0, 2]).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]]]))
+    end
+  end
+
+  describe "#trunc" do
+    it "truncates the input" do
+      f = MXNet::Symbol.var("f")
+      f.trunc.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -1.0, 1.0, 1.0, 2.0]))
     end
   end
 

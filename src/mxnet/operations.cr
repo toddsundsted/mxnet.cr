@@ -1078,6 +1078,22 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, broadcast_to)
 
+      # Returns element-wise ceiling of the input.
+      #
+      # The ceiling  `x` is the smallest integer `i`, such that `i >= x`.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #     ceil(x) = [-2.0,-1.9, 2.0, 2.0, 3.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, ceil)
+
       # Clips (limits) the values in an array.
       #
       # Given an interval, values outside the interval are clipped to
@@ -1357,6 +1373,21 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, expand_dims)
+
+      # Returns element-wise rounded value to the nearest integer
+      # towards zero.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #     fix(x) = [-2.0, -1.0, 1.0, 1.0, 2.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, fix)
 
       # Flattens the input array into a 2-D array by collapsing the
       # higher dimensions.
@@ -2331,6 +2362,38 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, reshape_like)
 
+      # Returns element-wise rounded value to the nearest integer.
+      #
+      # Note:
+      #    - For input *N.5* *rint* returns *N* while *round* returns *N+1*.
+      #    - For input *-N.5* both *rint* and *round* return *-N-1*.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #     rint(x) = [-2.0, -2.0, 1.0, 2.0, 2.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, rint)
+
+      # Returns element-wise rounded value to the nearest integer.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #     round(x) = [-2.0, -2.0, 2.0, 2.0, 2.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, round)
+
       # Update function for Stochastic Gradient Descent (SGD)
       # optimizer.
       #
@@ -2706,6 +2769,24 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, transpose)
+
+      # Return the element-wise truncated value of the input.
+      #
+      # The truncated value of `x` is the nearest integer `i` which is
+      # closer to zero than `x` is. In short, the fractional part of
+      # the signed number `x` is discarded.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2.1, -1.9, 1.5, 1.9, 2.1]
+      #
+      # Then:
+      #     trunc(x) = [-2.0, -1.0, 1.0, 1.0, 2.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, trunc)
 
       # Returns an array filled with all zeros, with the given shape.
       #

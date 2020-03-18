@@ -701,6 +701,36 @@ module MXNet
         Internal._arange(**kwargs.merge({start: start, stop: stop, ctx: ctx}))
       end
 
+      # Returns the indices that would sort an input array along the
+      # given axis.
+      #
+      # This function performs sorting along the given axis and
+      # returns an array of indices having the same shape as an input
+      # array that index data in the sorted order.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0.3, 0.2, 0.4], [0.1, 0.3, 0.2]]
+      #
+      # Then:
+      #     argsort(x) = [[1.0, 0.0, 2.0], [0.0, 2.0, 1.0]]
+      #     argsort(x, axis: 0) = [[1.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+      #     argsort(x, axis: None) = [3.0, 1.0, 5.0, 0.0, 4.0, 2.0]
+      #     argsort(x, is_ascend: false) = [[2.0, 0.0, 1.0], [1.0, 2.0, 0.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `None`, optional, default = `-1`)
+      #   The axis along which to choose sort the input tensor. If
+      #   omitted, the last axis is used. If `None`, the flattened
+      #   array is used.
+      # * *is_ascend* (`Bool`, optional, default = false)
+      #   Whether to sort in ascending or descending order.
+      # * *dtype* (`::Symbol`, optional, default = `:float32`)
+      #   The data type of the output indices.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, argsort)
+
       # Returns element-wise sum of the input arrays with broadcasting.
       #
       # `.broadcast_add` is an alias for `.broadcast_plus`.
@@ -2614,6 +2644,29 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, softmax)
 
+      # Returns a sorted copy of an input array along the given axis.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1, 4], [3, 1]]
+      #
+      # Then:
+      #     sort(x) = [[1, 4], [1, 3]]
+      #     sort(x, axis: 0) = [[1, 1], [3, 4]]
+      #     sort(x, axis: None) = [1, 1, 3, 4]
+      #     sort(x, is_ascend: false) = [[4, 1], [3, 1]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `None`, optional, default = `-1`)
+      #   The axis along which to choose sort the input tensor. If
+      #   omitted, the last axis is used. If `None`, the flattened
+      #   array is used.
+      # * *is_ascend* (`Bool`, optional, default = false)
+      #   Whether to sort in ascending or descending order.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, sort)
+
       # Returns element-wise square-root value of the input.
       #
       # Assume *x* is an array with the following elements:
@@ -2750,6 +2803,46 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, tile)
+
+      # Returns the top *k* elements in an input array along the given
+      # axis.
+      #
+      # Examples::
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0.3, 0.2, 0.4], [0.1, 0.3, 0.2]]
+      #
+      # Then:
+      #     topk(x) = [[2.0], [1.0]]
+      #     topk(x, ret_typ: :value, k: 2) = [[0.4, 0.3], [0.3, 0.2]]
+      #     topk(x, ret_typ: :value, k: 2, is_ascend: true) = [[0.2, 0.3], [0.1, 0.2]]
+      #     topk(x, axis: 0, k: 2) = [[0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int` or `None`, optional, default = `-1`)
+      #   Axis along which to choose the top k indices. If omitted,
+      #   the last axis is used. If `None`, the flattened array is
+      #   used.
+      # * *k* (`Int`, optional, default = `1`)
+      #   Number of top elements to select. It should be always
+      #   smaller than or equal to the element number in the given
+      #   axis.
+      # * *ret_typ* (`::Symbol`, `:value`, `:indices`, `:mask`, `:both`, optional, default = `:indices`)
+      #   The return type. `:value` means to return the top *k*
+      #   values, `:indices` means to return the indices of the top
+      #   *k* values, `:mask` means to return a mask array containing
+      #   0 and 1 (1 means the top *k* value). `:both` means to return
+      #   a list of both values and indices of top *k* elements.
+      # * *is_ascend* (`Bool`, optional, default = false)
+      #   Whether to choose *k* largest or *k* smallest elements. Top
+      #   *k* largest elements will be chosen if set to `false`.
+      # * *dtype* (`::Symbol`, optional, default = `:float32`)
+      #   The data type of the output indices when *ret_typ* is
+      #   `:indices` or `:both`.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, topk)
 
       # Permutes the dimensions of an array.
       #

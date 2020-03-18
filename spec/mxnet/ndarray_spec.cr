@@ -581,6 +581,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#argsort" do
+    it "returns indices that would sort the input array" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      u.argsort(axis: 0, dtype: :int32).should eq(MXNet::NDArray.array([[2, 1, 0], [1, 2, 2], [0, 0, 1]]))
+    end
+  end
+
   describe "#broadcast_add" do
     it "adds two arrays" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
@@ -1018,6 +1025,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#sort" do
+    it "sorts the input array" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      u.sort(axis: 0).should eq(MXNet::NDArray.array([[1.0, 5.0, 2.0], [3.0, 6.0, 4.0], [7.0, 8.0, 9.0]]))
+    end
+  end
+
   describe "#sqrt" do
     it "computes the square-root of the input" do
       d = MXNet::NDArray.array([[1.0], [4.0], [9.0]])
@@ -1058,6 +1072,13 @@ describe MXNet::NDArray do
                                 [3, 4, 3, 4, 3, 4]],
                                dtype: :float64)
       MXNet::NDArray.tile(a, reps: [2, 3]).should eq(o)
+    end
+  end
+
+  describe "#topk" do
+    it "returns the indices of the top k elements" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      u.topk(axis: 0, dtype: :int32).should eq(MXNet::NDArray.array([[0, 0, 1]]))
     end
   end
 

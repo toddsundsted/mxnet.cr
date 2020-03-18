@@ -354,6 +354,7 @@ describe MXNet::Symbol do
     f: MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1]),
     i: MXNet::NDArray.array([0.0, 1.0]),
     n: MXNet::NDArray.array([[[3.14, Float64::NAN], [Float64::NAN, 2.71]]]),
+    u: MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]]),
     z: MXNet::NDArray.array([0.0])
   }
 
@@ -532,6 +533,13 @@ describe MXNet::Symbol do
       MXNet::Symbol.arange(3).eval(**args).first.should eq(MXNet::NDArray.array([0.0, 1.0, 2.0], :float32))
       MXNet::Symbol.arange(2, 6).eval(**args).first.should eq(MXNet::NDArray.array([2.0, 3.0, 4.0, 5.0], :float32))
       MXNet::Symbol.arange(2, 6, step: 2).eval(**args).first.should eq(MXNet::NDArray.array([2.0, 4.0], :float32))
+    end
+  end
+
+  describe "#argsort" do
+    it "returns indices that would sort the input array" do
+      u = MXNet::Symbol.var("u")
+      u.argsort(axis: 0, dtype: :int32).eval(**args).first.should eq(MXNet::NDArray.array([[2, 1, 0], [1, 2, 2], [0, 0, 1]]))
     end
   end
 
@@ -972,6 +980,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#sort" do
+    it "sorts the input array" do
+      u = MXNet::Symbol.var("u")
+      u.sort(axis: 0).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 5.0, 2.0], [3.0, 6.0, 4.0], [7.0, 8.0, 9.0]]))
+    end
+  end
+
   describe "#sqrt" do
     it "computes the square-root of the input" do
       d = MXNet::Symbol.var("d")
@@ -1012,6 +1027,13 @@ describe MXNet::Symbol do
                                 [3, 4, 3, 4, 3, 4]],
                                dtype: :float64)
       MXNet::Symbol.tile(a, reps: [2, 3]).eval(**args).first.should eq(o)
+    end
+  end
+
+  describe "#topk" do
+    it "returns the indices of the top k elements" do
+      u = MXNet::Symbol.var("u")
+      u.topk(axis: 0, dtype: :int32).eval(**args).first.should eq(MXNet::NDArray.array([[0, 0, 1]]))
     end
   end
 

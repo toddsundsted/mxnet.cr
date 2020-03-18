@@ -581,6 +581,20 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#argmax" do
+    it "returns indices of the maximum values" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      u.argmax(axis: 0, keepdims: true).should eq(MXNet::NDArray.array([[0.0, 0.0, 1.0]]))
+    end
+  end
+
+  describe "#argmin" do
+    it "returns indices of the minimum values" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      u.argmin(axis: 0, keepdims: true).should eq(MXNet::NDArray.array([[2.0, 1.0, 0.0]]))
+    end
+  end
+
   describe "#argsort" do
     it "returns indices that would sort the input array" do
       u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])

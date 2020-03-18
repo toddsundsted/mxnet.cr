@@ -701,6 +701,56 @@ module MXNet
         Internal._arange(**kwargs.merge({start: start, stop: stop, ctx: ctx}))
       end
 
+      # Returns indices of the maximum values along an axis.
+      #
+      # In the case of multiple occurrences of maximum values, the
+      # indices corresponding to the first occurrence are returned.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]
+      #
+      # Then:
+      #     argmax(x, axis: 0) = [1.0, 1.0, 1.0]
+      #     argmax(x, axis: 1) = [2.0, 2.0]
+      #     argmax(x, axis: 1, keepdims: true) = [[2.0], [2.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int`, optional, default = `-1`)
+      #   The axis along which to perform the reduction. If omitted,
+      #   the last axis is used.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If true, the reduced axis is left in the result as a
+      #   dimension with size one.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, argmax)
+
+      # Returns indices of the minimum values along an axis.
+      #
+      # In the case of multiple occurrences of minimum values, the
+      # indices corresponding to the first occurrence are returned.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]
+      #
+      # Then:
+      #     argmin(x, axis: 0) = [0.0, 0.0, 0.0]
+      #     argmin(x, axis: 1) = [0.0, 0.0]
+      #     argmin(x, axis: 1, keepdims: true) = [[0.0], [0.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *axis* (`Int`, optional, default = `-1`)
+      #   The axis along which to perform the reduction. If omitted,
+      #   the last axis is used.
+      # * *keepdims* (`Bool`, optional, default = false)
+      #   If true, the reduced axis is left in the result as a
+      #   dimension with size one.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, argmin)
+
       # Returns the indices that would sort an input array along the
       # given axis.
       #

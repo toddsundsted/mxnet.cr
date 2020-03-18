@@ -536,6 +536,20 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#argmax" do
+    it "returns indices of the maximum values" do
+      u = MXNet::Symbol.var("u")
+      u.argmax(axis: 0, keepdims: true).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 0.0, 1.0]]))
+    end
+  end
+
+  describe "#argmin" do
+    it "returns indices of the minimum values" do
+      u = MXNet::Symbol.var("u")
+      u.argmin(axis: 0, keepdims: true).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 1.0, 0.0]]))
+    end
+  end
+
   describe "#argsort" do
     it "returns indices that would sort the input array" do
       u = MXNet::Symbol.var("u")

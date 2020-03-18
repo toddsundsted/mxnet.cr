@@ -655,6 +655,28 @@ module MXNet
       Internal._div_scalar
     )
 
+    # Returns element-wise modulo of the input arrays.
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs % rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to modulo.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to modulo.
+    #
+    bifunc_helper(
+      modulo,
+      lhs, rhs,
+      Internal._mod,
+      :%,
+      Internal._rmod_scalar,
+      Internal._mod_scalar
+    )
+
     # Returns result of first array elements raised to powers from
     # second array, element-wise.
     #
@@ -899,6 +921,11 @@ module MXNet
       self.class.divide(self, other)
     end
 
+    # Performs element-wise modulo (without broadcasting).
+    def %(other)
+      self.class.modulo(self, other)
+    end
+
     # Returns the result of the first array elements raised to powers
     # from the second array (or scalar), element-wise (without
     # broadcasting).
@@ -1092,6 +1119,11 @@ struct Number
   # Performs element-wise division.
   def /(other : MXNet::Symbol)
     MXNet::Symbol.divide(self, other)
+  end
+
+  # Performs element-wise modulo.
+  def %(other : MXNet::Symbol)
+    MXNet::Symbol.modulo(self, other)
   end
 
   # Returns the result of this number raised to powers from the array,

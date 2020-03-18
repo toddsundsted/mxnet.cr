@@ -422,6 +422,19 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#%" do
+    it "divides an array by a scalar" do
+      a = MXNet::Symbol.var("a")
+      (a % 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 0.0], [1.0, 0.0]]))
+      (2 % a).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 0.0], [2.0, 2.0]]))
+    end
+    it "divides two arrays" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      (a % b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 2.0], [0.0, 0.0]]))
+    end
+  end
+
   describe "#**" do
     it "exponentiates an array by a scalar" do
       a = MXNet::Symbol.var("a")

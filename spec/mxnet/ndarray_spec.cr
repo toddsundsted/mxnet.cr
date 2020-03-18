@@ -467,6 +467,19 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#%" do
+    it "divides an array by a scalar" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      (a % 2).should eq(MXNet::NDArray.array([[1.0, 0.0], [1.0, 0.0]]))
+      (2 % a).should eq(MXNet::NDArray.array([[0.0, 0.0], [2.0, 2.0]]))
+    end
+    it "divides two arrays" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      (a % b).should eq(MXNet::NDArray.array([[0.0, 2.0], [0.0, 0.0]]))
+    end
+  end
+
   describe "#**" do
     it "exponentiates an array by a scalar" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

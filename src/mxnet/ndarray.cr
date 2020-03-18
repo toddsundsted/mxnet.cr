@@ -195,6 +195,30 @@ module MXNet
       Internal._div_scalar
     )
 
+    # Returns element-wise modulo of the input arrays.
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs % rhs`. Equivalent to `.broadcast_mod` for
+    # `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to modulo.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to modulo.
+    #
+    bifunc_helper(
+      modulo,
+      lhs, rhs,
+      Ops._broadcast_mod,
+      :%,
+      Internal._rmod_scalar,
+      Internal._mod_scalar
+    )
+
     # Returns result of first array elements raised to powers from
     # second array, element-wise.
     #
@@ -457,6 +481,11 @@ module MXNet
     # Performs element-wise division with broadcasting.
     def /(other)
       self.class.divide(self, other)
+    end
+
+    # Performs element-wise modulo with broadcasting.
+    def %(other)
+      self.class.modulo(self, other)
     end
 
     # Returns the result of the first array elements raised to powers
@@ -1084,6 +1113,11 @@ struct Number
   # Performs element-wise division.
   def /(other : MXNet::NDArray)
     MXNet::NDArray.divide(self, other)
+  end
+
+  # Performs element-wise modulo.
+  def %(other : MXNet::NDArray)
+    MXNet::NDArray.modulo(self, other)
   end
 
   # Returns the result of this number raised to powers from the array,

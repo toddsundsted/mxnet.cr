@@ -594,6 +594,27 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#arccos" do
+    it "computes the element-wise inverse cosine of the input array" do
+      p = MXNet::NDArray.array([Math.cos(0), Math.cos(Math::PI/4), Math.cos(Math::PI/2)])
+      p.arccos.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arcsin" do
+    it "computes the element-wise inverse sine of the input array" do
+      p = MXNet::NDArray.array([Math.sin(0), Math.sin(Math::PI/4), Math.sin(Math::PI/2)])
+      p.arcsin.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arctan" do
+    it "computes the element-wise inverse tangent of the input array" do
+      p = MXNet::NDArray.array([Math.tan(0), Math.tan(Math::PI/4), Math.tan(Math::PI/2)])
+      p.arctan.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
   describe "#argmax" do
     it "returns indices of the maximum values" do
       u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
@@ -778,6 +799,13 @@ describe MXNet::NDArray do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
       MXNet::NDArray.concat([a, b]).should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+    end
+  end
+
+  describe "#cos" do
+    it "computes the element-wise cosine of the input array" do
+      p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
+      p.cos.should be_close(MXNet::NDArray.array([Math.cos(0), Math.cos(Math::PI/4), Math.cos(Math::PI/2)]), 0.005)
     end
   end
 
@@ -1021,6 +1049,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#sin" do
+    it "computes the element-wise sine of the input array" do
+      p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
+      p.sin.should be_close(MXNet::NDArray.array([Math.sin(0), Math.sin(Math::PI/4), Math.sin(Math::PI/2)]), 0.005)
+    end
+  end
+
   {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
     describe "#size_array" do
       it "returns an array containing the size of data" do
@@ -1087,6 +1122,13 @@ describe MXNet::NDArray do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
       e = MXNet::NDArray.array([[-1.0], [1.0]])
       a.take(e).should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]]]))
+    end
+  end
+
+  describe "#tan" do
+    it "computes the element-wise tangent of the input array" do
+      p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
+      p.tan.should be_close(MXNet::NDArray.array([Math.tan(0), Math.tan(Math::PI/4), Math.tan(Math::PI/2)]), 0.005)
     end
   end
 

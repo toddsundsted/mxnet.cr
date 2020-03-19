@@ -354,6 +354,7 @@ describe MXNet::Symbol do
     f: MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1]),
     i: MXNet::NDArray.array([0.0, 1.0]),
     n: MXNet::NDArray.array([[[3.14, Float64::NAN], [Float64::NAN, 2.71]]]),
+    p: MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]),
     u: MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]]),
     z: MXNet::NDArray.array([0.0])
   }
@@ -549,6 +550,27 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#arccos" do
+    it "computes the element-wise inverse cosine of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.arccos.eval(args[:p].cos).first.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arcsin" do
+    it "computes the element-wise inverse sine of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.arcsin.eval(args[:p].sin).first.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arctan" do
+    it "computes the element-wise inverse tangent of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.arctan.eval(args[:p].tan).first.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
   describe "#argmax" do
     it "returns indices of the maximum values" do
       u = MXNet::Symbol.var("u")
@@ -733,6 +755,13 @@ describe MXNet::Symbol do
       a = MXNet::Symbol.var("a")
       b = MXNet::Symbol.var("b")
       MXNet::Symbol.concat([a, b]).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 2.0, 1.0, 4.0], [3.0, 4.0, 1.0, 1.0]]))
+    end
+  end
+
+  describe "#cos" do
+    it "computes the element-wise cosine of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.cos.eval(args[:p]).first.should be_close(MXNet::NDArray.array([Math.cos(0), Math.cos(Math::PI/4), Math.cos(Math::PI/2)]), 0.005)
     end
   end
 
@@ -976,6 +1005,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#sin" do
+    it "computes the element-wise sine of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.sin.eval(args[:p]).first.should be_close(MXNet::NDArray.array([Math.sin(0), Math.sin(Math::PI/4), Math.sin(Math::PI/2)]), 0.005)
+    end
+  end
+
   {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
     describe "#size_array" do
       it "returns an array containing the size of data" do
@@ -1042,6 +1078,13 @@ describe MXNet::Symbol do
       a = MXNet::Symbol.var("a")
       e = MXNet::Symbol.var("e")
       a.take(e).eval(**args).first.should eq(MXNet::NDArray.array([[[1.0, 2.0]], [[3.0, 4.0]]]))
+    end
+  end
+
+  describe "#tan" do
+    it "computes the element-wise tangent of the input array" do
+      p = MXNet::Symbol.var("p")
+      p.tan.eval(args[:p]).first.should be_close(MXNet::NDArray.array([Math.tan(0), Math.tan(Math::PI/4), Math.tan(Math::PI/2)]), 0.005)
     end
   end
 

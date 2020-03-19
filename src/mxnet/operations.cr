@@ -701,6 +701,44 @@ module MXNet
         Internal._arange(**kwargs.merge({start: start, stop: stop, ctx: ctx}))
       end
 
+      # Returns element-wise inverse cosine of the input array.
+      #
+      # The input should be in range `[-1, 1]`.
+      # The output is in the closed interval `[0, 𝜋]`
+      #
+      #     arccos([-1, -.707, 0, .707, 1]) = [𝜋, 3𝜋/4, 𝜋/2, 𝜋/4, 0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arccos)
+
+      # Returns element-wise inverse sine of the input array.
+      #
+      # The input should be in the range `[-1, 1]`.
+      # The output is in the closed interval `[-𝜋/2, 𝜋/2]`.
+      #
+      #     arcsin([-1, -.707, 0, .707, 1]) = [-𝜋/2, -𝜋/4, 0, 𝜋/4, 𝜋/2]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arcsin)
+
+      # Returns element-wise inverse tangent of the input array.
+      #
+      # The output is in the closed interval `[-𝜋/2, 𝜋/2]`
+      #
+      #     arctan([-1, 0, 1]) = [-𝜋/4, 0, 𝜋/4]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arctan)
+
       # Returns indices of the maximum values along an axis.
       #
       # In the case of multiple occurrences of maximum values, the
@@ -1349,6 +1387,18 @@ module MXNet
       def self.convolution(data : self, weight : self?, bias : self?, kernel, num_filter, **kwargs)
         Ops._Convolution(data, weight, bias, **kwargs.merge({kernel: kernel, num_filter: num_filter}))
       end
+
+      # Computes the element-wise cosine of the input array.
+      #
+      # The input should be in radians (`2\𝜋` radians equals 360 degrees).
+      #
+      #     cos([0, 𝜋/4, 𝜋/2]) = [1, 0.707, 0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, cos)
 
       # Extracts a diagonal or constructs a diagonal array.
       #
@@ -2595,6 +2645,18 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, sign)
 
+      # Computes the element-wise sine of the input array.
+      #
+      # The input should be in radians (`2\𝜋` radians equals 360 degrees).
+      #
+      #     sin([0, 𝜋/4, 𝜋/2]) = [0, 0.707, 1]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, sin)
+
       # Returns a 1-D array containing the size of the data.
       #
       # Assume *x* is an array with the following elements:
@@ -2812,6 +2874,18 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, take)
+
+      # Computes the element-wise tangent of the input array.
+      #
+      # The input should be in radians (`2\𝜋` radians equals 360 degrees).
+      #
+      #     tan([0, 𝜋, 𝜋/2]) = [0, 1, -∞)]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, tan)
 
       # Repeats the array multiple times.
       #

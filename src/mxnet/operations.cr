@@ -701,6 +701,17 @@ module MXNet
         Internal._arange(**kwargs.merge({start: start, stop: stop, ctx: ctx}))
       end
 
+      # Converts each element of the input array from radians to
+      # degrees.
+      #
+      #     degrees([0, 𝜋/2, 𝜋, 3𝜋/2, 2𝜋]) = [0, 90, 180, 270, 360]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, degrees)
+
       # Returns element-wise inverse cosine of the input array.
       #
       # The input should be in range `[-1, 1]`.
@@ -2006,6 +2017,17 @@ module MXNet
       def self.pooling(data : self, **kwargs)
         Ops._Pooling(data, **kwargs)
       end
+
+      # Converts each element of the input array from degrees to
+      # radians.
+      #
+      #     radians([0, 90, 180, 270, 360]) = [0, 𝜋/2, 𝜋, 3𝜋/2, 2𝜋]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, radians)
 
       # Computes the rectified linear activation.
       #

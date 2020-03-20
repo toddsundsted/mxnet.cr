@@ -809,6 +809,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#degrees" do
+    it "converts from radians to degrees" do
+      p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
+      p.degrees.should be_close(MXNet::NDArray.array([0.0, 45.0, 90.0]), 0.005)
+    end
+  end
+
   {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
     describe "#diag" do
       it "constructs a diagonal array" do
@@ -973,6 +980,13 @@ describe MXNet::NDArray do
       c.prod(axis: 1).should eq(MXNet::NDArray.array([[105.0, 384.0]]))
       c.prod(axis: 2).should eq(MXNet::NDArray.array([[2.0, 12.0, 30.0, 56.0]]))
       c.prod.should eq(MXNet::NDArray.array([40320.0]))
+    end
+  end
+
+  describe "#radians" do
+    it "converts from degrees to radians" do
+      p = MXNet::NDArray.array([0, 180.0/4, 180.0/2])
+      p.radians.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
     end
   end
 

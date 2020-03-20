@@ -765,6 +765,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#degrees" do
+    it "converts from radians to degrees" do
+      p = MXNet::Symbol.var("p")
+      p.degrees.eval(args[:p]).first.should be_close(MXNet::NDArray.array([0.0, 45.0, 90.0]), 0.005)
+    end
+  end
+
   {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
     describe "#diag" do
       it "constructs a diagonal array" do
@@ -929,6 +936,13 @@ describe MXNet::Symbol do
       c.prod(axis: 1).eval(**args).first.should eq(MXNet::NDArray.array([[105.0, 384.0]]))
       c.prod(axis: 2).eval(**args).first.should eq(MXNet::NDArray.array([[2.0, 12.0, 30.0, 56.0]]))
       c.prod.eval(**args).first.should eq(MXNet::NDArray.array([40320.0]))
+    end
+  end
+
+  describe "#radians" do
+    it "converts from degrees to radians" do
+      p = MXNet::Symbol.var("p")
+      p.radians.eval((args[:p] * 180.0) / Math::PI).first.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
     end
   end
 

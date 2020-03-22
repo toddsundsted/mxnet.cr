@@ -1411,6 +1411,16 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, cos)
 
+      # Returns the hyperbolic cosine of the input array, computed element-wise.
+      #
+      #     cosh(x) = (exp(x) + exp(-x)) / 2
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, cosh)
+
       # Extracts a diagonal or constructs a diagonal array.
       #
       # `.diag`‘s behavior depends on the input array dimensions:
@@ -2679,6 +2689,16 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, sin)
 
+      # Returns the hyperbolic sine of the input array, computed element-wise.
+      #
+      #     sinh(x) = (exp(x) - exp(-x)) / 2
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, sinh)
+
       # Returns a 1-D array containing the size of the data.
       #
       # Assume *x* is an array with the following elements:
@@ -2908,6 +2928,16 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, tan)
+
+      # Returns the hyperbolic tangent of the input array, computed element-wise.
+      #
+      #     tanh(x) = sinh(x) / cosh(x)
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, tanh)
 
       # Repeats the array multiple times.
       #

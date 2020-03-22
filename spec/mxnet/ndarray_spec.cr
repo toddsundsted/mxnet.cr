@@ -809,6 +809,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#cosh" do
+    it "computes the element-wise hyperbolic cosine of the input array" do
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.cosh.should be_close(MXNet::NDArray.array([1, 1.543080]), 0.005)
+    end
+  end
+
   describe "#degrees" do
     it "converts from radians to degrees" do
       p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
@@ -1070,6 +1077,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#sinh" do
+    it "computes the element-wise hyperbolic sine of the input array" do
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.sinh.should be_close(MXNet::NDArray.array([0, 1.175201]), 0.005)
+    end
+  end
+
   {% unless compare_versions(MXNet::Internal::MXNET_VERSION, "1.3.0") < 0 %}
     describe "#size_array" do
       it "returns an array containing the size of data" do
@@ -1143,6 +1157,13 @@ describe MXNet::NDArray do
     it "computes the element-wise tangent of the input array" do
       p = MXNet::NDArray.array([0, Math::PI/4, Math::PI/2])
       p.tan.should be_close(MXNet::NDArray.array([Math.tan(0), Math.tan(Math::PI/4), Math.tan(Math::PI/2)]), 0.005)
+    end
+  end
+
+  describe "#tanh" do
+    it "computes the element-wise hyperbolic tangent of the input array" do
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.tanh.should be_close(MXNet::NDArray.array([0, 0.761594]), 0.005)
     end
   end
 

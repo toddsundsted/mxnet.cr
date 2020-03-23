@@ -557,6 +557,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#arccosh" do
+    it "computes the element-wise inverse hyperbolic cosine of the input array" do
+      i = MXNet::Symbol.var("i")
+      i.arccosh.eval(args[:i].cosh).first.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
+    end
+  end
+
   describe "#arcsin" do
     it "computes the element-wise inverse sine of the input array" do
       p = MXNet::Symbol.var("p")
@@ -564,10 +571,24 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#arcsinh" do
+    it "computes the element-wise inverse hyperbolic sine of the input array" do
+      i = MXNet::Symbol.var("i")
+      i.arcsinh.eval(args[:i].sinh).first.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
+    end
+  end
+
   describe "#arctan" do
     it "computes the element-wise inverse tangent of the input array" do
       p = MXNet::Symbol.var("p")
       p.arctan.eval(args[:p].tan).first.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arctanh" do
+    it "computes the element-wise inverse hyperbolic tangent of the input array" do
+      i = MXNet::Symbol.var("i")
+      i.arctanh.eval(args[:i].tanh).first.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
     end
   end
 

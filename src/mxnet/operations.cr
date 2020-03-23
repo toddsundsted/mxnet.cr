@@ -725,6 +725,15 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, arccos)
 
+      # Returns the inverse hyperbolic cosine of the input array,
+      # computed element-wise.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arccosh)
+
       # Returns element-wise inverse sine of the input array.
       #
       # The input should be in the range `[-1, 1]`.
@@ -738,6 +747,15 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, arcsin)
 
+      # Returns the inverse hyperbolic sine of the input array,
+      # computed element-wise.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arcsinh)
+
       # Returns element-wise inverse tangent of the input array.
       #
       # The output is in the closed interval `[-𝜋/2, 𝜋/2]`
@@ -749,6 +767,15 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, arctan)
+
+      # Returns the inverse hyperbolic tangent of the input array,
+      # computed element-wise.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, arctanh)
 
       # Returns indices of the maximum values along an axis.
       #

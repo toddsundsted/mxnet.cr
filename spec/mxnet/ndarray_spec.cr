@@ -601,6 +601,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#arccosh" do
+    it "computes the element-wise inverse hyperbolic cosine of the input array" do
+      i = MXNet::NDArray.array([Math.cosh(0.0), Math.cosh(1.0)])
+      i.arccosh.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
+    end
+  end
+
   describe "#arcsin" do
     it "computes the element-wise inverse sine of the input array" do
       p = MXNet::NDArray.array([Math.sin(0), Math.sin(Math::PI/4), Math.sin(Math::PI/2)])
@@ -608,10 +615,24 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#arcsinh" do
+    it "computes the element-wise inverse hyperbolic sine of the input array" do
+      i = MXNet::NDArray.array([Math.sinh(0.0), Math.sinh(1.0)])
+      i.arcsinh.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
+    end
+  end
+
   describe "#arctan" do
     it "computes the element-wise inverse tangent of the input array" do
       p = MXNet::NDArray.array([Math.tan(0), Math.tan(Math::PI/4), Math.tan(Math::PI/2)])
       p.arctan.should be_close(MXNet::NDArray.array([0, Math::PI/4, Math::PI/2]), 0.005)
+    end
+  end
+
+  describe "#arctanh" do
+    it "computes the element-wise inverse hyperbolic tangent of the input array" do
+      i = MXNet::NDArray.array([Math.tanh(0.0), Math.tanh(1.0)])
+      i.arctanh.should be_close(MXNet::NDArray.array([0.0, 1.0]), 0.005)
     end
   end
 

@@ -1536,6 +1536,23 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, exp)
 
+      # Returns `exp(x) - 1` computed element-wise on the input.
+      #
+      # This function provides greater precision than explicitly
+      # calculating `exp(x) - 1` for small values of *x*.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [0.0, 1.0, 2.0]
+      #
+      # Then:
+      #     expm1(x) = [0.0, 1.71828182, 6.38905609]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, expm1)
+
       # Inserts a new axis of size 1 into the array shape.
       #
       # For example, given *x* with shape *[2, 3, 4]*, then
@@ -1672,6 +1689,37 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, log)
+
+      # Returns `log(1 + x)` computed element-wise on the input.
+      #
+      # This function is more accurate than explicitly calculating
+      # `log(1 + x)` for small *x*.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, log1p)
+
+      # Returns element-wise base-10 logarithmic value of the input.
+      #
+      #     10**log10(x) = x
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, log10)
+
+      # Returns element-wise base-2 logarithmic value of the input.
+      #
+      #     2**log2(x) = x
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, log2)
 
       # Computes the log softmax of the input.
       #

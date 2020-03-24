@@ -878,6 +878,13 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#expm1" do
+    it "computes exp(x) - 1" do
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.expm1.should be_close(MXNet::NDArray.array([0.0000, 1.7182]), 0.001)
+    end
+  end
+
   describe "#expand_dims" do
     it "inserts a new axis into the input array" do
       c = MXNet::NDArray.array([[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]])
@@ -918,7 +925,28 @@ describe MXNet::NDArray do
   describe "#log" do
     it "computes the natural logarithm" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
-      a.log.should be_close(MXNet::NDArray.array([[0.0, 0.69314], [1.0986, 1.3862]]), 0.001)
+      a.log.should be_close(MXNet::NDArray.array([[0.0, 0.6931], [1.0986, 1.3862]]), 0.001)
+    end
+  end
+
+  describe "#log1p" do
+    it "computes log(1 + x)" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.log1p.should be_close(MXNet::NDArray.array([[0.6931, 1.0986], [1.3862, 1.6094]]), 0.001)
+    end
+  end
+
+  describe "#log10" do
+    it "computes the base-10 logarithmic value" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.log10.should be_close(MXNet::NDArray.array([[0.0, 0.3010], [0.4771, 0.6020]]), 0.001)
+    end
+  end
+
+  describe "#log2" do
+    it "computes the base-2 logarithmic value" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.log2.should be_close(MXNet::NDArray.array([[0.0, 1.0], [1.5849, 2.0]]), 0.001)
     end
   end
 

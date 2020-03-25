@@ -1234,6 +1234,20 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, broadcast_to)
 
+      # Returns element-wise cube-root value of the input.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [1, 8, -125]
+      #
+      # Then:
+      #     cbrt(x) = [1, 2, -5]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, cbrt)
+
       # Returns element-wise ceiling of the input.
       #
       # The ceiling  `x` is the smallest integer `i`, such that `i >= x`.
@@ -2114,6 +2128,22 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, radians)
 
+      # Returns element-wise inverse cube-root value of the input.
+      #
+      #     rcbrt(x) = 1/cbrt(x)
+      #
+      # Assume *x* is an array with the following elements:
+      #     [1, 8, -125]
+      #
+      # Then:
+      #     rcbrt(x) = [1.0, 0.5, -0.2]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, rcbrt)
+
       # Computes the rectified linear activation.
       #
       # _y=max(input,0)_
@@ -2630,6 +2660,22 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, round)
+
+      # Returns element-wise inverse square-root value of the input.
+      #
+      #     rsqrt(x) = 1/sqrt(x)
+      #
+      # Assume *x* is an array with the following elements:
+      #     [4, 9, 16]
+      #
+      # Then:
+      #     rsqrt(x) = [0.5, 0.33333, 0.25]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, rsqrt)
 
       # Update function for Stochastic Gradient Descent (SGD)
       # optimizer.

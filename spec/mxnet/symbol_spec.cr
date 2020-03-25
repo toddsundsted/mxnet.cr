@@ -757,6 +757,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#cbrt" do
+    it "computes the cube-root of the input" do
+      d = MXNet::Symbol.var("d")
+      d.cbrt.eval(**args).first.should be_close(MXNet::NDArray.array([[1.0], [1.5874], [2.0800]]), 0.005)
+    end
+  end
+
   describe "#ceil" do
     it "returns ceiling of the input" do
       f = MXNet::Symbol.var("f")
@@ -1002,6 +1009,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#rcbrt" do
+    it "computes the inverse cube-root of the input" do
+      d = MXNet::Symbol.var("d")
+      d.rcbrt.eval(**args).first.should be_close(MXNet::NDArray.array([[1.0], [0.6299], [0.4807]]), 0.005)
+    end
+  end
+
   describe "#relu" do
     it "computes the rectified linear activation of the input" do
       e = MXNet::Symbol.var("e")
@@ -1042,6 +1056,13 @@ describe MXNet::Symbol do
       a = MXNet::Symbol.zeros(shape: [9])
       b = MXNet::Symbol.zeros(shape: [3, 3])
       a.reshape_like(b).eval.first.shape.should eq([3, 3])
+    end
+  end
+
+  describe "#rsqrt" do
+    it "computes the inverse square-root of the input" do
+      d = MXNet::Symbol.var("d")
+      d.rsqrt.eval(**args).first.should be_close(MXNet::NDArray.array([[1.0], [0.5], [0.3333]]), 0.005)
     end
   end
 

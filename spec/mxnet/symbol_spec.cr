@@ -1016,6 +1016,13 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#reciprocal" do
+    it "computes the reciprocal" do
+      d = MXNet::Symbol.var("d")
+      d.reciprocal.eval(**args).first.should be_close(MXNet::NDArray.array([[1.0], [0.25], [0.1111]]), 0.005)
+    end
+  end
+
   describe "#relu" do
     it "computes the rectified linear activation of the input" do
       e = MXNet::Symbol.var("e")

@@ -2144,6 +2144,22 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, rcbrt)
 
+      # Returns the reciprocal of the argument, element-wise.
+      #
+      #     reciprocal(x) = 1/x
+      #
+      # Assume *x* is an array with the following elements:
+      #     [-2, 1, 3, 1.6, 0.2]
+      #
+      # Then:
+      #     reciprocal(x) = [-0.5, 1.0, 0.33333334, 0.625, 5.0]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, reciprocal)
+
       # Computes the rectified linear activation.
       #
       # _y=max(input,0)_

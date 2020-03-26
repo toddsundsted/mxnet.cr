@@ -2895,6 +2895,57 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, slice_axis)
 
+      # Slices like the shape of another array.
+      #
+      # This function is similar to `.slice`, however, the *begin*
+      # values are always `0` and the *end* values of specific axes
+      # are inferred from the second input *shape_like*.
+      #
+      # Given a value of *shape_like* of *shape=[d_0, d_1, ..., d_n-1]*
+      # and default empty *axes*, `.slice_like` performs the following
+      # operation:
+      #
+      #     out = slice(input, begin: [0, 0, ..., 0], end: [d_0, d_1, ..., d_n-1])
+      #
+      # When *axes* is present, it is used to specify which axes are
+      # being sliced.
+      #
+      # It is allowed to have first and second inputs with different
+      # dimensions, however, you have to make sure *axes* are
+      # specified and do not exceed the dimension limits.
+      #
+      # For example, given an input *a* with *shape=[2, 3, 4, 5]* and
+      # an input *b* with *shape=[1, 2, 3]*, the following is not
+      # allowed because the number of dimensions of *a* is 4 and the
+      # number of dimension of *b* is 3:
+      #
+      #     out = slice_like(a, b)
+      #
+      # The following is allowed in this situation:
+      #
+      #     out = slice_like(a, b, axes: [0, 2])
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]] # x
+      #     [[0, 0, 0], [0, 0, 0]]                        # y
+      #
+      #     slice_like(x, y) = [[1, 2, 3], [5, 6, 7]]
+      #     slice_like(x, y, axes: [0, 1]) = [[1, 2, 3], [5, 6, 7]]
+      #     slice_like(x, y, axes: [0]) = [[1, 2, 3, 4], [5, 6, 7, 8]]
+      #     slice_like(x, y, axes: [-1]) = [[1, 2, 3], [5, 6, 7], [9, 10, 11]]
+      #
+      # ### Parameters
+      {{prefix}}
+      # * *shape_like* (`{{type}}`)
+      #   Input to shape like.
+      # * *axes* (`Int` or `Array(Int)`)
+      #   List of axes on which input data will be sliced according to
+      #   the corresponding size of the second input. By default it
+      #   will slice on all axes. Negative axes are supported.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, slice_like)
+
       # Applies the softmax function.
       #
       # The resulting array contains elements in the range *(0, 1)*

@@ -1184,6 +1184,14 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#slice_like" do
+    it "slices a region of the array" do
+      u = MXNet::NDArray.array([[7.0, 8.0, 2.0], [3.0, 5.0, 9.0], [1.0, 6.0, 4.0]])
+      d = MXNet::NDArray.array([[1.0], [4.0], [9.0]])
+      u.slice_like(d).should eq(MXNet::NDArray.array([[7.0], [3.0], [1.0]]))
+    end
+  end
+
   describe "#softmax" do
     it "applies the softmax function" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

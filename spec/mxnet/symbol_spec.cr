@@ -1140,6 +1140,14 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#slice_like" do
+    it "slices a region of the array" do
+      u = MXNet::Symbol.var("u")
+      d = MXNet::Symbol.var("d")
+      u.slice_like(d).eval(**args).first.should eq(MXNet::NDArray.array([[7.0], [3.0], [1.0]]))
+    end
+  end
+
   describe "#softmax" do
     it "applies the softmax function" do
       a = MXNet::Symbol.var("a")

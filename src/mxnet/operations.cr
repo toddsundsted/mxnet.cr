@@ -1256,7 +1256,7 @@ module MXNet
       #     [-2.1, -1.9, 1.5, 1.9, 2.1]
       #
       # Then:
-      #     ceil(x) = [-2.0,-1.9, 2.0, 2.0, 3.0]
+      #     ceil(x) = [-2.0, -1.9, 2.0, 2.0, 3.0]
       #
       # ### Parameters
       {{prefix}}
@@ -1287,36 +1287,6 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, clip)
-
-      # Returns an array of ones with the same shape, data type and
-      # storage type as the input array.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-      #
-      # Then:
-      #     ones_like(x) # => [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, ones_like)
-
-      # Returns an array of zeros with the same shape, data type and
-      # storage type as the input array.
-      #
-      # Assume *x* is an array with the following elements:
-      #     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
-      #
-      # Then:
-      #     zeros_like(x) # => [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-      #
-      # ### Parameters
-      {{prefix}}
-      {{suffix}}
-      #
-      def_class_and_fluent_method(Ops, zeros_like)
 
       # Joins input arrays along a given axis.
       #
@@ -1964,6 +1934,21 @@ module MXNet
       def self.ones(shape : Int | Array(Int), ctx = Context.current, **kwargs)
         Internal._ones(**kwargs.merge({shape: shape, ctx: ctx}))
       end
+
+      # Returns an array of ones with the same shape, data type and
+      # storage type as the input array.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+      #
+      # Then:
+      #     ones_like(x) # => [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, ones_like)
 
       # Picks elements from an input array according to the indices
       # along the given axis.
@@ -3210,6 +3195,21 @@ module MXNet
       def self.zeros(shape : Int | Array(Int), ctx = Context.current, **kwargs)
         Internal._zeros(**kwargs.merge({shape: shape, ctx: ctx}))
       end
+
+      # Returns an array of zeros with the same shape, data type and
+      # storage type as the input array.
+      #
+      # Assume *x* is an array with the following elements:
+      #     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+      #
+      # Then:
+      #     zeros_like(x) # => [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, zeros_like)
     end
   end
 end

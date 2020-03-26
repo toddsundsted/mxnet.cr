@@ -1088,6 +1088,14 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#reshape_like" do
+    it "reshapes the input array" do
+      a = MXNet::NDArray.zeros(shape: [9])
+      b = MXNet::NDArray.zeros(shape: [3, 3])
+      a.reshape_like(b).shape.should eq([3, 3])
+    end
+  end
+
   describe "#rint" do
     it "rounds the elements of the array" do
       f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
@@ -1099,14 +1107,6 @@ describe MXNet::NDArray do
     it "rounds the elements of the array" do
       f = MXNet::NDArray.array([-2.1, -1.9, 1.5, 1.9, 2.1])
       f.round.should eq(MXNet::NDArray.array([-2.0, -2.0, 2.0, 2.0, 2.0]))
-    end
-  end
-
-  describe "#reshape_like" do
-    it "reshapes the input array" do
-      a = MXNet::NDArray.zeros(shape: [9])
-      b = MXNet::NDArray.zeros(shape: [3, 3])
-      a.reshape_like(b).shape.should eq([3, 3])
     end
   end
 

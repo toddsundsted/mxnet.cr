@@ -26,6 +26,8 @@ outputs:
 <NDArray 2x2 int32 cpu(0)>
 ```
 
+# Examples
+
 If you want to see what MXNet.cr can do, check out
 [toddsundsted/deep-learning](https://github.com/toddsundsted/deep-learning).
 It's a collection of problems and solutions from [Deep Learning - The
@@ -104,7 +106,7 @@ MXNet.cr currently implements a subset of
 arithmetic operations on arrays and symbols, with support for symbolic
 evaluation and some support for automatic differentiation thrown
 in. Almost all operations in the library are exposed, however, via the
-automatically generated `Ops`, `Sparse`, `Linalg`, etc. modules but
+automatically generated `Ops`, `Sparse`, `Linalg`, etc. modules, but
 documentation and guidance are nonexistent at this time.
 
 Implemented functionality:

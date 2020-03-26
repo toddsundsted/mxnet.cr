@@ -1044,6 +1044,14 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#reshape_like" do
+    it "reshapes the input array" do
+      a = MXNet::Symbol.zeros(shape: [9])
+      b = MXNet::Symbol.zeros(shape: [3, 3])
+      a.reshape_like(b).eval.first.shape.should eq([3, 3])
+    end
+  end
+
   describe "#rint" do
     it "rounds the elements of the array" do
       f = MXNet::Symbol.var("f")
@@ -1055,14 +1063,6 @@ describe MXNet::Symbol do
     it "rounds the elements of the array" do
       f = MXNet::Symbol.var("f")
       f.round.eval(**args).first.should eq(MXNet::NDArray.array([-2.0, -2.0, 2.0, 2.0, 2.0]))
-    end
-  end
-
-  describe "#reshape_like" do
-    it "reshapes the input array" do
-      a = MXNet::Symbol.zeros(shape: [9])
-      b = MXNet::Symbol.zeros(shape: [3, 3])
-      a.reshape_like(b).eval.first.shape.should eq([3, 3])
     end
   end
 

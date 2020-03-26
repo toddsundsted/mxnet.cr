@@ -763,7 +763,7 @@ module MXNet
 
     # Returns an `Array` with values copied from this array.
     #
-    # Only works for 1-dimensional arrays (`shape.size == 1`).
+    # Only supports 1-dimensional arrays (`shape.size == 1`).
     #
     # ```
     # MXNet::NDArray.zeros([4], dtype: :float64).to_a # => [0.0, 0.0, 0.0, 0.0]
@@ -783,17 +783,61 @@ module MXNet
 
     # Returns an `Array` with values copied from this array.
     #
-    # Only works for 1-dimensional arrays (`shape.size == 1`).
+    # Only supports arrays up to 4 dimensions (`shape.size <= 4`).
     #
     # ```
-    # MXNet::NDArray.zeros([4], dtype: :float64).to_a(Float64) # => [0.0, 0.0, 0.0, 0.0]
+    # MXNet::NDArray.zeros([4], dtype: :float32).to_a(Float32) # => [0.0, 0.0, 0.0, 0.0]
     # ```
     #
-    # To return an array without checking and restricting the return
-    # type, see `#to_a`.
+    # To return a 1-dimensional array without checking and restricting
+    # the return type, see `#to_a`.
     #
+    # ### Parameters
+    # * *as* (`Class`)
+    #   The class of the contained item. For example, to check and
+    #   restrict the return type to `Array(Float32)` specify
+    #   `Float32`.
+    #
+    def to_a(as : Array(Array(Array(T))).class) : Array(Array(Array(Array(T)))) forall T
+      {% puts @def %}
+      unless shape.size == 4
+        raise NDArrayException.new("the array must have 4 dimensions")
+      end
+      raw
+        .in_groups_of(shape[-1], T.zero)
+        .in_groups_of(shape[-2], [] of T)
+        .in_groups_of(shape[-3], [] of Array(T))
+        .as(Array(Array(Array(Array(T)))))
+    end
+
+    # :ditto:
+    def to_a(as : Array(Array(T)).class) : Array(Array(Array(T))) forall T
+      unless shape.size == 3
+        raise NDArrayException.new("the array must have 3 dimensions")
+      end
+      raw
+        .in_groups_of(shape[-1], T.zero)
+        .in_groups_of(shape[-2], [] of T)
+        .as(Array(Array(Array(T))))
+    end
+
+    # :ditto:
+    def to_a(as : Array(T).class) : Array(Array(T)) forall T
+      unless shape.size == 2
+        raise NDArrayException.new("the array must have 2 dimensions")
+      end
+      raw
+        .in_groups_of(shape[-1], T.zero)
+        .as(Array(Array(T)))
+    end
+
+    # :ditto:
     def to_a(as : T.class) : Array(T) forall T
-      to_a.as(Array(T))
+      unless shape.size == 1
+        raise NDArrayException.new("the array must have 1 dimension")
+      end
+      raw
+        .as(Array(T))
     end
 
     def to_s(io)

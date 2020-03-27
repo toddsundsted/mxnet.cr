@@ -95,12 +95,12 @@ describe MXNet::NDArray do
     end
 
     it "supports Crystal numeric types" do
-      MXNet::NDArray.array([1_f32]).should eq(MXNet::NDArray.array([1_f32]))
-      MXNet::NDArray.array([1_f64]).should eq(MXNet::NDArray.array([1_f64]))
-      MXNet::NDArray.array([1_u8]).should eq(MXNet::NDArray.array([1_u8]))
-      MXNet::NDArray.array([1_i32]).should eq(MXNet::NDArray.array([1_i32]))
-      MXNet::NDArray.array([1_i8]).should eq(MXNet::NDArray.array([1_i8]))
-      MXNet::NDArray.array([1_i64]).should eq(MXNet::NDArray.array([1_i64]))
+      MXNet::NDArray.array([1_f32]).dtype.should eq(:float32)
+      MXNet::NDArray.array([1_f64]).dtype.should eq(:float64)
+      MXNet::NDArray.array([1_u8]).dtype.should eq(:uint8)
+      MXNet::NDArray.array([1_i32]).dtype.should eq(:int32)
+      MXNet::NDArray.array([1_i8]).dtype.should eq(:int8)
+      MXNet::NDArray.array([1_i64]).dtype.should eq(:int64)
     end
 
     it "supports explicit context" do

@@ -929,6 +929,33 @@ module MXNet
       Int64 => 6
     }
 
+    # Returns a new array of given shape, filled with the given
+    # *value*.
+    #
+    # ### Parameters
+    # * *shape* (`Int` or `Array(Int)`)
+    #   The shape of the new array.
+    # * *value* (`T`)
+    #   A fill value of any supported numeric type.
+    # * *dtype* (`::Symbol`, optional)
+    #   The data type of the output array. If unspecified, the type is
+    #   inferred from the value.
+    # * *ctx* (`Context`, optional)
+    #   Device context (default is the current context).
+    #
+    def self.full(shape : Int | Array(Int), value : T, dtype = nil, ctx = nil) forall T
+      ctx ||= Context.current
+
+      unless dtype
+        dtype = INFERRED_TYPES[T]? || raise MXNet::NDArrayException.new("type is unsupported: #{T}")
+        dtype = DT2T[dtype]
+      end
+
+      MXNet::NDArray.empty(shape, dtype, ctx).tap do |out|
+        out[..] = value
+      end
+    end
+
     # Creates an MXNet array from any enumerable object.
     #
     # ### Parameters

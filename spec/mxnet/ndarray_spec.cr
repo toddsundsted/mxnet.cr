@@ -126,6 +126,34 @@ describe MXNet::NDArray do
     end
   end
 
+  describe ".full" do
+    it "creates an NDArray" do
+      MXNet::NDArray.full([2, 3], 0).should be_a(MXNet::NDArray)
+    end
+
+    it "supports MXNet numeric types" do
+      MXNet::NDArray.full([1, 2], 1, dtype: :float32).should eq(MXNet::NDArray.array([[1_f32, 1_f32]]))
+      MXNet::NDArray.full([1, 2], 1, dtype: :float64).should eq(MXNet::NDArray.array([[1_f64, 1_f64]]))
+      MXNet::NDArray.full([1, 2], 1, dtype: :uint8).should eq(MXNet::NDArray.array([[1_u8, 1_u8]]))
+      MXNet::NDArray.full([1, 2], 1, dtype: :int32).should eq(MXNet::NDArray.array([[1_i32, 1_i32]]))
+      MXNet::NDArray.full([1, 2], 1, dtype: :int8).should eq(MXNet::NDArray.array([[1_i8, 1_i8]]))
+      MXNet::NDArray.full([1, 2], 1, dtype: :int64).should eq(MXNet::NDArray.array([[1_i64, 1_i64]]))
+    end
+
+    it "returns a new array filled with the value" do
+      MXNet::NDArray.full([1, 2], 3_f32).should eq(MXNet::NDArray.array([[3_f32, 3_f32]]))
+      MXNet::NDArray.full([1, 2], 3_f64).should eq(MXNet::NDArray.array([[3_f64, 3_f64]]))
+      MXNet::NDArray.full([1, 2], 3_u8).should eq(MXNet::NDArray.array([[3_u8, 3_u8]]))
+      MXNet::NDArray.full([1, 2], 3_i32).should eq(MXNet::NDArray.array([[3_i32, 3_i32]]))
+      MXNet::NDArray.full([1, 2], 3_i8).should eq(MXNet::NDArray.array([[3_i8, 3_i8]]))
+      MXNet::NDArray.full([1, 2], 3_i64).should eq(MXNet::NDArray.array([[3_i64, 3_i64]]))
+    end
+
+    it "supports explicit context" do
+      MXNet::NDArray.full([1, 2], 0, ctx: MXNet::Context.cpu).context.should eq(MXNet::Context.cpu)
+    end
+  end
+
   describe ".zeros" do
     it "returns a new array filled with all zeros" do
       MXNet::NDArray.zeros([2, 3]).should eq(MXNet::NDArray.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], dtype: :float32))

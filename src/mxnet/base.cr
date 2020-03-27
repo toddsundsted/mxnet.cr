@@ -1,8 +1,7 @@
 require "./operations"
 
 module MXNet
-  # Base class for `NDArray` and `Symbol`.
-  #
+  #:nodoc:
   class Base
     private macro inherited
       include MXNet::Operations

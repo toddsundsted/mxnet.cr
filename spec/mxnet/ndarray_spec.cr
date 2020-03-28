@@ -1316,6 +1316,15 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#where" do
+    it "return the elements depending on the condition" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      i = MXNet::NDArray.array([0.0, 1.0])
+      i.where(a, b).should eq(MXNet::NDArray.array([[1.0, 4.0], [3.0, 4.0]]))
+    end
+  end
+
   describe ".zeros_like" do
     it "creates an array of the same shape filled with zeros" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

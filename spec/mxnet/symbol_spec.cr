@@ -1244,6 +1244,15 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#where" do
+    it "return the elements depending on the condition" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      i = MXNet::Symbol.var("i")
+      i.where(a, b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 4.0], [3.0, 4.0]]))
+    end
+  end
+
   describe ".zeros_like" do
     it "creates an array of the same shape filled with zeros" do
       a = MXNet::Symbol.var("a")

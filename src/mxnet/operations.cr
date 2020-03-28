@@ -3230,6 +3230,47 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, trunc)
 
+      # Returns elements, either from *x* or *y*, depending on the
+      # *condition*.
+      #
+      # Given three arrays, *condition*, *x* and *y*, return an array
+      # with the elements from *x* or *y*, depending on whether the
+      # elements from *condition* are true or false. *x* and *y* must
+      # have the same shape.
+      #
+      # If *condition* has the same shape as *x*, each element in the
+      # output array is from *x* if the corresponding element in
+      # *condition* is true and from *y* if false.
+      #
+      # If *condition* does not have the same shape as *x*, it must be
+      # a 1-D array whose size is the same as the size of the first
+      # dimension of *x*. Each row of the output array is from *x* if
+      # the corresponding element from *condition* is true and from
+      # *y* if false.
+      #
+      # Note: all non-zero values are interpreted as `true` in
+      # *condition*.
+      #
+      # Assume *x*, *y* and *condition* are arrays with the following
+      # elements:
+      #     [[1, 2], [3, 4]]  # x
+      #     [[5, 6], [7, 8]]  # y
+      #     [[0, 1], [-1, 0]] # condition
+      #
+      # Then:
+      #     where(condition, x, y) = [[5, 2], [3, 8]]
+      #
+      # ### Parameters
+      # * *condition* ((`{{type}}`, required))
+      #   The condition array.
+      # * *x* ((`{{type}}`, required))
+      #   The first input.
+      # * *y* ((`{{type}}`, required))
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, where)
+
       # Returns an array filled with all zeros, with the given shape.
       #
       # ### Parameters

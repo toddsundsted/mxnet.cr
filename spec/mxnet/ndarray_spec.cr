@@ -957,6 +957,14 @@ describe MXNet::NDArray do
     end
   end
 
+  describe ".hypot" do
+    it "computes the hypotenuse" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      MXNet::NDArray.hypot(a, b).should be_close(MXNet::NDArray.array([[1.414, 4.472], [3.162, 4.123]]), 0.01)
+    end
+  end
+
   describe "#log" do
     it "computes the natural logarithm" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

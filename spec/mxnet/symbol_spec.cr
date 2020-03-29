@@ -885,6 +885,14 @@ describe MXNet::Symbol do
     end
   end
 
+  describe ".hypot" do
+    it "computes the hypotenuse" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      MXNet::Symbol.hypot(a, b).eval(**args).first.should be_close(MXNet::NDArray.array([[1.414, 4.472], [3.162, 4.123]]), 0.01)
+    end
+  end
+
   describe "#log" do
     it "computes the natural logarithm" do
       a = MXNet::Symbol.var("a")

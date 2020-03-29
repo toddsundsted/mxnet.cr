@@ -1661,6 +1661,18 @@ module MXNet
         Ops._FullyConnected(data, weight, bias, **kwargs.merge({num_hidden: num_hidden}))
       end
 
+      # Given the legs of a right triangle, return its hypotenuse.
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   Input data.
+      # * *rhs* (`{{type}}`, required)
+      #   Input data.
+      #
+      def self.hypot(lhs : self, rhs : self, **kwargs)
+        Internal._hypot(lhs, rhs, **kwargs)
+      end
+
       # Returns element-wise natural logarithmic value of the input.
       #
       # The natural logarithm is the logarithm in base *e*, so that

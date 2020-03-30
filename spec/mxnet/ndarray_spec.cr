@@ -599,6 +599,45 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#&" do
+    it "performs element-wise logical and with a scalar" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      (a & 2).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (2 & a).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical and" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      (a & b).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe "#|" do
+    it "performs element-wise logical or with a scalar" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      (a | 0).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (0 | a).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical or" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      (a | b).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe "#^" do
+    it "performs element-wise logical xor with a scalar" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      (a ^ 0).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (0 ^ a).should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical xor" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      b = MXNet::NDArray.array([[1.0, 4.0], [1.0, 1.0]])
+      (a ^ b).should eq(MXNet::NDArray.array([[0.0, 0.0], [0.0, 0.0]]))
+    end
+  end
+
   describe ".abs" do
     it "computes the element-wise absolute value of the input" do
       e = MXNet::NDArray.array([[-1.0], [1.0]])

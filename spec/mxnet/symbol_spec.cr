@@ -527,6 +527,45 @@ describe MXNet::Symbol do
     end
   end
 
+  describe "#&" do
+    it "performs element-wise logical and with a scalar" do
+      a = MXNet::Symbol.var("a")
+      (a & 2).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (2 & a).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical and" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      (a & b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe "#|" do
+    it "performs element-wise logical or with a scalar" do
+      a = MXNet::Symbol.var("a")
+      (a | 0).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (0 | a).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical or" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      (a | b).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+  end
+
+  describe "#^" do
+    it "performs element-wise logical xor with a scalar" do
+      a = MXNet::Symbol.var("a")
+      (a ^ 0).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+      (0 ^ a).eval(**args).first.should eq(MXNet::NDArray.array([[1.0, 1.0], [1.0, 1.0]]))
+    end
+    it "performs element-wise logical xor" do
+      a = MXNet::Symbol.var("a")
+      b = MXNet::Symbol.var("b")
+      (a ^ b).eval(**args).first.should eq(MXNet::NDArray.array([[0.0, 0.0], [0.0, 0.0]]))
+    end
+  end
+
   describe ".abs" do
     it "computes the element-wise absolute value of the input" do
       e = MXNet::Symbol.var("e")

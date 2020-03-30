@@ -463,6 +463,93 @@ module MXNet
       Internal._lesser_equal_scalar
     )
 
+    # Returns the result of element-wise logical and (`&`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element and *rhs* element is true (not zero), otherwise return 0
+    # (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs & rhs`. Equivalent to
+    # `.broadcast_logical_and` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_and,
+      lhs, rhs,
+      Ops._broadcast_logical_and,
+      :&,
+      Internal._logical_and_scalar,
+      Internal._logical_and_scalar
+    )
+
+    # Returns the result of element-wise logical or (`|`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element or *rhs* element is true (not zero), otherwise return 0
+    # (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs | rhs`. Equivalent to
+    # `.broadcast_logical_or` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_or,
+      lhs, rhs,
+      Ops._broadcast_logical_or,
+      :|,
+      Internal._logical_or_scalar,
+      Internal._logical_or_scalar
+    )
+
+    # Returns the result of element-wise logical xor (`^`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if either
+    # *lhs* element or *rhs* element is true (not zero) but not both,
+    # otherwise return 0 (false).
+    #
+    # If the corresponding dimensions of two arrays have the same size
+    # or one of them has size 1, then the arrays are broadcastable to
+    # a common shape.
+    #
+    # Equivalent to `lhs ^ rhs`. Equivalent to
+    # `.broadcast_logical_xor` for `NDArray` arguments.
+    #
+    # ### Parameters
+    # * *lhs* (`NDArray` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`NDArray` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_xor,
+      lhs, rhs,
+      Ops._broadcast_logical_xor,
+      :^,
+      Internal._logical_xor_scalar,
+      Internal._logical_xor_scalar
+    )
+
     # Performs element-wise addition with broadcasting.
     def +(other)
       self.class.add(self, other)
@@ -529,6 +616,24 @@ module MXNet
     # operation with broadcasting.
     def <=(other)
       self.class.lesser_equal(self, other)
+    end
+
+    # Performs element-wise logical and (`&`) comparison operation
+    # with broadcasting.
+    def &(other)
+      self.class.logical_and(self, other)
+    end
+
+    # Performs element-wise logical or (`|`) comparison operation
+    # with broadcasting.
+    def |(other)
+      self.class.logical_or(self, other)
+    end
+
+    # Performs element-wise logical xor (`^`) comparison operation
+    # with broadcasting.
+    def ^(other)
+      self.class.logical_xor(self, other)
     end
 
     # Performs element-wise numerical negative.
@@ -1225,5 +1330,20 @@ struct Number
   # Performs element-wise less than or equal to (`<=`) comparison.
   def <=(other : MXNet::NDArray)
     MXNet::NDArray.lesser_equal(self, other)
+  end
+
+  # Performs element-wise logical and (`&`) comparison.
+  def &(other : MXNet::NDArray)
+    MXNet::NDArray.logical_and(self, other)
+  end
+
+  # Performs element-wise logical or (`|`) comparison.
+  def |(other : MXNet::NDArray)
+    MXNet::NDArray.logical_or(self, other)
+  end
+
+  # Performs element-wise logical xor (`^`) comparison.
+  def ^(other : MXNet::NDArray)
+    MXNet::NDArray.logical_xor(self, other)
   end
 end

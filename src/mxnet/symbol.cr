@@ -901,6 +901,87 @@ module MXNet
       Internal._lesser_equal_scalar
     )
 
+    # Returns the result of element-wise logical and (`&`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element and *rhs* element is true (not zero), otherwise return 0
+    # (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs & rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_and,
+      lhs, rhs,
+      Internal._logical_and,
+      :&,
+      Internal._logical_and_scalar,
+      Internal._logical_and_scalar
+    )
+
+    # Returns the result of element-wise logical or (`|`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if *lhs*
+    # element or *rhs* element is true (not zero), otherwise return 0
+    # (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs | rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_or,
+      lhs, rhs,
+      Internal._logical_or,
+      :|,
+      Internal._logical_or_scalar,
+      Internal._logical_or_scalar
+    )
+
+    # Returns the result of element-wise logical xor (`^`) comparison
+    # operation.
+    #
+    # For each element in input arrays, return 1 (true) if either
+    # *lhs* element or *rhs* element is true (not zero) but not both,
+    # otherwise return 0 (false).
+    #
+    # Both inputs can be a `Symbol` or a scalar number. Broadcasting
+    # is not supported.
+    #
+    # Equivalent to `lhs ^ rhs`.
+    #
+    # ### Parameters
+    # * *lhs* (`Symbol` or `Number`)
+    #   The first value to be compared.
+    # * *rhs* (`Symbol` or `Number`)
+    #   The second value to be compared.
+    #
+    bifunc_helper(
+      logical_xor,
+      lhs, rhs,
+      Internal._logical_xor,
+      :^,
+      Internal._logical_xor_scalar,
+      Internal._logical_xor_scalar
+    )
+
     # Performs element-wise addition (without broadcasting).
     def +(other)
       self.class.add(self, other)
@@ -967,6 +1048,24 @@ module MXNet
     # operation (without broadcasting).
     def <=(other)
       self.class.lesser_equal(self, other)
+    end
+
+    # Performs element-wise logical and (`&`) comparison operation
+    # (without broadcasting).
+    def &(other)
+      self.class.logical_and(self, other)
+    end
+
+    # Performs element-wise logical or (`|`) comparison operation
+    # (without broadcasting).
+    def |(other)
+      self.class.logical_or(self, other)
+    end
+
+    # Performs element-wise logical xor (`^`) comparison operation
+    # (without broadcasting).
+    def ^(other)
+      self.class.logical_xor(self, other)
     end
 
     # Performs element-wise numerical negative.
@@ -1160,5 +1259,20 @@ struct Number
   # Performs element-wise less than or equal to (`<=`) comparison.
   def <=(other : MXNet::Symbol)
     MXNet::Symbol.lesser_equal(self, other)
+  end
+
+  # Performs element-wise logical and (`&`) comparison.
+  def &(other : MXNet::Symbol)
+    MXNet::Symbol.logical_and(self, other)
+  end
+
+  # Performs element-wise logical or (`|`) comparison.
+  def |(other : MXNet::Symbol)
+    MXNet::Symbol.logical_or(self, other)
+  end
+
+  # Performs element-wise logical xor (`^`) comparison.
+  def ^(other : MXNet::Symbol)
+    MXNet::Symbol.logical_xor(self, other)
   end
 end

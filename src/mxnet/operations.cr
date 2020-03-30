@@ -877,6 +877,24 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, broadcast_add)
 
+      # Returns element-wise logical and of the input arrays with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 1], [1, 1, 1]] # x
+      #     [[0], [1]]             # y
+      #
+      # Then:
+      #     broadcast_logical_and(x, y) # => [[0, 0, 0], [1, 1, 1]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_logical_and)
+
       # Broadcasts the input array over particular axis.
       #
       # Broadcasting is allowed on axes with size 1, such as from `[2, 1, 3, 1]`
@@ -1145,6 +1163,24 @@ module MXNet
       #
       def_class_and_fluent_method(Ops, broadcast_not_equal)
 
+      # Returns element-wise logical or of the input arrays with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 0], [1, 1, 0]] # x
+      #     [[1], [0]]             # y
+      #
+      # Then:
+      #     broadcast_logical_or(x, y) # => [[1, 1, 1], [1, 1, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_logical_or)
+
       # Returns element-wise sum of the input arrays with broadcasting.
       #
       # `.broadcast_plus` is an alias for `.broadcast_add`.
@@ -1233,6 +1269,24 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, broadcast_to)
+
+      # Returns element-wise logical xor of the input arrays with broadcasting.
+      #
+      # Assume *x* and *y* are arrays with the following elements:
+      #     [[1, 1, 0], [1, 1, 0]] # x
+      #     [[1], [0]]             # y
+      #
+      # Then:
+      #     broadcast_logical_or(x, y) # => [[0, 0, 1], [1, 1, 0]]
+      #
+      # ### Parameters
+      # * *lhs* (`{{type}}`, required)
+      #   The first input.
+      # * *rhs* (`{{type}}`, required)
+      #   The second input.
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, broadcast_logical_xor)
 
       # Returns element-wise cube-root value of the input.
       #
@@ -1740,6 +1794,15 @@ module MXNet
       {{suffix}}
       #
       def_class_and_fluent_method(Ops, log_softmax)
+
+      # Performs element-wise logical not of the input array.
+      #
+      #     logical_not([-2, 0, 1]) = [0, 1, 0]
+      #
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, logical_not)
 
       # Computes the max of array elements over given axes.
       #

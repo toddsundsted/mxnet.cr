@@ -1715,6 +1715,25 @@ module MXNet
         Ops._FullyConnected(data, weight, bias, **kwargs.merge({num_hidden: num_hidden}))
       end
 
+      # Returns the gamma function (extension of the factorial
+      # function to the reals), computed element-wise on the input
+      # array.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, gamma)
+
+      # Returns the log of the absolute value of the gamma function,
+      # computed element-wise on the input array.
+      #
+      # ### Parameters
+      {{prefix}}
+      {{suffix}}
+      #
+      def_class_and_fluent_method(Ops, gammaln)
+
       # Given the legs of a right triangle, return its hypotenuse.
       #
       # ### Parameters

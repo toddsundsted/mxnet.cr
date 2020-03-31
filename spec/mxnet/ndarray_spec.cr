@@ -996,6 +996,20 @@ describe MXNet::NDArray do
     end
   end
 
+  describe "#gamma" do
+    it "computes the gamma function" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.gamma.should be_close(MXNet::NDArray.array([[1.0, 1.0], [2.0, 6.0]]), 0.01)
+    end
+  end
+
+  describe "#gammaln" do
+    it "computes the log of the gamma function" do
+      a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])
+      a.gammaln.should be_close(MXNet::NDArray.array([[0.0, 0.0], [0.6931, 1.7917]]), 0.01)
+    end
+  end
+
   describe ".hypot" do
     it "computes the hypotenuse" do
       a = MXNet::NDArray.array([[1.0, 2.0], [3.0, 4.0]])

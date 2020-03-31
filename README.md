@@ -4,10 +4,12 @@
 [![Build Status](https://travis-ci.org/toddsundsted/mxnet.cr.svg?branch=master)](https://travis-ci.org/toddsundsted/mxnet.cr)
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://toddsundsted.github.io/mxnet.cr/)
 
-[MXNet](https://mxnet.incubator.apache.org/) is a library for deep
-learning, written in C++. It provides bindings for many popular
-languages (Python, Scala, R, etc.). [MXNet.cr](https://github.com/toddsundsted/mxnet.cr)
-provides bindings for [Crystal](https://crystal-lang.org/).
+[MXNet.cr](https://github.com/toddsundsted/mxnet.cr)
+provides [MXNet](https://mxnet.incubator.apache.org/)
+bindings for the [Crystal](https://crystal-lang.org/) programming
+language. MXNet is a framework for machine learning and deep learning
+written in C++, supporting distributed training across multiple
+machines and multiple GPUs (if available).
 
 MXNet.cr follows the design of the Python bindings, albeit with
 Crystal syntax. The following code:
@@ -30,7 +32,7 @@ outputs:
 
 If you want to see what MXNet.cr can do, check out
 [toddsundsted/deep-learning](https://github.com/toddsundsted/deep-learning).
-It's a collection of problems and solutions from [Deep Learning - The
+It is a collection of problems and solutions from [Deep Learning - The
 Straight Dope](https://gluon.mxnet.io/), a set of notebooks teaching
 deep learning using MXNet.
 
@@ -102,14 +104,13 @@ install_name_tool -id $LIBMXNET $LIBMXNET
 # Status
 
 MXNet.cr currently implements a subset of
-[Gluon](https://gluon.mxnet.io/), and supports most of the basic
-arithmetic operations on arrays and symbols, with support for symbolic
-evaluation and some support for automatic differentiation thrown
-in. Almost all operations in the library are exposed, however, via the
-automatically generated `Ops`, `Sparse`, `Linalg`, etc. modules, but
-documentation and guidance are nonexistent at this time.
+[Gluon](https://gluon.mxnet.io/), and supports a rich set of
+operations on arrays and symbols (arithmetic, trigonometric,
+hyperbolic, exponents and logarithms, powers, comparison, logical,
+rounding, sorting, searching, reduction and indexing) with automatic
+differentiation built in.
 
-Implemented functionality:
+Implemented classes:
 * MXNet
   * Autograd
   * Context

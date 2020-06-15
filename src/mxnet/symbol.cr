@@ -499,13 +499,13 @@ module MXNet
       bind(args: args, ctx: ctx).forward
     end
 
-    # ditto
+    # :ditto:
     def eval(ctx : Context = MXNet::Context.current, **ndargs : MXNet::NDArray)
       args = ndargs.map { |k, v| {k.to_s, v} }.to_h
       bind(ctx: ctx, args: args).forward
     end
 
-    # ditto
+    # :ditto:
     def eval(ctx : Context = MXNet::Context.current)
       bind(ctx: ctx).forward
     end

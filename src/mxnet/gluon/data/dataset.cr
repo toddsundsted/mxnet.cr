@@ -121,22 +121,22 @@ module MXNet
           Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V), Indexable(W), Indexable(X)), Tuple(T, U, V, W, X)).new({t, u, v, w, x})
         end
 
-        # ditto
+        # :ditto:
         def self.new(t : Indexable(T), u : Indexable(U), v : Indexable(V), w : Indexable(W)) forall T, U, V, W
           Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V), Indexable(W)), Tuple(T, U, V, W)).new({t, u, v, w})
         end
 
-        # ditto
+        # :ditto:
         def self.new(t : Indexable(T), u : Indexable(U), v : Indexable(V)) forall T, U, V
           Implementation(Tuple(Indexable(T), Indexable(U), Indexable(V)), Tuple(T, U, V)).new({t, u, v})
         end
 
-        # ditto
+        # :ditto:
         def self.new(t : Indexable(T), u : Indexable(U)) forall T, U
           Implementation(Tuple(Indexable(T), Indexable(U)), Tuple(T, U)).new({t, u})
         end
 
-        # ditto
+        # :ditto:
         def self.new(t : Indexable(T)) forall T
           Implementation(Tuple(Indexable(T)), Tuple(T)).new({t})
         end

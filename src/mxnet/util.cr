@@ -17,7 +17,7 @@ module MXNet
     private def output(arg, io)
       if arg.responds_to?(:join)
         io << '['
-        arg.join(",", io) { |a| output(a, io) }
+        arg.join(io, ",") { |a| output(a, io) }
         io << ']'
       else
         io << arg

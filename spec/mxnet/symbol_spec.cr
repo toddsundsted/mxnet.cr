@@ -43,21 +43,33 @@ private macro sample_spec_helper(sample, *args, return_type = :float64)
 end
 
 struct Expression
+  include JSON::Serializable
+
+  property nodes : Array(Node)
+  property arg_nodes : Array(Int32)
+  property node_row_ptr : Array(Int32)
+  property heads : Array(Array(Int32))
+  property attrs : Attrs
+
+  def initialize(@nodes, @arg_nodes, @node_row_ptr, @heads)
+    @attrs = Attrs.new
+  end
+
   struct Node
-    JSON.mapping(
-      op: String,
-      name: String,
-      inputs: Array(Array(Int32))
-    )
+    include JSON::Serializable
+
+    property op : String
+    property name : String
+    property inputs : Array(Array(Int32))
 
     def initialize(@op, @name, @inputs)
     end
   end
 
   struct Attrs
-    JSON.mapping(
-      mxnet_version: Tuple(String, Int32)
-    )
+    include JSON::Serializable
+
+    property mxnet_version : Tuple(String, Int32)
 
     def initialize
       MXNet::Internal.libcall(
@@ -66,18 +78,6 @@ struct Expression
       )
       @mxnet_version = {"int", version}
     end
-  end
-
-  JSON.mapping(
-    nodes: Array(Node),
-    arg_nodes: Array(Int32),
-    node_row_ptr: Array(Int32),
-    heads: Array(Array(Int32)),
-    attrs: Attrs
-  )
-
-  def initialize(@nodes, @arg_nodes, @node_row_ptr, @heads)
-    @attrs = Attrs.new
   end
 end
 

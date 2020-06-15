@@ -1,5 +1,5 @@
 require "../../data"
-require "gzip"
+require "compress/gzip"
 
 module MXNet
   module Gluon
@@ -81,7 +81,7 @@ module MXNet
 
             data_out = [] of MXNet::NDArray
             File.open(data_file) do |io|
-              io = Gzip::Reader.new(io)
+              io = Compress::Gzip::Reader.new(io)
               magic = UInt32.from_io(io, IO::ByteFormat::BigEndian)
               count = UInt32.from_io(io, IO::ByteFormat::BigEndian)
               nrows = UInt32.from_io(io, IO::ByteFormat::BigEndian)
@@ -98,7 +98,7 @@ module MXNet
 
             label_out = [] of Int32
             File.open(label_file) do |io|
-              io = Gzip::Reader.new(io)
+              io = Compress::Gzip::Reader.new(io)
               magic = UInt32.from_io(io, IO::ByteFormat::BigEndian)
               count = UInt32.from_io(io, IO::ByteFormat::BigEndian)
 

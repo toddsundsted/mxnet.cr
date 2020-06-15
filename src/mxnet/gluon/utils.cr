@@ -18,7 +18,8 @@ module MXNet
         File.open(filename) do |io|
           sha1_hash == Digest::SHA1.hexdigest do |digest|
             slice = Bytes.new(1048576)
-            while (count = io.read(slice)) > 0
+            loop do
+              break unless (count = io.read(slice)) > 0
               digest.update(slice[0, count])
             end
           end

@@ -1056,8 +1056,8 @@ module MXNet
         dtype = DT2T[dtype]
       end
 
-      MXNet::NDArray.empty(shape, dtype, ctx).tap do |out|
-        out[..] = value
+      MXNet::NDArray.empty(shape, dtype, ctx).tap do |arr|
+        arr[..] = value
       end
     end
 

@@ -53,8 +53,8 @@ module MXNet
       if _out
         [_out]
       else
-        num_outputs.times.reduce([] of NDArray) do |out, i|
-          out << NDArray.new(outputs[i])
+        num_outputs.times.reduce([] of NDArray) do |arr, i|
+          arr << NDArray.new(outputs[i])
         end
       end
     end

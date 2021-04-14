@@ -309,7 +309,7 @@ class Quux < MXNet::Gluon::HybridBlock
   attribute c : MXNet::Gluon::Parameter
 
   def initialize(**kwargs)
-    super
+    super(**kwargs)
     with_name_scope do
       self.c = params.get("c", init: :ones, allow_deferred_init: true)
     end
@@ -388,7 +388,7 @@ describe MXNet::Gluon::HybridBlock do
     it "writes model to a file" do
       quux.export(temp)
       s = MXNet::Symbol.load("%s-symbol.json" % temp)
-      s.list_arguments.should eq(["data", "quux0_c"])
+      s.list_arguments.should eq(["data", "quux_c"])
       s.list_outputs.size.should eq(1)
       s.list_outputs.first.should match(/_plus[0-9]+_output/)
       s.name.should match(/_plus[0-9]+/)
@@ -396,7 +396,7 @@ describe MXNet::Gluon::HybridBlock do
     it "writes parameter data to a file" do
       quux.export(temp)
       p = MXNet::NDArray.load("%s-0000.params" % temp).as(Hash(String, MXNet::NDArray))
-      p.keys.should eq(["arg:quux0_c"])
+      p.keys.should eq(["arg:quux_c"])
       p.values.should eq([MXNet::NDArray.array([1, 1])])
     end
   end

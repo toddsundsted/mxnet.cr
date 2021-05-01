@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.36.1">
+<meta name="crystal_docs.project_version" content="0.3.2">
+<meta name="crystal_docs.project_name" content="mxnet">
+
+
+
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/doc.js"></script>
+
+  <meta name="repository-name" content="mxnet">
+  <title>MXNet::Gluon::Block - mxnet 0.3.2</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../../index.html">
+          mxnet
+        </a>
+      </h1>
+
+      <span class="project-version">
+        0.3.2
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="mxnet/MXNet" data-name="mxnet">
+      <a href="../../MXNet.html">MXNet</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Autograd" data-name="mxnet::autograd">
+      <a href="../../MXNet/Autograd.html">Autograd</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/CachedOp" data-name="mxnet::cachedop">
+      <a href="../../MXNet/CachedOp.html">CachedOp</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Context" data-name="mxnet::context">
+      <a href="../../MXNet/Context.html">Context</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Executor" data-name="mxnet::executor">
+      <a href="../../MXNet/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class="parent open current" data-id="mxnet/MXNet/Gluon" data-name="mxnet::gluon">
+      <a href="../../MXNet/Gluon.html">Gluon</a>
+      
+        <ul>
+  
+  <li class=" current" data-id="mxnet/MXNet/Gluon/Block" data-name="mxnet::gluon::block">
+      <a href="../../MXNet/Gluon/Block.html">Block</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/BlockScope" data-name="mxnet::gluon::blockscope">
+      <a href="../../MXNet/Gluon/BlockScope.html">BlockScope</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/CachedGraph" data-name="mxnet::gluon::cachedgraph">
+      <a href="../../MXNet/Gluon/CachedGraph.html">CachedGraph</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Constant" data-name="mxnet::gluon::constant">
+      <a href="../../MXNet/Gluon/Constant.html">Constant</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Gluon/Data" data-name="mxnet::gluon::data">
+      <a href="../../MXNet/Gluon/Data.html">Data</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/ArrayDataset" data-name="mxnet::gluon::data::arraydataset">
+      <a href="../../MXNet/Gluon/Data/ArrayDataset.html">ArrayDataset</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/BatchSampler" data-name="mxnet::gluon::data::batchsampler(t)">
+      <a href="../../MXNet/Gluon/Data/BatchSampler.html">BatchSampler</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/DataLoader" data-name="mxnet::gluon::data::dataloader(element, batch)">
+      <a href="../../MXNet/Gluon/Data/DataLoader.html">DataLoader</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/Dataset" data-name="mxnet::gluon::data::dataset(t)">
+      <a href="../../MXNet/Gluon/Data/Dataset.html">Dataset</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/DownloadedDataset" data-name="mxnet::gluon::data::downloadeddataset(t, u, v)">
+      <a href="../../MXNet/Gluon/Data/DownloadedDataset.html">DownloadedDataset</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/LazyTransformDataset" data-name="mxnet::gluon::data::lazytransformdataset(t, u)">
+      <a href="../../MXNet/Gluon/Data/LazyTransformDataset.html">LazyTransformDataset</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/RandomSampler" data-name="mxnet::gluon::data::randomsampler">
+      <a href="../../MXNet/Gluon/Data/RandomSampler.html">RandomSampler</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/Sampler" data-name="mxnet::gluon::data::sampler(t)">
+      <a href="../../MXNet/Gluon/Data/Sampler.html">Sampler</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/SequentialSampler" data-name="mxnet::gluon::data::sequentialsampler">
+      <a href="../../MXNet/Gluon/Data/SequentialSampler.html">SequentialSampler</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/SimpleDataset" data-name="mxnet::gluon::data::simpledataset(t)">
+      <a href="../../MXNet/Gluon/Data/SimpleDataset.html">SimpleDataset</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Gluon/Data/Vision" data-name="mxnet::gluon::data::vision">
+      <a href="../../MXNet/Gluon/Data/Vision.html">Vision</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Data/Vision/MNIST" data-name="mxnet::gluon::data::vision::mnist(t)">
+      <a href="../../MXNet/Gluon/Data/Vision/MNIST.html">MNIST</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/DeferredInitializationError" data-name="mxnet::gluon::deferredinitializationerror">
+      <a href="../../MXNet/Gluon/DeferredInitializationError.html">DeferredInitializationError</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/HybridBlock" data-name="mxnet::gluon::hybridblock">
+      <a href="../../MXNet/Gluon/HybridBlock.html">HybridBlock</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Gluon/Loss" data-name="mxnet::gluon::loss">
+      <a href="../../MXNet/Gluon/Loss.html">Loss</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Loss/L1Loss" data-name="mxnet::gluon::loss::l1loss">
+      <a href="../../MXNet/Gluon/Loss/L1Loss.html">L1Loss</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Loss/L2Loss" data-name="mxnet::gluon::loss::l2loss">
+      <a href="../../MXNet/Gluon/Loss/L2Loss.html">L2Loss</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Loss/SoftmaxCrossEntropyLoss" data-name="mxnet::gluon::loss::softmaxcrossentropyloss">
+      <a href="../../MXNet/Gluon/Loss/SoftmaxCrossEntropyLoss.html">SoftmaxCrossEntropyLoss</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Gluon/NN" data-name="mxnet::gluon::nn">
+      <a href="../../MXNet/Gluon/NN.html">NN</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Activation" data-name="mxnet::gluon::nn::activation">
+      <a href="../../MXNet/Gluon/NN/Activation.html">Activation</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Conv1D" data-name="mxnet::gluon::nn::conv1d">
+      <a href="../../MXNet/Gluon/NN/Conv1D.html">Conv1D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Conv2D" data-name="mxnet::gluon::nn::conv2d">
+      <a href="../../MXNet/Gluon/NN/Conv2D.html">Conv2D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Conv3D" data-name="mxnet::gluon::nn::conv3d">
+      <a href="../../MXNet/Gluon/NN/Conv3D.html">Conv3D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Dense" data-name="mxnet::gluon::nn::dense">
+      <a href="../../MXNet/Gluon/NN/Dense.html">Dense</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Flatten" data-name="mxnet::gluon::nn::flatten">
+      <a href="../../MXNet/Gluon/NN/Flatten.html">Flatten</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/HybridSequential" data-name="mxnet::gluon::nn::hybridsequential">
+      <a href="../../MXNet/Gluon/NN/HybridSequential.html">HybridSequential</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Gluon/NN/Internal" data-name="mxnet::gluon::nn::internal">
+      <a href="../../MXNet/Gluon/NN/Internal.html">Internal</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Internal/Conv" data-name="mxnet::gluon::nn::internal::conv">
+      <a href="../../MXNet/Gluon/NN/Internal/Conv.html">Conv</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Internal/Pooling" data-name="mxnet::gluon::nn::internal::pooling">
+      <a href="../../MXNet/Gluon/NN/Internal/Pooling.html">Pooling</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/MaxPool1D" data-name="mxnet::gluon::nn::maxpool1d">
+      <a href="../../MXNet/Gluon/NN/MaxPool1D.html">MaxPool1D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/MaxPool2D" data-name="mxnet::gluon::nn::maxpool2d">
+      <a href="../../MXNet/Gluon/NN/MaxPool2D.html">MaxPool2D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/MaxPool3D" data-name="mxnet::gluon::nn::maxpool3d">
+      <a href="../../MXNet/Gluon/NN/MaxPool3D.html">MaxPool3D</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/NN/Sequential" data-name="mxnet::gluon::nn::sequential">
+      <a href="../../MXNet/Gluon/NN/Sequential.html">Sequential</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Parameter" data-name="mxnet::gluon::parameter">
+      <a href="../../MXNet/Gluon/Parameter.html">Parameter</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/ParameterDict" data-name="mxnet::gluon::parameterdict">
+      <a href="../../MXNet/Gluon/ParameterDict.html">ParameterDict</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/SymbolBlock" data-name="mxnet::gluon::symbolblock">
+      <a href="../../MXNet/Gluon/SymbolBlock.html">SymbolBlock</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Trainer" data-name="mxnet::gluon::trainer">
+      <a href="../../MXNet/Gluon/Trainer.html">Trainer</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Gluon/Utils" data-name="mxnet::gluon::utils">
+      <a href="../../MXNet/Gluon/Utils.html">Utils</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Initializer" data-name="mxnet::initializer">
+      <a href="../../MXNet/Initializer.html">Initializer</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Initializer/Constant" data-name="mxnet::initializer::constant">
+      <a href="../../MXNet/Initializer/Constant.html">Constant</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Initializer/Normal" data-name="mxnet::initializer::normal">
+      <a href="../../MXNet/Initializer/Normal.html">Normal</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Initializer/One" data-name="mxnet::initializer::one">
+      <a href="../../MXNet/Initializer/One.html">One</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Initializer/Uniform" data-name="mxnet::initializer::uniform">
+      <a href="../../MXNet/Initializer/Uniform.html">Uniform</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Initializer/Zero" data-name="mxnet::initializer::zero">
+      <a href="../../MXNet/Initializer/Zero.html">Zero</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Internal" data-name="mxnet::internal">
+      <a href="../../MXNet/Internal.html">Internal</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Internal/LibraryException" data-name="mxnet::internal::libraryexception">
+      <a href="../../MXNet/Internal/LibraryException.html">LibraryException</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/MXNetException" data-name="mxnet::mxnetexception">
+      <a href="../../MXNet/MXNetException.html">MXNetException</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Name" data-name="mxnet::name">
+      <a href="../../MXNet/Name.html">Name</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Name/Manager" data-name="mxnet::name::manager">
+      <a href="../../MXNet/Name/Manager.html">Manager</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/NDArray" data-name="mxnet::ndarray">
+      <a href="../../MXNet/NDArray.html">NDArray</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArray/Contrib" data-name="mxnet::ndarray::contrib">
+      <a href="../../MXNet/NDArray/Contrib.html">Contrib</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArray/Internal" data-name="mxnet::ndarray::internal">
+      <a href="../../MXNet/NDArray/Internal.html">Internal</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArray/Linalg" data-name="mxnet::ndarray::linalg">
+      <a href="../../MXNet/NDArray/Linalg.html">Linalg</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArray/Ops" data-name="mxnet::ndarray::ops">
+      <a href="../../MXNet/NDArray/Ops.html">Ops</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArray/Sparse" data-name="mxnet::ndarray::sparse">
+      <a href="../../MXNet/NDArray/Sparse.html">Sparse</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/NDArrayException" data-name="mxnet::ndarrayexception">
+      <a href="../../MXNet/NDArrayException.html">NDArrayException</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Operations" data-name="mxnet::operations">
+      <a href="../../MXNet/Operations.html">Operations</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Optimizer" data-name="mxnet::optimizer">
+      <a href="../../MXNet/Optimizer.html">Optimizer</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Optimizer/SGD" data-name="mxnet::optimizer::sgd">
+      <a href="../../MXNet/Optimizer/SGD.html">SGD</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Random" data-name="mxnet::random">
+      <a href="../../MXNet/Random.html">Random</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mxnet/MXNet/Symbol" data-name="mxnet::symbol">
+      <a href="../../MXNet/Symbol.html">Symbol</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mxnet/MXNet/Symbol/Contrib" data-name="mxnet::symbol::contrib">
+      <a href="../../MXNet/Symbol/Contrib.html">Contrib</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Symbol/Internal" data-name="mxnet::symbol::internal">
+      <a href="../../MXNet/Symbol/Internal.html">Internal</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Symbol/Linalg" data-name="mxnet::symbol::linalg">
+      <a href="../../MXNet/Symbol/Linalg.html">Linalg</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Symbol/Ops" data-name="mxnet::symbol::ops">
+      <a href="../../MXNet/Symbol/Ops.html">Ops</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Symbol/Sparse" data-name="mxnet::symbol::sparse">
+      <a href="../../MXNet/Symbol/Sparse.html">Sparse</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/SymbolException" data-name="mxnet::symbolexception">
+      <a href="../../MXNet/SymbolException.html">SymbolException</a>
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/MXNet/Util" data-name="mxnet::util">
+      <a href="../../MXNet/Util.html">Util</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mxnet/Number" data-name="number">
+      <a href="../../Number.html">Number</a>
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">class</span> MXNet::Gluon::Block
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../MXNet/Gluon/Block.html">MXNet::Gluon::Block</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Base class for all neural network layers and models. Your models
+should subclass this class.</p>
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="direct-known-subclasses" class="anchor" href="#direct-known-subclasses">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Direct Known Subclasses
+  </h2>
+  <ul class="other-types-list">
+    
+      <li class="other-type"><a href="../../MXNet/Gluon/HybridBlock.html">MXNet::Gluon::HybridBlock</a></li>
+    
+      <li class="other-type"><a href="../../MXNet/Gluon/NN/Sequential.html">MXNet::Gluon::NN::Sequential</a></li>
+    
+      <li class="other-type"><a href="../../MXNet/Gluon/SymbolBlock.html">MXNet::Gluon::SymbolBlock</a></li>
+    
+  </ul>
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L55" target="_blank">
+        mxnet/gluon/block.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new(prefix=nil,params=nil)-class-method" class="signature"><strong>.new</strong>(prefix = <span class="n">nil</span>, params = <span class="n">nil</span>)</a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#call(inputs:Array(T)):Array(T)forallT-instance-method" class="signature"><strong>#call</strong>(inputs : Array(T)) : Array(T) forall T</a>
+        
+          <div class="summary"><p>Calls <code><a href="../../MXNet/Gluon/Block.html#forward(inputs:Array(T)):Array(T)forallT-instance-method">#forward</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#children-instance-method" class="signature"><strong>#children</strong></a>
+        
+          <div class="summary"><p>Returns this block's registered children.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#collect_params(selector=nil)-instance-method" class="signature"><strong>#collect_params</strong>(selector = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p>Returns a <code><a href="../../MXNet/Gluon/ParameterDict.html">ParameterDict</a></code> containing this <code><a href="../../MXNet/Gluon/Block.html">Block</a></code>'s and all of its children's <code><a href="../../MXNet/Gluon/Parameter.html">Parameter</a></code>s.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#forward(inputs:Array(T)):Array(T)forallT-instance-method" class="signature"><strong>#forward</strong>(inputs : Array(T)) : Array(T) forall T</a>
+        
+          <div class="summary"><p>Override to implement forward computation using <code><a href="../../MXNet/NDArray.html">NDArray</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#get_attr(name:String):Block%7CParameter%7CNil-instance-method" class="signature"><strong>#get_attr</strong>(name : String) : Block | Parameter | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hybridize(active=true)-instance-method" class="signature"><strong>#hybridize</strong>(active = <span class="n">true</span>)</a>
+        
+          <div class="summary"><p>Activates or deactivates <code><a href="../../MXNet/Gluon/HybridBlock.html">HybridBlock</a></code> children recursively.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#init(init=nil,ctx=nil,force_reinit=false)-instance-method" class="signature"><strong>#init</strong>(init = <span class="n">nil</span>, ctx = <span class="n">nil</span>, force_reinit = <span class="n">false</span>)</a>
+        
+          <div class="summary"><p>Initializes parameters of this block and its children.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#load_parameters(fname,ctx=MXNet.cpu,allow_missing=false,ignore_extra=false)-instance-method" class="signature"><strong>#load_parameters</strong>(fname, ctx = <span class="t">MXNet</span>.cpu, allow_missing = <span class="n">false</span>, ignore_extra = <span class="n">false</span>)</a>
+        
+          <div class="summary"><p>Loads parameters from a file.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#params:MXNet::Gluon::ParameterDict-instance-method" class="signature"><strong>#params</strong> : MXNet::Gluon::ParameterDict</a>
+        
+          <div class="summary"><p>Returns this block's parameter dictionary.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#prefix:String-instance-method" class="signature"><strong>#prefix</strong> : String</a>
+        
+          <div class="summary"><p>Prefix of this block.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#register_child(block,name=nil)-instance-method" class="signature"><strong>#register_child</strong>(block, name = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p>Registers block as a child of self.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#register_parameter(param,name=nil)-instance-method" class="signature"><strong>#register_parameter</strong>(param, name = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p>Registers parameter on self.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#save_parameters(fname)-instance-method" class="signature"><strong>#save_parameters</strong>(fname)</a>
+        
+          <div class="summary"><p>Saves parameters to a file.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#scope:MXNet::Gluon::BlockScope?-instance-method" class="signature"><strong>#scope</strong> : MXNet::Gluon::BlockScope?</a>
+        
+          <div class="summary"><p>Scope of this block.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#set_attr(name:String,value:Block%7CParameter%7CNil)-instance-method" class="signature"><strong>#set_attr</strong>(name : String, value : Block | Parameter | Nil)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#with_name_scope(&)-instance-method" class="signature"><strong>#with_name_scope</strong>(&)</a>
+        
+          <div class="summary"><p>Enters a name scope managing block names.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+  <h2>
+    <a id="macro-summary" class="anchor" href="#macro-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#attribute(*names)-macro" class="signature"><strong>attribute</strong>(*names)</a>
+        
+          <div class="summary"><p>Creates accessors for declared attributes.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(prefix=nil,params=nil)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(prefix = <span class="n">nil</span>, params = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#new(prefix=nil,params=nil)-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L82" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="call(inputs:Array(T)):Array(T)forallT-instance-method">
+      <div class="signature">
+        
+        def <strong>call</strong>(inputs : Array(T)) : Array(T) forall T
+
+        <a class="method-permalink" href="#call(inputs:Array(T)):Array(T)forallT-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Calls <code><a href="../../MXNet/Gluon/Block.html#forward(inputs:Array(T)):Array(T)forallT-instance-method">#forward</a></code>.</p>
+
+<p>Only accepts positional arguments.</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>inputs</em> (<code>Array(<a href="../../MXNet/NDArray.html">NDArray</a>)</code>)
+  Input tensors.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L210" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="children-instance-method">
+      <div class="signature">
+        
+        def <strong>children</strong>
+
+        <a class="method-permalink" href="#children-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns this block's registered children.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L119" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="collect_params(selector=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>collect_params</strong>(selector = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#collect_params(selector=nil)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns a <code><a href="../../MXNet/Gluon/ParameterDict.html">ParameterDict</a></code> containing this <code><a href="../../MXNet/Gluon/Block.html">Block</a></code>'s and all of
+its children's <code><a href="../../MXNet/Gluon/Parameter.html">Parameter</a></code>s. Can also return the <code><a href="../../MXNet/Gluon/Parameter.html">Parameter</a></code>s
+that match some given regular expressions.</p>
+
+<p>For example, collect the specified <code><a href="../../MXNet/Gluon/Parameter.html">Parameter</a></code>s for
+"conv1_weight", "conv1_bias", "fc_weight" and "fc_bias":</p>
+
+<pre><code class="language-crystal">model.collect_params(<span class="s">/conv1_weight|conv1_bias|fc_weight|fc_bias/</span>)</code></pre>
+
+<p>or, alternatively, collect all parameters whose names end with
+"weight" or "bias":</p>
+
+<pre><code class="language-crystal">model.collect_params(<span class="s">/.*weight|.*bias/</span>)</code></pre>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>selector</em> (<code>Regex</code>)
+  Regular expressions to match parameters.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L141" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="forward(inputs:Array(T)):Array(T)forallT-instance-method">
+      <div class="signature">
+        
+        def <strong>forward</strong>(inputs : Array(T)) : Array(T) forall T
+
+        <a class="method-permalink" href="#forward(inputs:Array(T)):Array(T)forallT-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override to implement forward computation using <code><a href="../../MXNet/NDArray.html">NDArray</a></code>.</p>
+
+<p>Only accepts positional arguments.</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>inputs</em> (<code>Array(<a href="../../MXNet/NDArray.html">NDArray</a>)</code>)
+  Input tensors.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L222" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="get_attr(name:String):Block|Parameter|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>get_attr</strong>(name : String) : <a href="../../MXNet/Gluon/Block.html">Block</a> | <a href="../../MXNet/Gluon/Parameter.html">Parameter</a> | Nil
+
+        <a class="method-permalink" href="#get_attr(name:String):Block%7CParameter%7CNil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L248" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hybridize(active=true)-instance-method">
+      <div class="signature">
+        
+        def <strong>hybridize</strong>(active = <span class="n">true</span>)
+
+        <a class="method-permalink" href="#hybridize(active=true)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Activates or deactivates <code><a href="../../MXNet/Gluon/HybridBlock.html">HybridBlock</a></code> children
+recursively. Has no effect on non-hybrid blocks.</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>active</em> (<code>Bool</code>, default = <code>true</code>)
+  Whether to turn hybridization on or off.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L196" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="init(init=nil,ctx=nil,force_reinit=false)-instance-method">
+      <div class="signature">
+        
+        def <strong>init</strong>(init = <span class="n">nil</span>, ctx = <span class="n">nil</span>, force_reinit = <span class="n">false</span>)
+
+        <a class="method-permalink" href="#init(init=nil,ctx=nil,force_reinit=false)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Initializes parameters of this block and its children.
+Equivalent to <code>self<a href="../../MXNet/Gluon/Block.html#collect_params(selector=nil)-instance-method">.collect_params</a>.init(...)</code>.</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>init</em> (<code><a href="../../MXNet/Initializer.html">Initializer</a></code>, default = <code>nil</code>)
+  The initializer to use.</li><li><em>ctx</em> (<code><a href="../../MXNet/Context.html">Context</a></code> or <code>Array(<a href="../../MXNet/Context.html">Context</a>)</code>, default = <code>nil</code>)
+  Desired contexts.</li><li><em>force_reinit</em> (<code>Bool</code>, default = <code>false</code>)
+  Whether to force re-initialization if parameter is already
+  initialized.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L166" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="load_parameters(fname,ctx=MXNet.cpu,allow_missing=false,ignore_extra=false)-instance-method">
+      <div class="signature">
+        
+        def <strong>load_parameters</strong>(fname, ctx = <span class="t">MXNet</span>.cpu, allow_missing = <span class="n">false</span>, ignore_extra = <span class="n">false</span>)
+
+        <a class="method-permalink" href="#load_parameters(fname,ctx=MXNet.cpu,allow_missing=false,ignore_extra=false)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Loads parameters from a file.</p>
+
+<p>For reference see: "Saving and Loading Gluon Models"
+(https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html).</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>fname</em> (<code>String</code>)
+  Path to file.</li><li><em>ctx</em> (<code><a href="../../MXNet/Context.html">Context</a></code> or <code>Array(<a href="../../MXNet/Context.html">Context</a>)</code>, default = cpu)
+  Context(s) to initialize loaded parameters on.</li><li><em>allow_missing</em> (<code>Bool</code>, default = <code>false</code>)
+  Whether to silently skip parameters not present
+  in the file.</li><li><em>ignore_extra</em> (<code>Bool</code>, default = <code>false</code>)
+  Whether to silently ignore parameters not present
+  in this block.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L290" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="params:MXNet::Gluon::ParameterDict-instance-method">
+      <div class="signature">
+        
+        def <strong>params</strong> : <a href="../../MXNet/Gluon/ParameterDict.html">MXNet::Gluon::ParameterDict</a>
+
+        <a class="method-permalink" href="#params:MXNet::Gluon::ParameterDict-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns this block's parameter dictionary.</p>
+
+<p>Does not include its children's parameters.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L97" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="prefix:String-instance-method">
+      <div class="signature">
+        
+        def <strong>prefix</strong> : String
+
+        <a class="method-permalink" href="#prefix:String-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Prefix of this block.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L91" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="register_child(block,name=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>register_child</strong>(block, name = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#register_child(block,name=nil)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Registers block as a child of self. Blocks assigned as
+attributes will be registered automatically.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L174" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="register_parameter(param,name=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>register_parameter</strong>(param, name = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#register_parameter(param,name=nil)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Registers parameter on self. Parameters assigned as attributes
+will be registered automatically.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L183" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="save_parameters(fname)-instance-method">
+      <div class="signature">
+        
+        def <strong>save_parameters</strong>(fname)
+
+        <a class="method-permalink" href="#save_parameters(fname)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Saves parameters to a file.</p>
+
+<p>Note that this method only saves parameters, not model
+structure. If you want to save model structures, use
+<code><a href="../../MXNet/Gluon/HybridBlock.html#export(filename,epoch=0)-instance-method">HybridBlock#export</a></code>.</p>
+
+<p>For reference see: "Saving and Loading Gluon Models"
+(https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html).</p>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>fname</em> (<code>String</code>)
+  Path to file.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L268" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="scope:MXNet::Gluon::BlockScope?-instance-method">
+      <div class="signature">
+        
+        def <strong>scope</strong> : <a href="../../MXNet/Gluon/BlockScope.html">MXNet::Gluon::BlockScope</a>?
+
+        <a class="method-permalink" href="#scope:MXNet::Gluon::BlockScope?-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Scope of this block.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L88" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="set_attr(name:String,value:Block|Parameter|Nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>set_attr</strong>(name : String, value : <a href="../../MXNet/Gluon/Block.html">Block</a> | <a href="../../MXNet/Gluon/Parameter.html">Parameter</a> | Nil)
+
+        <a class="method-permalink" href="#set_attr(name:String,value:Block%7CParameter%7CNil)-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L228" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="with_name_scope(&)-instance-method">
+      <div class="signature">
+        
+        def <strong>with_name_scope</strong>(&)
+
+        <a class="method-permalink" href="#with_name_scope(&)-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Enters a name scope managing block names.</p>
+
+<pre><code class="language-crystal"><span class="k">self</span>.with_name_scope <span class="k">do</span>
+  <span class="k">self</span>.dense <span class="o">=</span> <span class="t">MXNet</span><span class="t">::</span><span class="t">Gluon</span><span class="t">::</span><span class="t">NN</span>.<span class="t">Dense</span>(<span class="n">20</span>)
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L105" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="macro-detail" class="anchor" href="#macro-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Detail
+  </h2>
+  
+    <div class="entry-detail" id="attribute(*names)-macro">
+      <div class="signature">
+        
+        macro <strong>attribute</strong>(*names)
+
+        <a class="method-permalink" href="#attribute(*names)-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Creates accessors for declared attributes.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/toddsundsted/mxnet.cr/blob/v0.3.2/src/mxnet/gluon/block.cr#L58" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+</div>
+
+</body>
+</html>

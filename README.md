@@ -1,7 +1,7 @@
 # Deep Learning for Crystal
 
 [![GitHub Release](https://img.shields.io/github/release/toddsundsted/mxnet.cr.svg)](https://github.com/toddsundsted/mxnet.cr/releases)
-[![Build Status](https://travis-ci.org/toddsundsted/mxnet.cr.svg?branch=master)](https://travis-ci.org/toddsundsted/mxnet.cr)
+[![Build Status](https://travis-ci.org/toddsundsted/mxnet.cr.svg?branch=main)](https://travis-ci.org/toddsundsted/mxnet.cr)
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://toddsundsted.github.io/mxnet.cr/)
 
 [MXNet.cr](https://github.com/toddsundsted/mxnet.cr)

@@ -11,7 +11,7 @@ describe MXNet::Gluon::Utils do
   end
 
   describe ".download" do
-    url = "https://raw.githubusercontent.com/toddsundsted/mxnet.cr/master/README.md"
+    url = "https://raw.githubusercontent.com/toddsundsted/mxnet.cr/main/README.md"
     filename = File.join(Dir.tempdir, "README.md")
 
     it "returns the path to the downloaded file" do

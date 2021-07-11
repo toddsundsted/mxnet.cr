@@ -1342,6 +1342,13 @@ Most routines between these two packages share source code. But
       </li>
     
       <li class="entry-summary">
+        <a href="#random_randint(low:Int,high:Int,ctx:Context=Context.current,**kwargs)-class-method" class="signature"><strong>.random_randint</strong>(low : Int, high : Int, ctx : Context = <span class="t">Context</span>.current, **kwargs)</a>
+        
+          <div class="summary"><p>Draws random samples from a discrete uniform distribution.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#random_uniform(low:Number=0.0,high:Number=1.0,ctx:Context=Context.current,**kwargs)-class-method" class="signature"><strong>.random_uniform</strong>(low : Number = <span class="n">0.0</span>, high : Number = <span class="n">1.0</span>, ctx : Context = <span class="t">Context</span>.current, **kwargs)</a>
         
           <div class="summary"><p>Draws random samples from a uniform distribution.</p></div>
@@ -6691,6 +6698,45 @@ as a floating point data type.</p>
   Lambda parameter (rate) of the Poisson distribution.</li><li><em>shape</em> (<code>Int</code> or <code>Array(Int)</code>)
   The shape of the output.</li><li><em>dtype</em> (<code>::Symbol</code>, default = <code>:float32</code>)
   The data type of the output in case this can’t be inferred.</li><li><em>ctx</em> (<code><a href="../MXNet/Context.html">Context</a></code>, optional)
+  Device context (default is the current context). Only used
+  for imperative calls.</li><li><em>out</em> (<code><a href="../MXNet/NDArray.html">NDArray</a></code>, optional)
+  The output array.</li></ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="random_randint(low:Int,high:Int,ctx:Context=Context.current,**kwargs)-class-method">
+      <div class="signature">
+        
+        def self.<strong>random_randint</strong>(low : Int, high : Int, ctx : <a href="../MXNet/Context.html">Context</a> = <span class="t">Context</span>.current, **kwargs)
+
+        <a class="method-permalink" href="#random_randint(low:Int,high:Int,ctx:Context=Context.current,**kwargs)-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Draws random samples from a discrete uniform distribution.</p>
+
+<p>Samples are uniformly distributed over the half-open interval
+<code>[low, high)</code> (includes low, but excludes high).</p>
+
+<pre><code class="language-crystal">random_randint(<span class="n">0</span>, <span class="n">5</span>, shape: [<span class="n">2</span>, <span class="n">2</span>]) <span class="c"># =&gt; [[0, 2], [3, 1]]</span></code></pre>
+
+<h3><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h3>
+
+<ul><li><em>low</em> (<code>Int</code>, required)
+  Lower boundary of the output interval.</li><li><em>high</em> (<code>Int</code>, required)
+  Upper boundary of the output interval.</li><li><em>shape</em> (<code>Int</code> or <code>Array(Int)</code>)
+  The shape of the output.</li><li><em>dtype</em> (<code>::Symbol</code>, default = <code>:int32</code>)
+  The data type of the output.</li><li><em>ctx</em> (<code><a href="../MXNet/Context.html">Context</a></code>, optional)
   Device context (default is the current context). Only used
   for imperative calls.</li><li><em>out</em> (<code><a href="../MXNet/NDArray.html">NDArray</a></code>, optional)
   The output array.</li></ul>

@@ -10,10 +10,10 @@ args = parser.parse_args()
 def explain():
     msg = '''NO MXNET LIBRARY FOUND
 
-MXNet.cr requires the MXNet (https://mxnet.incubator.apache.org/) deep
-learning library be installed. On most platforms, you can either build
-the MXNet library from source or you can install the library, along
-with Python language bindings, with a tool like "pip". In any case, no
+MXNet.cr requires the MXNet (https://mxnet.apache.org/) deep learning
+library be installed. On most platforms, you can either build the
+MXNet library from source or you can install the library, along with
+Python language bindings, with a tool like "pip". In any case, no
 MXNet library can be found.
 
 See the MXNet.cr README (https://github.com/toddsundsted/mxnet.cr) for
@@ -56,8 +56,12 @@ if args.command == "library":
         dll_path.extend([p.strip() for p in os.environ['DYLD_FALLBACK_LIBRARY_PATH'].split(':')])
 
     dll_path.append('../../../')
-    dll_path = [os.path.join(p, 'libmxnet.so') for p in dll_path]
+
+    dll_path = [os.path.join(p, 'libmxnet.dylib') for p in dll_path] + \
+        [os.path.join(p, 'libmxnet.dll') for p in dll_path] + \
+        [os.path.join(p, 'libmxnet.so') for p in dll_path]
 
     lib_path = [p for p in dll_path if os.path.exists(p) and os.path.isfile(p)]
+
     if len(lib_path) > 0:
         print(lib_path[0])
